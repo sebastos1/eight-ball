@@ -18,33 +18,68 @@
     }
 }
 
+/* custom name fx */
 @keyframes rainbow {
     0% {
-        color: red;
+        color: rgb(255, 88, 88);
     }
 
-    14% {
-        color: orange;
+    16% {
+        color: rgb(255, 203, 105);
     }
 
-    28% {
-        color: yellow;
+    32% {
+        color: rgb(255, 255, 120);
     }
 
-    42% {
-        color: green;
+    48% {
+        color: rgb(134, 255, 134);
     }
 
-    57% {
-        color: blue;
+    64% {
+        color: rgb(111, 255, 255);
     }
 
-    71% {
-        color: indigo;
+    81% {
+        color: rgb(255, 104, 255);
     }
 
-    85% {
-        color: violet;
+    100% {
+        color: rgb(255, 88, 88);
+    }
+}
+
+.id-rainbow {
+    font-weight: bold;
+    animation: rainbow 10s linear infinite;
+}
+
+@keyframes green-blue {
+    0% {
+        color: rgb(66, 249, 255);
+    }
+
+    50% {
+        color: rgb(134, 255, 134);
+    }
+
+    100% {
+        color: rgb(66, 249, 255);
+    }
+}
+
+.id-green {
+    font-weight: bold;
+    animation: green-blue 10s linear infinite;
+}
+
+@keyframes death {
+    0% {
+        color: black;
+    }
+
+    50% {
+        color: white;
     }
 
     100% {
@@ -52,30 +87,26 @@
     }
 }
 
-.id-rainbow {
+.id-death {
     font-weight: bold;
-    animation: rainbow 5s linear infinite;
+    animation: death 250ms infinite;
 }
 
-.id-green {
-    font-weight: bold;
-    color: green;
-}
-
+/* leaderboard */
 .table>tbody>tr.gold>* {
     font-weight: bold;
-    color: gold !important;
+    color: gold;
     text-shadow: 0 0 5px rgba(255, 215, 0, 0.5);
 }
 
 .table>tbody>tr.silver>* {
     font-weight: bold;
-    color: silver !important;
+    color: silver;
     text-shadow: 0 0 5px rgba(192, 192, 192, 0.5);
 }
 
 .table>tbody>tr.bronze>* {
     font-weight: bold;
-    color: #cd7f32 !important;
+    color: #cd7f32;
     text-shadow: 0 0 5px rgba(205, 127, 50, 0.5);
 }

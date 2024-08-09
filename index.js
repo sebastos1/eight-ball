@@ -1,14 +1,5 @@
 'use strict';
 
-function colorPicker(id) {
-    const colors = [
-        "id-rainbow",
-        "id-green",
-    ];
-    if (id > colors.length) { return ""; }
-    return colors[id - 1];
-}
-
 // Dependencies
 const express = require('express');
 const expressHandlebars = require('express-handlebars');
@@ -18,13 +9,14 @@ const logger = require('morgan');
 const chalk = require('chalk');
 
 // Imports
-const database = require('./database');
-const socket = require('./socket');
-const authentication = require('./authentication');
+const database = require('./src/database.js');
+const socket = require('./src/socket.js');
+const authentication = require('./src/authentication.js');
+const colors = require("./static/js/colors.js");
 
 // Routers
-const indexRouter = require('./routes/index');
-const usersRouter = require('./routes/users');
+const indexRouter = require('./src/routes/index');
+const usersRouter = require('./src/routes/users.js');
 
 // Initialise app
 const app = express();
@@ -45,7 +37,7 @@ app.engine('handlebars', expressHandlebars(
     {
         defaultLayout: false,
         helpers: {
-            userColor: colorPicker,
+            userColor: colors.colorPicker,
             eq: eq,
         }
     }

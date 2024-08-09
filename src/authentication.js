@@ -40,7 +40,7 @@ const authentication = function (req, res, next) {
                 // Call next middleware
                 next();
 
-            // If no user was found or there was an error
+                // If no user was found or there was an error
             } else {
 
                 // Set request property
@@ -58,7 +58,7 @@ const authentication = function (req, res, next) {
             }
         });
 
-    // If there is no user id in the session
+        // If there is no user id in the session
     } else {
 
         // Set request property
@@ -84,7 +84,7 @@ authentication.comparePassword = function (password, hash, callback) {
         // If no error and match found, send true
         if (!err, res) {
             callback(true);
-        // If error or no match found, send false
+            // If error or no match found, send false
         } else {
             callback(false);
         }

@@ -41,7 +41,7 @@
                     onclick="window.location='/profile/{{this.id}}'" style="cursor:pointer">
                     <th scope="row">{{this.position}}</th>
                     {{!-- <td>{{this.id}}</td> --}}
-                    <td>{{this.username}}</td>
+                    <td class="{{userColor this.id}}">{{this.username}}</td>
                     <td>{{this.firstname}} {{this.lastname}}</td>
                     <td>{{this.wins}}</td>
                     {{!-- <td>{{this.losses}}</td> --}}

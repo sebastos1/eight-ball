@@ -3,16 +3,6 @@
 const YELLOW_COL = "#1CCC7F"; // teal
 const RED_COL = "#C43E64"; // purple ish
 
-// duplicate code
-function colorPicker(id) {
-    const colors = [
-        "id-rainbow",
-        "id-green",
-    ];
-    if (id > colors.length) { return ""; }
-    return colors[id - 1];
-}
-
 // Connect
 const socket = io();
 
@@ -77,8 +67,8 @@ socket.on('game-start', (data) => {
     $('#playerColour').css('background-color', game.player.colour);
     $('#opponentColour').css('background-color', game.opponent.colour);
 
-    $('#playerUsername').addClass(colorPicker(game.player.id));
-    $('#opponentUsername').addClass(colorPicker(game.opponent.id));
+    $('#playerUsername').addClass(Colors.colorPicker(game.player.id));
+    $('#opponentUsername').addClass(Colors.colorPicker(game.opponent.id));
 
     // If player's turn
     if (game.turn) {
@@ -107,37 +97,45 @@ socket.on('game-update', (data) => {
     if (game) game.update(data);
 });
 
-// Game turn update event listener
-socket.on('game-updateTurn', (data) => {
+socket.on('game-scoreUpdate', (data) => {
     if (game) {
+        // Update the game object
+        game.player.score = data.player;
+        game.opponent.score = data.opponent;
+        game.player.colour = data.playerColour;
+        game.opponent.colour = data.opponentColour;
 
-        // Update current game turns with the data
-        game.updateTurn(data);
-
-        // Update player and oppoenent scores
+        // Update the displayed scores
         $('#playerScore').text(game.player.score);
         $('#opponentScore').text(game.opponent.score);
 
         // Update player and opponent colours
         $('#playerColour').css('background-color', (game.player.colour == "red") ? RED_COL : YELLOW_COL);
         $('#opponentColour').css('background-color', (game.opponent.colour == "red") ? RED_COL : YELLOW_COL);
+    }
+});
 
-        // If player's turn
-        if (game.turn) {
-            // Underline player username and score
-            $('#playerUsername').css('text-decoration', 'underline');
-            $('#playerScore').css('text-decoration', 'underline');
-            $('#opponentUsername').css('text-decoration', 'none');
-            $('#opponentScore').css('text-decoration', 'none');
-            // If opponent's turn
-        } else {
-            // Underline opponent username and score
-            $('#playerUsername').css('text-decoration', 'none');
-            $('#playerScore').css('text-decoration', 'none');
-            $('#opponentUsername').css('text-decoration', 'underline');
-            $('#opponentScore').css('text-decoration', 'underline');
-        }
+// Game turn update event listener
+socket.on('game-updateTurn', (data) => {
+    if (!game) return;
 
+    // Update current game turns with the data
+    game.updateTurn(data);
+
+    // If player's turn
+    if (game.turn) {
+        // Underline player username and score
+        $('#playerUsername').css('text-decoration', 'underline');
+        $('#playerScore').css('text-decoration', 'underline');
+        $('#opponentUsername').css('text-decoration', 'none');
+        $('#opponentScore').css('text-decoration', 'none');
+        // If opponent's turn
+    } else {
+        // Underline opponent username and score
+        $('#playerUsername').css('text-decoration', 'none');
+        $('#playerScore').css('text-decoration', 'none');
+        $('#opponentUsername').css('text-decoration', 'underline');
+        $('#opponentScore').css('text-decoration', 'underline');
     }
 });
 
@@ -156,5 +154,4 @@ socket.on('game-end', (data) => {
 
     // Show game ending
     showGameEnd();
-
 });
