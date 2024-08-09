@@ -27,8 +27,16 @@ const server = socket(app);
 const PORT = process.env.PORT || 8080;
 app.set('port', PORT);
 
+
 // Set view engine
-app.engine('handlebars', expressHandlebars({ defaultLayout: false }));
+app.engine('handlebars', expressHandlebars(
+    {
+        defaultLayout: false,
+        helpers: {
+            userColor: colorPicker
+        }
+    }
+));
 app.set('view engine', 'handlebars');
 
 // Set static path

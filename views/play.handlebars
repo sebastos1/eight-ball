@@ -34,17 +34,19 @@
         <div id="game" class="text-center">
             <div class="d-flex border border-bottom-0 mx-0 pt-2">
                 <div class="d-flex w-50 flex-column flex-sm-row justify-content-around">
-                    <a id="playerUsername" href="#" class="h3 d-block text-body text-truncate">playerUsername</a>
+                    <a id="playerUsername" href="#" class="h3 d-block text-truncate">playerUsername</a>
                     <span id="playerScore" class="h3 d-block">pScore</span>
                 </div>
                 <div class="d-flex w-50 flex-column flex-sm-row-reverse justify-content-around">
-                    <a id="opponentUsername" href="#" class="h3 d-block text-body text-truncate">opponentUsername</a>
+                    <a id="opponentUsername" href="#" class="h3 d-block text-truncate">opponentUsername</a>
                     <span id="opponentScore" class="h3 d-block">oScore</span>
                 </div>
             </div>
             <div id="colours" class="clearfix border-left border-right" style="margin-top: -5px;">
-                <div id="playerColour" class="float-left" style="width: 50%; height: 10px; background-color: none"></div>
-                <div id="opponentColour" class="float-right" style="width: 50%; height: 10px; background-color: none"></div>
+                <div id="playerColour" class="float-left" style="width: 50%; height: 10px; background-color: none">
+                </div>
+                <div id="opponentColour" class="float-right" style="width: 50%; height: 10px; background-color: none">
+                </div>
             </div>
             <canvas id="canvas" class="d-block w-100 h-auto mh-100"></canvas>
         </div>
@@ -52,7 +54,8 @@
         <div id="gameEnd" class="border shadow-lg text-center mx-auto py-5 px-5">
             <h1 id="endMsg" class="display-3">Game End</h1>
             <hr class="my-5">
-            <button type="button" id="btn-showMenu" class="btn btn-lg btn-success mb-3"><i class="fas fa-arrow-left"></i> Back to Menu</button><br>
+            <button type="button" id="btn-showMenu" class="btn btn-lg btn-success mb-3"><i
+                    class="fas fa-arrow-left"></i> Back to Menu</button><br>
             <a href="/profile/" class="btn btn-primary mx-1" role="button">Profile</a>
             <a href="/leaderboard/" class="btn btn-danger mx-1" role="button">Leaderboard</a>
         </div>
@@ -60,8 +63,8 @@
     </div>
 
     <!-- Socket.IO JS -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.js" integrity="sha256-ji09tECORKvr8xB9iCl8DJ8iNMLriDchC1+p+yt1hSs="
-        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.js"
+        integrity="sha256-ji09tECORKvr8xB9iCl8DJ8iNMLriDchC1+p+yt1hSs=" crossorigin="anonymous"></script>
 
     {{> js}}
 
