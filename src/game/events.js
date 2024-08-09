@@ -4,11 +4,11 @@
 const Vector = require('./Vector');
 
 // Initialise physics object
+
 const events = {};
 
 // Ball potted method
 events.ballPotted = function (game, ball) {
-
     // Switch case ball colour
     switch (ball.colour) {
 
@@ -21,12 +21,13 @@ events.ballPotted = function (game, ball) {
                 // If the red player potted the red ball, set potted to true
                 if (game.turn == game.redPlayer) {
                     game.potted = true;
-                // If the yellow player potted the red ball, set foul to true
+
+                    // If the yellow player potted the red ball, set foul to true
                 } else {
                     game.foul = true;
                 }
 
-            // If the colours have not been selected
+                // If the colours have not been selected
             } else {
 
                 // Set the current player to red
@@ -38,14 +39,13 @@ events.ballPotted = function (game, ball) {
                 // Set colour selected to true and potted to true
                 game.colourSelected = true;
                 game.potted = true;
-
             }
 
             // Increment the red player's score
             game.redPlayer.score++;
+
             // Remove the potted ball from the game
             game.balls.splice(game.balls.indexOf(ball), 1);
-
             break;
 
         // Yellow ball
@@ -57,12 +57,13 @@ events.ballPotted = function (game, ball) {
                 // If the yellow player potted the yellow ball, set potted to true
                 if (game.turn == game.yellowPlayer) {
                     game.potted = true;
-                // If the red player potted the yellow ball, set foul to true
+
+                    // If the red player potted the yellow ball, set foul to true
                 } else {
                     game.foul = true;
                 }
 
-            // If the colours have not been selected
+                // If the colours have not been selected
             } else {
 
                 // Set the current player to yellow
@@ -74,14 +75,13 @@ events.ballPotted = function (game, ball) {
                 // Set colour selected to true and potted to true
                 game.colourSelected = true;
                 game.potted = true;
-                
             }
 
             // Increment the yellow player's score
             game.yellowPlayer.score++;
+
             // Remove the potted ball from the game
             game.balls.splice(game.balls.indexOf(ball), 1);
-
             break;
 
         // White ball
@@ -94,7 +94,6 @@ events.ballPotted = function (game, ball) {
             ball.position = new Vector(320, 360);
             ball.velocity = new Vector(0, 0);
             ball.acceleration = new Vector(0, 0);
-
             break;
 
         // Black ball
@@ -103,18 +102,35 @@ events.ballPotted = function (game, ball) {
             // If the current player has potted all of their balls, set their score to 8
             if (game.turn.score >= 7) {
                 game.turn.score = 8;
-            // If the current player has not potted all of their balls, set the opponent's score to 8
+
+                // If the current player has not potted all of their balls, set the opponent's score to 8
             } else {
                 game.nextTurn.score = 8;
             }
 
             // Remove the potted ball from the game
             game.balls.splice(game.balls.indexOf(ball), 1);
-
             break;
-
     }
 
+    game.player1.socket.emit('game-scoreUpdate', {
+        player: game.player1.score,
+        opponent: game.player2.score,
+        playerColour: game.player1.colour,
+        opponentColour: game.player2.colour
+    });
+    game.player2.socket.emit('game-scoreUpdate', {
+        player: game.player2.score,
+        opponent: game.player1.score,
+        playerColour: game.player2.colour,
+        opponentColour: game.player1.colour
+    });
+
+    // If the game has ended (black ball potted), emit game-end event
+    if (ball.colour === 'black') {
+        game.player1.socket.emit('game-end', { winner: game.player1.score === 8 });
+        game.player2.socket.emit('game-end', { winner: game.player2.score === 8 });
+    }
 };
 
 // Export events module 

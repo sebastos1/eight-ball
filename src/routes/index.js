@@ -31,13 +31,13 @@ router.get('/', (req, res, next) => {
                     gamesInProgress: socket.gamesInProgress,
                     game
                 });
-            // If there was an error send it to the error handler
+                // If there was an error send it to the error handler
             } else {
                 next('Database error.');
             }
         });
 
-    // If the request is not authenticated
+        // If the request is not authenticated
     } else {
         // Render the login page and pass in saved login infomation
         res.render('login', { login: req.session.login });
@@ -56,7 +56,7 @@ router.get('/play', (req, res, next) => {
     if (req.authenticated) {
         // Render the play page
         res.render('play');
-    // If the request is not authenticated
+        // If the request is not authenticated
     } else {
         // Send an error flash message and redirect to the login route
         req.flash('danger', 'You are not logged in.');
@@ -80,21 +80,21 @@ router.get('/profile', (req, res, next) => {
             // If a user was found and there was no error
             if (!err && id) {
                 res.redirect(`/profile/${id}`);
-            // If no user was found or there was an error
+                // If no user was found or there was an error
             } else {
                 // Send a suitable message to the error handler
                 next(err ? 'Database error.' : 'User not found.');
             }
         });
 
-    // If the request does not contain a query
+        // If the request does not contain a query
     } else {
 
         // If the request is authenticated
         if (req.authenticated) {
             // Redirect to the profile for their own account
             res.redirect(`/profile/${req.user_id}`);
-        // If the request is not authenticated
+            // If the request is not authenticated
         } else {
             // Send an error flash message and redirect to the login route
             req.flash('danger', 'You are not logged in.');
@@ -125,13 +125,13 @@ router.get('/profile/:id', (req, res, next) => {
                 if (!err) {
                     // Render the profile page and pass in the profile data, games played, whether its a self profile and the winrate
                     res.render('profile', { profile, games, selfProfile, gamesPlayed, winRate });
-                // If there was an error send it to the error handler
+                    // If there was an error send it to the error handler
                 } else {
                     next('Database error.');
                 }
             });
 
-        // If no user was found or there was an error
+            // If no user was found or there was an error
         } else {
             // Send a suitable message to the error handler
             next(err ? 'Database error.' : 'User not found.');
@@ -169,7 +169,7 @@ router.get('/leaderboard', (req, res, next) => {
             // Render the leaderboard page and pass in the users array
             res.render('leaderboard', { users });
 
-        // If there was an error send it to the error handler
+            // If there was an error send it to the error handler
         } else {
             next('Database error.');
         }

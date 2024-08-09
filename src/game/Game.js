@@ -80,8 +80,10 @@ const Game = function (player1, player2) {
 
 };
 
+const game = Game.prototype;
+
 // Update class method
-Game.prototype.update = function () {
+game.update = function () {
 
     // Set game active property to false by default
     this.active = false;
@@ -134,7 +136,7 @@ Game.prototype.update = function () {
 };
 
 // Shoot class method
-Game.prototype.shoot = function (player, power, angle) {
+game.shoot = function (player, power, angle) {
     // Check if it is the player's turn, the balls have stopped moving, and the power is not above the max power
     if (this.turn == player && !this.active && power <= MAX_POWER) {
         // Update cue ball's velocity and set active to true
@@ -144,7 +146,7 @@ Game.prototype.shoot = function (player, power, angle) {
 };
 
 // Game end method
-Game.prototype.end = function (winner) {
+game.end = function (winner) {
 
     // Set winner's score to 8
     winner.score = 8;
@@ -184,7 +186,7 @@ Game.prototype.end = function (winner) {
 };
 
 // Data that is sent to the players when the game starts
-Game.prototype.startData = function (player) {
+game.startData = function (player) {
     let opponent = (player == this.player1 ? this.player2 : this.player1);
     return {
         player: { id: player.id, username: player.username, score: player.score, colour: player.colour },
@@ -196,7 +198,7 @@ Game.prototype.startData = function (player) {
 };
 
 // Data that is sent to the players each game update
-Game.prototype.updateData = function () {
+game.updateData = function () {
     return {
         active: this.active,
         balls: this.balls.map(ball => { return { x: ball.position.x, y: ball.position.y, colour: ball.colour }; })
@@ -204,7 +206,7 @@ Game.prototype.updateData = function () {
 };
 
 // Data that is sent to the palyers when the turn changes
-Game.prototype.turnData = function (player) {
+game.turnData = function (player) {
     let opponent = (player == this.player1 ? this.player2 : this.player1);
     return {
         player: { score: player.score, colour: player.colour },
@@ -214,7 +216,7 @@ Game.prototype.turnData = function (player) {
 };
 
 // Data that is sent to the players when the game ends
-Game.prototype.endData = function (player) {
+game.endData = function (player) {
     let opponent = (player == this.player1 ? this.player2 : this.player1);
     return { winner: player.score > opponent.score };
 };
