@@ -5,6 +5,9 @@ const MAX_POWER = 50;
 const STICK_WIDTH = 20;
 const STICK_HEIGHT = 750;
 
+const STICK_COL = '#C66F35';
+const GUIDE_COL = 'rgba(0, 0, 0, 0.25)';
+
 // Stick class constructor
 const Stick = function (position) {
 
@@ -25,8 +28,8 @@ Stick.prototype.draw = function () {
 
     // If mouse is pressed, increase power
     if (canvas.mouse.down) {
-        if (this.power < MAX_POWER) this.power+= 0.5;
-    // If mouse has been released, call the shoot function and reset power
+        if (this.power < MAX_POWER) this.power += 0.5;
+        // If mouse has been released, call the shoot function and reset power
     } else if (this.power > 0) {
         shoot(this.power, this.rotation);
         this.power = 0;
@@ -35,11 +38,11 @@ Stick.prototype.draw = function () {
     // Calculate distance from cue ball from power
     let offset = new Vector(-STICK_WIDTH / 2, this.power + 50);
     // Draw rectangle to canvas
-    canvas.drawRect(offset, Vector.add(this.position, TABLE), new Vector(STICK_WIDTH, STICK_HEIGHT), 'bisque', this.rotation + Math.PI / 2);
+    canvas.drawRect(offset, Vector.add(this.position, TABLE), new Vector(STICK_WIDTH, STICK_HEIGHT), STICK_COL, this.rotation + Math.PI / 2);
 
 };
 
 // Draw guide method
 Stick.prototype.drawGuide = function () {
-    canvas.drawRect(new Vector(0,-5), Vector.add(this.position, TABLE), new Vector(2000, 10), 'rgba(0, 0, 0, 0.25)', this.rotation);
+    canvas.drawRect(new Vector(0, -5), Vector.add(this.position, TABLE), new Vector(2000, 10), GUIDE_COL, this.rotation);
 };

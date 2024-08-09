@@ -34,7 +34,7 @@ const showGame = function () {
 };
 
 // Show game end method
-const showGameEnd = function() {
+const showGameEnd = function () {
 
     // Show the game end element and hide the others
     $('#menu').hide();

@@ -1,5 +1,17 @@
 'use strict';
 
+const YELLOW_COL = "#1CCC7F"; // teal
+const RED_COL = "#C43E64"; // purple ish
+
+function colorPicker(id) {
+    const colors = [
+        "id-rainbow",
+        "id-green",
+    ];
+    if (id > colors.length) { return ""; }
+    return colors[id - 1];
+}
+
 // Connect
 const socket = io();
 
@@ -60,9 +72,12 @@ socket.on('game-start', (data) => {
     $('#playerScore').text(game.player.score);
     $('#opponentScore').text(game.opponent.score);
 
-    // Display  and opponent colours
+    // Display player and opponent colours
     $('#playerColour').css('background-color', game.player.colour);
     $('#opponentColour').css('background-color', game.opponent.colour);
+
+    $('#playerUsername').addClass(colorPicker(game.player.id));
+    $('#opponentUsername').addClass(colorPicker(game.opponent.id));
 
     // If player's turn
     if (game.turn) {
@@ -71,7 +86,7 @@ socket.on('game-start', (data) => {
         $('#playerScore').css('text-decoration', 'underline');
         $('#opponentUsername').css('text-decoration', 'none');
         $('#opponentScore').css('text-decoration', 'none');
-    // If opponent's turn
+        // If opponent's turn
     } else {
         // Underline opponent username and score
         $('#playerUsername').css('text-decoration', 'none');
@@ -103,8 +118,8 @@ socket.on('game-updateTurn', (data) => {
         $('#opponentScore').text(game.opponent.score);
 
         // Update player and opponent colours
-        $('#playerColour').css('background-color', game.player.colour);
-        $('#opponentColour').css('background-color', game.opponent.colour);
+        $('#playerColour').css('background-color', (game.player.colour == "red") ? RED_COL : YELLOW_COL);
+        $('#opponentColour').css('background-color', (game.opponent.colour == "red") ? RED_COL : YELLOW_COL);
 
         // If player's turn
         if (game.turn) {
@@ -113,7 +128,7 @@ socket.on('game-updateTurn', (data) => {
             $('#playerScore').css('text-decoration', 'underline');
             $('#opponentUsername').css('text-decoration', 'none');
             $('#opponentScore').css('text-decoration', 'none');
-        // If opponent's turn
+            // If opponent's turn
         } else {
             // Underline opponent username and score
             $('#playerUsername').css('text-decoration', 'none');
@@ -130,10 +145,10 @@ socket.on('game-end', (data) => {
 
     // If player has won, display win text
     if (data.winner) {
-        $('#endMsg').text('You have Won!');
-    // If player has lost, display lose text
+        $('#endMsg').text('Winner winner chicken dinner!');
+        // If player has lost, display lose text
     } else {
-        $('#endMsg').text('You have Lost!');
+        $('#endMsg').text('Lost :(');
     }
 
     game = null;
