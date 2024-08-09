@@ -1,5 +1,14 @@
 'use strict';
 
+function colorPicker(id) {
+    const colors = [
+        "id-rainbow",
+        "id-green",
+    ];
+    if (id > colors.length) { return ""; }
+    return colors[id - 1];
+}
+
 // Dependencies
 const express = require('express');
 const expressHandlebars = require('express-handlebars');
@@ -27,13 +36,17 @@ const server = socket(app);
 const PORT = process.env.PORT || 8080;
 app.set('port', PORT);
 
+function eq(item1, item2) {
+    return (item1 === item2);
+}
 
 // Set view engine
 app.engine('handlebars', expressHandlebars(
     {
         defaultLayout: false,
         helpers: {
-            userColor: colorPicker
+            userColor: colorPicker,
+            eq: eq,
         }
     }
 ));

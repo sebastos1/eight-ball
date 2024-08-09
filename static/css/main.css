@@ -61,3 +61,21 @@
     font-weight: bold;
     color: green;
 }
+
+.table>tbody>tr.gold>* {
+    font-weight: bold;
+    color: gold !important;
+    text-shadow: 0 0 5px rgba(255, 215, 0, 0.5);
+}
+
+.table>tbody>tr.silver>* {
+    font-weight: bold;
+    color: silver !important;
+    text-shadow: 0 0 5px rgba(192, 192, 192, 0.5);
+}
+
+.table>tbody>tr.bronze>* {
+    font-weight: bold;
+    color: #cd7f32 !important;
+    text-shadow: 0 0 5px rgba(205, 127, 50, 0.5);
+}

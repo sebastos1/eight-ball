@@ -3,6 +3,7 @@
 const YELLOW_COL = "#1CCC7F"; // teal
 const RED_COL = "#C43E64"; // purple ish
 
+// duplicate code
 function colorPicker(id) {
     const colors = [
         "id-rainbow",

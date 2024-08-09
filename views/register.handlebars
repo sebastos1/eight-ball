@@ -1,80 +1,77 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-bs-theme="dark">
 
 <head>
-
     {{> meta}}
-
     <title>Register | Eight Ball</title>
-
     {{> css}}
-
 </head>
 
 <body>
-
     {{> navbar active_register=true}}
-
-    <div class="container">
-
-        <div class="row">
+    <div class="container my-4">
+        <div class="row align-items-center">
             <div class="col">
                 <h1 class="display-4">Register</h1>
             </div>
-            <div class="col-xl-4 col-lg-5 col-md-6">
-                {{> search}}
+            <div class="col-xl-6">
+                {{> flash}}
             </div>
         </div>
-
         <div class="row">
-
             <div class="col-md-6">
-                <hr>
-                <form action="/register/" method="post">
-                    <div class="form-group">
-                        <label for="username">Username</label>
-                        <input type="text" name="username" placeholder="Username" value="{{register.username}}" class="form-control" required>
+                <form action="/register/" method="post" class="mb-4">
+                    <div class="mb-3">
+                        <label for="username" class="form-label">Username</label>
+                        <input type="text" id="username" name="username" placeholder="Username"
+                            value="{{register.username}}" class="form-control" required>
                     </div>
-                    <div class="form-group">
-                        <label for="email">Email</label>
-                        <input type="email" name="email" placeholder="Email" value="{{register.email}}" class="form-control" required>
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email</label>
+                        <input type="email" id="email" name="email" placeholder="Email" value="{{register.email}}"
+                            class="form-control" required>
                     </div>
-                    <div class="form-group">
-                        <label for="email">Name</label>
-                        <div class="input-group">
-                            <input type="text" name="firstname" placeholder="First Name" value="{{register.firstname}}" class="form-control" required>
-                            <input type="text" name="lastname" placeholder="Last Name" value="{{register.lastname}}" class="form-control" required>
+                    <div class="mb-3">
+                        <label class="form-label">Name</label>
+                        <div class="row">
+                            <div class="col-md-6 mb-2 mb-md-0">
+                                <input type="text" name="firstname" placeholder="First Name"
+                                    value="{{register.firstname}}" class="form-control" required>
+                            </div>
+                            <div class="col-md-6">
+                                <input type="text" name="lastname" placeholder="Last Name" value="{{register.lastname}}"
+                                    class="form-control" required>
+                            </div>
                         </div>
                     </div>
-                    <div class="form-group">
-                        <label for="password">Password</label>
-                        <input type="password" name="password" placeholder="Password" class="form-control" required>
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Password</label>
+                        <input type="password" id="password" name="password" placeholder="Password" class="form-control"
+                            required>
                     </div>
-                    <div class="form-group">
-                        <label for="passwordConfirm">Confirm Password</label>
-                        <input type="password" name="passwordConfirm" placeholder="Confirm Password" class="form-control" required>
+                    <div class="mb-3">
+                        <label for="passwordConfirm" class="form-label">Confirm Password</label>
+                        <input type="password" id="passwordConfirm" name="passwordConfirm"
+                            placeholder="Confirm Password" class="form-control" required>
                     </div>
-                    <button type="submit" class="btn btn-lg btn-primary">Register</button>
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary btn-lg">Register</button>
+                    </div>
                 </form>
                 <hr>
-                <div>
+                <div class="text-center">
                     <p class="text-muted">Already have an account?</p>
                     <a href="/login/" class="btn btn-secondary">Login</a>
                 </div>
             </div>
-
-            <div class="col-md-6 mt-3 mt-md-0">
-
-                {{> flash}}
-
+            <div class="col-xl-6">
+                <img
+                    src="https://images.chesscomfiles.com/proxy/i.pinimg.com/originals/26/19/4c/26194c00e9e3cb6b02c357cae56df413/https/0bb5ed1937.png">
             </div>
-
         </div>
 
     </div>
-
     {{> js}}
-
 </body>
 
 </html>

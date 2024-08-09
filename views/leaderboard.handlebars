@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-bs-theme="dark">
 
 <head>
 
@@ -16,13 +16,6 @@
     {{> navbar active_leaderboard=true}}
 
     <div class="container">
-
-        <div class="row justify-content-end mb-3">
-            <div class="col-xl-4 col-lg-5 col-md-6">
-                {{> search}}
-            </div>
-        </div>
-
         {{> flash}}
 
         <div class="jumbotron">
@@ -33,24 +26,25 @@
             <thead>
                 <tr>
                     <th scope="col">#</th>
-                    <th scope="col">ID</th>
+                    {{!-- <th scope="col">ID</th> --}}
                     <th scope="col">Username</th>
                     <th scope="col">Name</th>
                     <th scope="col">Wins</th>
-                    <th scope="col">Losses</th>
+                    {{!-- <th scope="col">Losses</th> --}}
                     <th scope="col">Games Played</th>
                     <th scope="col">Win Rate</th>
                 </tr>
             </thead>
             <tbody>
                 {{#each users}}
-                <tr class="{{#if this.self}}table-active{{/if}}" onclick="window.location='/profile/{{this.id}}'" style="cursor:pointer">
+                <tr class="{{#if this.self}}table-active{{/if}} {{#if (eq this.position 1)}}gold{{else if (eq this.position 2)}}silver{{else if (eq this.position 3)}}bronze{{/if}}"
+                    onclick="window.location='/profile/{{this.id}}'" style="cursor:pointer">
                     <th scope="row">{{this.position}}</th>
-                    <td>{{this.id}}</td>
+                    {{!-- <td>{{this.id}}</td> --}}
                     <td>{{this.username}}</td>
                     <td>{{this.firstname}} {{this.lastname}}</td>
                     <td>{{this.wins}}</td>
-                    <td>{{this.losses}}</td>
+                    {{!-- <td>{{this.losses}}</td> --}}
                     <td>{{this.gamesPlayed}}</td>
                     <td>{{this.winRate}}</td>
                 </tr>
