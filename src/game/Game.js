@@ -33,6 +33,9 @@ const Game = function (player1, player2) {
     this.player1.inGame = true;
     this.player2.inGame = true;
 
+    this.player1.score = 0;
+    this.player2.score = 0;
+
     // Game status properties
     this.active = false;
     this.ended = false;
@@ -43,16 +46,8 @@ const Game = function (player1, player2) {
     this.foul = false;
     this.potted = false;
 
-    // Game score
-    this.player1.score = 0;
-    this.player2.score = 0;
-
-    // Game player colour properties
-    this.colourSelected = false;
-    this.redPlayer = null;
-    this.yellowPlayer = null;
-    this.player1.colour = '';
-    this.player2.colour = '';
+    // This holds the winner and loser temporarily
+    this.winner = null;
 
     // Game balls array
     this.balls = [
@@ -124,10 +119,10 @@ game.update = function () {
         // Reset foul and potted properties
         this.foul = false;
         this.potted = false;
+    }
 
-        if (this.player1.score >= 8) this.end(this.player1);
-        if (this.player2.score >= 8) this.end(this.player2);
-
+    if (this.winner) {
+        this.end(this.winner);
     }
 
     // Return whether there is an update in turns
@@ -140,7 +135,7 @@ game.shoot = function (player, power, angle) {
     // Check if it is the player's turn, the balls have stopped moving, and the power is not above the max power
     if (this.turn == player && !this.active && power <= MAX_POWER) {
         // Update cue ball's velocity and set active to true
-        this.cueBall.velocity = new Vector(power * Math.cos(angle), power * Math.sin(angle));
+        this.cueBall.velocity.set(power * Math.cos(angle), power * Math.sin(angle));
         this.active = true;
     }
 };
@@ -148,13 +143,11 @@ game.shoot = function (player, power, angle) {
 // Game end method
 game.end = function (winner) {
 
-    // Set winner's score to 8
-    winner.score = 8;
     // Get loser
     let loser = (winner == this.player1 ? this.player2 : this.player1);
 
     // Create new game in the database
-    GameDB.create(this.player1, this.player2, (err) => {
+    GameDB.create(winner, loser, (err) => {
         if (err) console.log(err);
 
         // Increment the wins of the winner
@@ -174,8 +167,10 @@ game.end = function (winner) {
                 this.player2.inGame = false;
                 delete this.player1.game;
                 delete this.player2.game;
-                delete this.player1.colour;
-                delete this.player2.colour;
+                delete this.player1.color;
+                delete this.player2.color;
+                delete this.player1.score;
+                delete this.player2.score;
 
             });
 
@@ -189,11 +184,11 @@ game.end = function (winner) {
 game.startData = function (player) {
     let opponent = (player == this.player1 ? this.player2 : this.player1);
     return {
-        player: { id: player.id, username: player.username, score: player.score, colour: player.colour },
-        opponent: { id: opponent.id, username: opponent.username, score: opponent.score, colour: opponent.colour },
+        player: { id: player.id, username: player.username, score: player.score, color: player.color },
+        opponent: { id: opponent.id, username: opponent.username, score: opponent.score, color: opponent.color },
         active: this.active,
         turn: (player == this.turn),
-        balls: this.balls.map(ball => { return { x: ball.position.x, y: ball.position.y, colour: ball.colour }; })
+        balls: this.balls.map(ball => { return { x: ball.position.x, y: ball.position.y, color: ball.color }; })
     };
 };
 
@@ -201,7 +196,7 @@ game.startData = function (player) {
 game.updateData = function () {
     return {
         active: this.active,
-        balls: this.balls.map(ball => { return { x: ball.position.x, y: ball.position.y, colour: ball.colour }; })
+        balls: this.balls.map(ball => { return { x: ball.position.x, y: ball.position.y, color: ball.color }; })
     };
 };
 
@@ -209,16 +204,15 @@ game.updateData = function () {
 game.turnData = function (player) {
     let opponent = (player == this.player1 ? this.player2 : this.player1);
     return {
-        player: { score: player.score, colour: player.colour },
-        opponent: { score: opponent.score, colour: opponent.colour },
+        player: { score: player.score, color: player.color },
+        opponent: { score: opponent.score, color: opponent.color },
         turn: (player == this.turn)
     };
 };
 
 // Data that is sent to the players when the game ends
 game.endData = function (player) {
-    let opponent = (player == this.player1 ? this.player2 : this.player1);
-    return { winner: player.score > opponent.score };
+    return { winner: player === this.winner };
 };
 
 // Export game class

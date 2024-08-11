@@ -7,14 +7,14 @@ const database = require('../database');
 const Game = {};
 
 // Game create
-Game.create = function (player1, player2, callback) {
+Game.create = function (winner, loser, callback) {
 
     // SQL query
-    let sql = `INSERT INTO game (player1Id, player2Id, player1Score, player2Score)
+    let sql = `INSERT INTO game (winnerId, loserId, winnerScore, loserScore)
                VALUES (?, ?, ?, ?);`;
 
     // Query parameters
-    let params = [player1.id, player2.id, player1.score, player2.score];
+    let params = [winner.id, loser.id, winner.score, loser.score];
 
     // Execute the query
     database.run(sql, params, function (err) {
@@ -29,11 +29,11 @@ Game.create = function (player1, player2, callback) {
 Game.getGamesByUserId = function (id, callback) {
 
     // SQL query
-    let sql = `SELECT game.id, game.player1Id, game.player2Id, game.player1Score, game.player2Score, game.time, user1.username AS player1Username, user2.username AS player2Username
+    let sql = `SELECT game.id, game.winnerId, game.loserId, game.winnerScore, game.loserScore, game.time, user1.username AS winnerUsername, user2.username AS loserUsername
                FROM game
-               LEFT JOIN user AS user1 ON user1.id = game.player1Id
-               LEFT JOIN user AS user2 ON user2.id = game.player2Id
-               WHERE game.player1Id = ? OR game.player2Id = ?
+               LEFT JOIN user AS user1 ON user1.id = game.winnerId
+               LEFT JOIN user AS user2 ON user2.id = game.loserId
+               WHERE game.winnerId = ? OR game.loserId = ?
                ORDER BY game.time DESC;`;
 
     // Execute the query
@@ -49,11 +49,11 @@ Game.getGamesByUserId = function (id, callback) {
 Game.getLatestByUserId = function (id, callback) {
 
     // SQL query
-    let sql = `SELECT game.id, game.player1Id, game.player2Id, game.player1Score, game.player2Score, game.time, user1.username AS player1Username, user2.username AS player2Username
+    let sql = `SELECT game.id, game.winnerId, game.loserId, game.winnerScore, game.loserScore, game.time, user1.username AS winnerUsername, user2.username AS loserUsername
                FROM game
-               LEFT JOIN user AS user1 ON user1.id = game.player1Id
-               LEFT JOIN user AS user2 ON user2.id = game.player2Id
-               WHERE game.player1Id = ? OR game.player2Id = ?
+               LEFT JOIN user AS user1 ON user1.id = game.winnerId
+               LEFT JOIN user AS user2 ON user2.id = game.loserId
+               WHERE game.winnerId = ? OR game.loserId = ?
                ORDER BY game.time DESC
                LIMIT 1;`;
 

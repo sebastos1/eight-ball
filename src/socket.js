@@ -39,7 +39,7 @@ const events = function (io) {
                 // If player in queue, remove them from the queue
                 if (player.inQueue) queue.remove(player);
                 // If player in game, end the game with the opponent as the winner
-                if (player.inGame) player.game.end(player == player.game.player1 ? player.game.player2 : player.game.player1);
+                if (player.inGame) player.game.winner = (player.game.player1 ? player.game.player2 : player.game.player1);
 
                 // Remove the player from players
                 players.delete(player.id);
@@ -140,7 +140,7 @@ const gameLoop = setInterval(() => {
 
     });
 
-// Tickrate of the game loop in ms
+    // Tickrate of the game loop in ms
 }, 1000 / TICKRATE);
 
 

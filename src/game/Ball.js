@@ -4,14 +4,14 @@
 const Vector = require('./Vector');
 
 // Ball class constructor
-const Ball = function (position, radius, colour) {
+const Ball = function (position, radius, color) {
 
     // Properties
     this.position = position;
     this.velocity = new Vector();
     this.acceleration = new Vector();
     this.radius = radius;
-    this.colour = colour;
+    this.color = color;
 
 };
 

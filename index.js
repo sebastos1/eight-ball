@@ -32,6 +32,40 @@ function eq(item1, item2) {
     return (item1 === item2);
 }
 
+function timeAgo(dateString) {
+    const now = new Date();
+    const past = new Date(dateString);
+    const diffInSeconds = Math.floor((now - past) / 1000);
+
+    const intervals = [
+        { label: 'year', seconds: 31536000 },
+        { label: 'month', seconds: 2592000 },
+        { label: 'day', seconds: 86400 },
+        { label: 'hour', seconds: 3600 },
+        { label: 'minute', seconds: 60 },
+        { label: 'second', seconds: 1 }
+    ];
+
+    for (let i = 0; i < intervals.length; i++) {
+        const interval = intervals[i];
+        const count = Math.floor(diffInSeconds / interval.seconds);
+
+        if (count >= 1) {
+            if (interval.label === 'day' && count === 1) {
+                return 'yesterday';
+            } else if (interval.label === 'month' && count === 1) {
+                return 'last month';
+            } else if (interval.label === 'year' && count === 1) {
+                return 'last year';
+            } else {
+                return `${count} ${interval.label}${count !== 1 ? 's' : ''} ago`;
+            }
+        }
+    }
+
+    return 'just now';
+}
+
 // Set view engine
 app.engine('handlebars', expressHandlebars(
     {
@@ -39,6 +73,7 @@ app.engine('handlebars', expressHandlebars(
         helpers: {
             userColor: colors.colorPicker,
             eq: eq,
+            timeAgo: timeAgo,
         }
     }
 ));

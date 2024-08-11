@@ -51,27 +51,34 @@
             <div class="col-md-7 col-lg-8">
 
                 {{#each games}}
-                <div class="card mt-4">
-                    <div class="card-header d-flex justify-content-between align-items-center">
-                        <span>Game#{{this.id}}</span>
-                        <span>{{this.time}}</span>
+                <div class="card mb-3">
+                    <div class="card-header bg-dark d-flex justify-content-between align-items-center">
+                        <span class="text-muted">Game #{{this.id}}</span>
+                        <small class="text-muted">{{timeAgo this.time}}</small>
                     </div>
                     <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <a href="/profile/{{this.player1Id}}" class="h5 mb-0">{{this.player1Username}}</a>
-                            <a href="/profile/{{this.player2Id}}" class="h5 mb-0">{{this.player2Username}}</a>
-                        </div>
-                        <div class="d-flex justify-content-between align-items-top">
-                            <span class="text-muted">#{{this.player1Id}}</span>
-                            <h2 class="">{{this.player1Score}} - {{this.player2Score}}</h2>
-                            <span class="text-muted">#{{this.player2Id}}</span>
+                        <div class="row align-items-center">
+                            <div class="col-5 text-center">
+                                <a href="/profile/{{this.winnerId}}"
+                                    class="h5 mb-0 win-text">{{this.winnerUsername}}</a>
+                                <br>
+                                <small class="text-muted">#{{this.winnerId}}</small>
+                            </div>
+                            <div class="col-2 text-center">
+                                <h4 class="mb-0">{{this.winnerScore}} - {{this.loserScore}}</h4>
+                            </div>
+                            <div class="col-5 text-center">
+                                <a href="/profile/{{this.loserId}}" class="h5 mb-0 lose-text">{{this.loserUsername}}</a>
+                                <br>
+                                <small class="text-muted">#{{this.loserId}}</small>
+                            </div>
                         </div>
                     </div>
                 </div>
                 {{else}}
                 <div class="text-center border rounded px-3 py-5 mt-4">
                     <p>{{#if selfProfile}}You have{{else}}{{profile.username}} has{{/if}} not played any games yet.</p>
-                    <a href="/play/">Play a game now</a>
+                    <a href="/play">Play a game now</a>
                 </div>
                 {{/each}}
 
