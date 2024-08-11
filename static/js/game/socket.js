@@ -63,9 +63,9 @@ socket.on('game-start', (data) => {
     $('#playerScore').text(game.player.score);
     $('#opponentScore').text(game.opponent.score);
 
-    // Display player and opponent colours
-    $('#playerColour').css('background-color', game.player.colour);
-    $('#opponentColour').css('background-color', game.opponent.colour);
+    // Display player and opponent colors
+    $('#playercolor').css('background-color', game.player.color);
+    $('#opponentcolor').css('background-color', game.opponent.color);
 
     $('#playerUsername').addClass(Colors.colorPicker(game.player.id));
     $('#opponentUsername').addClass(Colors.colorPicker(game.opponent.id));
@@ -102,16 +102,16 @@ socket.on('game-scoreUpdate', (data) => {
         // Update the game object
         game.player.score = data.player;
         game.opponent.score = data.opponent;
-        game.player.colour = data.playerColour;
-        game.opponent.colour = data.opponentColour;
+        game.player.color = data.playercolor;
+        game.opponent.color = data.opponentcolor;
 
         // Update the displayed scores
         $('#playerScore').text(game.player.score);
         $('#opponentScore').text(game.opponent.score);
 
-        // Update player and opponent colours
-        $('#playerColour').css('background-color', (game.player.colour == "red") ? RED_COL : YELLOW_COL);
-        $('#opponentColour').css('background-color', (game.opponent.colour == "red") ? RED_COL : YELLOW_COL);
+        // Update player and opponent colors
+        $('#playercolor').css('background-color', (game.player.color == "red") ? RED_COL : YELLOW_COL);
+        $('#opponentcolor').css('background-color', (game.opponent.color == "red") ? RED_COL : YELLOW_COL);
     }
 });
 

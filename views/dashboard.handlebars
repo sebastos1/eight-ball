@@ -58,20 +58,22 @@
                     </div>
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-center">
-                            <a href="/profile/{{game.player1Id}}" class="h5 mb-0 text-body">{{game.player1Username}}</a>
-                            <a href="/profile/{{game.player2Id}}" class="h5 mb-0 text-body">{{game.player2Username}}</a>
+                            <a href="/profile/{{game.winnerId}}"
+                                class="h5 mb-0 text-body win-text">{{game.winnerUsername}}</a>
+                            <a href="/profile/{{game.loserId}}"
+                                class="h5 mb-0 text-body lose-text">{{game.loserUsername}}</a>
                         </div>
                         <div class="d-flex justify-content-between align-items-top">
-                            <span class="text-muted">#{{game.player1Id}}</span>
-                            <h2 class="">{{game.player1Score}} - {{game.player2Score}}</h2>
-                            <span class="text-muted">#{{game.player2Id}}</span>
+                            <span class="text-muted">#{{game.winnerId}}</span>
+                            <h2 class="">{{game.winnerScore}} - {{game.loserScore}}</h2>
+                            <span class="text-muted">#{{game.loserId}}</span>
                         </div>
                     </div>
                 </div>
                 {{else}}
                 <div class="text-center border rounded px-3 py-5 mt-4">
                     <p>You have not played any games yet.</p>
-                    <a href="/play/">Play a game now</a>
+                    <a href="/play">Play a game now</a>
                 </div>
                 {{/if}}
             </div>

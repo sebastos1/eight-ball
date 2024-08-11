@@ -110,3 +110,32 @@
     color: #cd7f32;
     text-shadow: 0 0 5px rgba(205, 127, 50, 0.5);
 }
+
+/* For winner/loser text */
+.win-text,
+.lose-text {
+    font-weight: bold;
+}
+
+.win-text {
+    color: #00cc00;
+    background: linear-gradient(90deg,
+            #00cc00 0%,
+            #7fff7f 50%,
+            #00cc00 100%);
+    background-size: 200% auto;
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: shimmer 2s linear infinite;
+}
+
+.lose-text {
+    color: #ff0000;
+}
+
+@keyframes shimmer {
+    to {
+        background-position: 200% center;
+    }
+}

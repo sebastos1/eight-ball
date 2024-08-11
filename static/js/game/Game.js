@@ -14,7 +14,7 @@ const Game = function (data) {
     this.turn = data.turn;
 
     // Game balls array
-    this.balls = data.balls.map(ball => new Ball(new Vector(ball.x, ball.y), BALL_RADIUS, ball.colour));
+    this.balls = data.balls.map(ball => new Ball(new Vector(ball.x, ball.y), BALL_RADIUS, ball.color));
     this.cueBall = this.balls[0];
 
     // Game cue stick
@@ -29,7 +29,7 @@ Game.prototype.update = function (data) {
     this.active = data.active;
 
     // Update balls array
-    this.balls = data.balls.map(ball => new Ball(new Vector(ball.x, ball.y), BALL_RADIUS, ball.colour));
+    this.balls = data.balls.map(ball => new Ball(new Vector(ball.x, ball.y), BALL_RADIUS, ball.color));
     this.cueBall = this.balls[0];
 
     // Update cue stick position
@@ -44,9 +44,9 @@ Game.prototype.updateTurn = function (data) {
     this.player.score = data.player.score;
     this.opponent.score = data.opponent.score;
 
-    // Update colours
-    this.player.colour = data.player.colour;
-    this.opponent.colour = data.opponent.colour;
+    // Update colors
+    this.player.color = data.player.color;
+    this.opponent.color = data.opponent.color;
 
     // Update turn
     this.turn = data.turn;

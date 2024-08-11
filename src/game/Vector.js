@@ -26,6 +26,13 @@ Vector.prototype = {
 
 };
 
+// update
+Vector.prototype.set = function (x, y) {
+    this.x = x;
+    this.y = y;
+    return this;
+};
+
 // Vector addition class method
 Vector.prototype.add = function (vector) {
     this.x += vector.x;

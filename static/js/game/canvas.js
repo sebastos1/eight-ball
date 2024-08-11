@@ -71,9 +71,9 @@ canvas.clear = function () {
 };
 
 // Draw a filled rectangle
-canvas.drawRect = function (position, origin, dimensions, colour, rotation = 0) {
+canvas.drawRect = function (position, origin, dimensions, color, rotation = 0) {
     canvas._context.save();
-    canvas._context.fillStyle = colour;
+    canvas._context.fillStyle = color;
     canvas._context.translate(origin.x, origin.y);
     canvas._context.rotate(rotation);
     canvas._context.fillRect(position.x, position.y, dimensions.x, dimensions.y);
@@ -81,9 +81,9 @@ canvas.drawRect = function (position, origin, dimensions, colour, rotation = 0) 
 };
 
 // Draw a filled circle
-canvas.drawCircle = function (position, origin, radius, colour) {
+canvas.drawCircle = function (position, origin, radius, color) {
     canvas._context.save();
-    canvas._context.fillStyle = colour
+    canvas._context.fillStyle = color
     canvas._context.translate(position.x, position.y);
     canvas._context.beginPath();
     canvas._context.arc(origin.x, origin.y, radius, 0, 2 * Math.PI);
@@ -104,9 +104,9 @@ canvas.drawImage = function (position, origin, size, image) {
 };
 
 // Draw a stroked rectangle
-canvas.strokeRect = function (position, origin, dimensions, colour, strokeSize, rotation = 0) {
+canvas.strokeRect = function (position, origin, dimensions, color, strokeSize, rotation = 0) {
     canvas._context.save();
-    canvas._context.strokeStyle = colour;
+    canvas._context.strokeStyle = color;
     canvas._context.lineWidth = strokeSize;
     canvas._context.translate(position.x, position.y);
     canvas._context.rotate(rotation);

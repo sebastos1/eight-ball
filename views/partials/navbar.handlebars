@@ -8,28 +8,28 @@
         <ul class="navbar-nav d-flex flex-row me-auto">
             {{#if authenticated}}
             <li class="nav-item me-3">
-                <a class="nav-link {{#if active_play}}active{{/if}}" href="/play/">Play</a>
+                <a class="nav-link {{#if active_play}}active{{/if}}" href="/play">Play</a>
             </li>
             {{/if}}
             <li class="nav-item me-3">
-                <a class="nav-link {{#if active_leaderboard}}active{{/if}}" href="/leaderboard/">Leaderboard</a>
+                <a class="nav-link {{#if active_leaderboard}}active{{/if}}" href="/leaderboard">Leaderboard</a>
             </li>
             {{#if authenticated}}
             <li class="nav-item dropdown me-3">
                 <a class="nav-link dropdown-toggle {{#if active_profile}}active{{/if}}" href="#" id="dropdown"
                     data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{user.username}}</a>
                 <div class="dropdown-menu dropdown-menu-end position-absolute" aria-labelledby="dropdown">
-                    <a class="dropdown-item" href="/profile/">Profile</a>
+                    <a class="dropdown-item" href="/profile">Profile</a>
                     <div class="dropdown-divider"></div>
-                    <a class="dropdown-item" href="/logout/">Logout</a>
+                    <a class="dropdown-item" href="/logout">Logout</a>
                 </div>
             </li>
             {{else}}
             <li class="nav-item me-3">
-                <a class="nav-link {{#if active_login}}active{{/if}}" href="/login/">Login</a>
+                <a class="nav-link {{#if active_login}}active{{/if}}" href="/login">Login</a>
             </li>
             <li class="nav-item me-3">
-                <a class="nav-link {{#if active_register}}active{{/if}}" href="/register/">Register</a>
+                <a class="nav-link {{#if active_register}}active{{/if}}" href="/register">Register</a>
             </li>
             {{/if}}
         </ul>
