@@ -7,14 +7,16 @@ const database = require('../database');
 const Game = {};
 
 // Game create
-Game.create = function (winner, loser, callback) {
+Game.create = function (winner, loser, ratingInfo, winReason, callback) {
 
     // SQL query
-    let sql = `INSERT INTO game (winnerId, loserId, winnerScore, loserScore)
-               VALUES (?, ?, ?, ?);`;
+    let sql = `INSERT INTO game (winnerId, loserId, winnerScore, loserScore, winnerNewRating, loserNewRating, ratingGained, ratingLost, winReason)
+               VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);`;
+
+    let { winnerRating, loserRating, ratingGained, ratingLost } = ratingInfo;
 
     // Query parameters
-    let params = [winner.id, loser.id, winner.score, loser.score];
+    let params = [winner.id, loser.id, winner.score, loser.score, winnerRating, loserRating, ratingGained, ratingLost, winReason];
 
     // Execute the query
     database.run(sql, params, function (err) {
@@ -29,7 +31,7 @@ Game.create = function (winner, loser, callback) {
 Game.getGamesByUserId = function (id, callback) {
 
     // SQL query
-    let sql = `SELECT game.id, game.winnerId, game.loserId, game.winnerScore, game.loserScore, game.time, user1.username AS winnerUsername, user2.username AS loserUsername
+    let sql = `SELECT game.id, game.winnerId, game.loserId, game.winnerScore, game.loserScore, game.time, user1.username AS winnerUsername, user2.username AS loserUsername, winnerNewRating, loserNewRating, ratingGained, ratingLost, winReason
                FROM game
                LEFT JOIN user AS user1 ON user1.id = game.winnerId
                LEFT JOIN user AS user2 ON user2.id = game.loserId
@@ -49,7 +51,7 @@ Game.getGamesByUserId = function (id, callback) {
 Game.getLatestByUserId = function (id, callback) {
 
     // SQL query
-    let sql = `SELECT game.id, game.winnerId, game.loserId, game.winnerScore, game.loserScore, game.time, user1.username AS winnerUsername, user2.username AS loserUsername
+    let sql = `SELECT game.id, game.winnerId, game.loserId, game.winnerScore, game.loserScore, game.time, user1.username AS winnerUsername, user2.username AS loserUsername, winnerNewRating, loserNewRating, ratingGained, ratingLost, winReason
                FROM game
                LEFT JOIN user AS user1 ON user1.id = game.winnerId
                LEFT JOIN user AS user2 ON user2.id = game.loserId

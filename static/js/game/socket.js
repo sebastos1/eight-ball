@@ -36,7 +36,10 @@ $('#btn-leaveQueue').click(() => {
 });
 
 // Show menu button click event
-$('#btn-showMenu').click(showMenu);
+$('#btn-requeue').click(() => {
+    socket.emit('queue-join');
+    showQueue();
+});
 
 // Shoot function
 const shoot = function (power, angle) {
@@ -110,8 +113,10 @@ socket.on('game-scoreUpdate', (data) => {
         $('#opponentScore').text(game.opponent.score);
 
         // Update player and opponent colors
-        $('#playercolor').css('background-color', (game.player.color == "red") ? RED_COL : YELLOW_COL);
-        $('#opponentcolor').css('background-color', (game.opponent.color == "red") ? RED_COL : YELLOW_COL);
+        if (data.gameColorSet) {
+            $('#playercolor').css('background-color', (game.player.color == "red") ? RED_COL : YELLOW_COL);
+            $('#opponentcolor').css('background-color', (game.opponent.color == "red") ? RED_COL : YELLOW_COL);
+        }
     }
 });
 
@@ -142,13 +147,33 @@ socket.on('game-updateTurn', (data) => {
 // Game end event listener
 socket.on('game-end', (data) => {
 
+    let string;
+
     // If player has won, display win text
     if (data.winner) {
-        $('#endMsg').text('Winner winner chicken dinner!');
-        // If player has lost, display lose text
+        $('#winnerName').text(game.player.username).addClass(Colors.colorPicker(game.player.id));
+        string = "You won ";
     } else {
-        $('#endMsg').text('Lost :(');
+        $('#winnerName').text(game.opponent.username).addClass(Colors.colorPicker(game.opponent.id));
+        string = "You lost ";
     }
+
+    switch (data.winReason) {
+        case 1:
+            string += "on score"; // medal
+            break;
+        case 2:
+            string += "due to 8-ball 🎱"; // 8 ball emoji
+            break;
+        case 3:
+            string += "because a player left ❌"; // red x
+            break;
+        default:
+            string += "for an unknown reason ❓"; // question mark
+            break;
+    }
+
+    $('#winReason').text(string);
 
     game = null;
 

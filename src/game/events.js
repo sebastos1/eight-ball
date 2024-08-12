@@ -4,6 +4,7 @@ const Vector = require('./Vector');
 
 const events = {
     ballPotted(game, ball) {
+        let changeTurn = true;
 
         switch (ball.color) {
             case 'red':
@@ -20,12 +21,13 @@ const events = {
 
         // update the score immediately
         [game.turn, game.nextTurn].forEach((player, i, array) => {
-            var opponent = array[1 - i];
+            let opponent = array[1 - i];
             player.socket.emit('game-scoreUpdate', {
                 player: player.score,
                 opponent: opponent.score,
                 playercolor: player.color,
-                opponentcolor: opponent.color
+                opponentcolor: opponent.color,
+                gameColorSet: (game.turn.color === undefined ? false : true)
             });
         })
     },
@@ -41,6 +43,7 @@ const events = {
         // add if colors is same, or give a foul and give to opponent
         if (game.turn.color === ball.color) {
             game.turn.score++;
+            game.potted = true; // needed to keep turn
         } else {
             game.nextTurn.score++;
             game.foul = true;
@@ -58,7 +61,13 @@ const events = {
     },
 
     handleBlackBall(game) {
-        game.winner = game.turn.score >= 7 ? game.turn : game.nextTurn;
+        if (game.turn.score >= 7) {
+            game.winner = game.turn
+            game.winReason = 1;
+        } else {
+            game.winner = game.nextTurn;
+            game.winReason = 2;
+        }
     },
 };
 

@@ -1,0 +1,73 @@
+/* custom name fx */
+@keyframes rainbow {
+    0% {
+        color: rgb(255, 88, 88);
+    }
+
+    16% {
+        color: rgb(255, 203, 105);
+    }
+
+    32% {
+        color: rgb(255, 255, 120);
+    }
+
+    48% {
+        color: rgb(134, 255, 134);
+    }
+
+    64% {
+        color: rgb(111, 255, 255);
+    }
+
+    81% {
+        color: rgb(255, 104, 255);
+    }
+
+    100% {
+        color: rgb(255, 88, 88);
+    }
+}
+
+.id-rainbow {
+    font-weight: bold;
+    animation: rainbow 10s linear infinite;
+}
+
+@keyframes green-blue {
+    0% {
+        color: rgb(66, 249, 255);
+    }
+
+    50% {
+        color: rgb(134, 255, 134);
+    }
+
+    100% {
+        color: rgb(66, 249, 255);
+    }
+}
+
+.id-green {
+    font-weight: bold;
+    animation: green-blue 10s linear infinite;
+}
+
+@keyframes death {
+    0% {
+        color: black;
+    }
+
+    50% {
+        color: white;
+    }
+
+    100% {
+        color: red;
+    }
+}
+
+.id-death {
+    font-weight: bold;
+    animation: death 250ms infinite;
+}
