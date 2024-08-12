@@ -55,12 +55,14 @@ router.get('/play', (req, res, next) => {
     // If the request is authenticated
     if (req.authenticated) {
         // Render the play page
-        res.render('play');
+        res.render('play', {
+            queuedPlayers: socket.queuedPlayers()._queue,
+        });
         // If the request is not authenticated
     } else {
         // Send an error flash message and redirect to the login route
         req.flash('danger', 'You are not logged in.');
-        res.redirect('/login/');
+        res.redirect('/login');
     }
 
 });
@@ -98,7 +100,7 @@ router.get('/profile', (req, res, next) => {
         } else {
             // Send an error flash message and redirect to the login route
             req.flash('danger', 'You are not logged in.');
-            res.redirect('/login/');
+            res.redirect('/login');
         }
 
     }

@@ -20,29 +20,15 @@
         </div>
         <div class="row">
             <div class="col-md-6">
-                <form action="/register/" method="post" class="mb-4">
+                <form action="/register" method="post" class="mb-4" novalidate>
                     <div class="mb-3">
                         <label for="username" class="form-label">Username</label>
                         <input type="text" id="username" name="username" placeholder="Username"
                             value="{{register.username}}" class="form-control" required>
                     </div>
                     <div class="mb-3">
-                        <label for="email" class="form-label">Email</label>
-                        <input type="email" id="email" name="email" placeholder="Email" value="{{register.email}}"
-                            class="form-control" required>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Name</label>
-                        <div class="row">
-                            <div class="col-md-6 mb-2 mb-md-0">
-                                <input type="text" name="firstname" placeholder="First Name"
-                                    value="{{register.firstname}}" class="form-control" required>
-                            </div>
-                            <div class="col-md-6">
-                                <input type="text" name="lastname" placeholder="Last Name" value="{{register.lastname}}"
-                                    class="form-control" required>
-                            </div>
-                        </div>
+                        <label for="email" class="form-label">Email (optional)</label>
+                        <input type="email" id="email" name="email" placeholder="Email" class="form-control">
                     </div>
                     <div class="mb-3">
                         <label for="password" class="form-label">Password</label>
@@ -61,7 +47,7 @@
                 <hr>
                 <div class="text-center">
                     <p class="text-muted">Already have an account?</p>
-                    <a href="/login/" class="btn btn-secondary">Login</a>
+                    <a href="/login" class="btn btn-secondary">Login</a>
                 </div>
             </div>
             <div class="col-xl-6">
@@ -72,6 +58,21 @@
 
     </div>
     {{> js}}
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const form = document.querySelector('form');
+            const emailInput = document.getElementById('email');
+
+            form.addEventListener('submit', function (event) {
+                if (emailInput.value.trim() === '') {
+                    emailInput.value = '';  // Clear any whitespace
+                    emailInput.removeAttribute('required');  // Remove required attribute
+                } else {
+                    emailInput.setAttribute('required', '');  // Add required attribute if email is not empty
+                }
+            });
+        });
+    </script>
 </body>
 
 </html>

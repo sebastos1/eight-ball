@@ -32,11 +32,10 @@
                     <div class="list-group">
                         <div
                             class="list-group-item list-group-item-secondary d-flex justify-content-between align-items-center">
-                            <span class="h5 mb-0 {{userColor profile.id}}">{{profile.username}}</span>
-                            <span class=" badge badge-light badge-pill">#{{profile.id}}</span>
+                            <span class="h5 mb-0 rank-text {{getRankColor profile.rating}}">{{getRank
+                                profile.rating}}</span>
                         </div>
-                        <div class="list-group-item">{{profile.firstname}} {{profile.lastname}}</div>
-                        <div class="list-group-item">{{profile.email}}</div>
+                        <div class="list-group-item">Rating: {{profile.rating}}</div>
                         <div class="list-group-item">Games Played: {{gamesPlayed}}<br>Winrate: {{winRate}}</div>
                         {{#if selfProfile}}
                         <button type="button" data-toggle="modal" data-target="#deleteProfile"
@@ -49,39 +48,77 @@
             </div>
 
             <div class="col-md-7 col-lg-8">
-
-                {{#each games}}
-                <div class="card mb-3">
-                    <div class="card-header bg-dark d-flex justify-content-between align-items-center">
-                        <span class="text-muted">Game #{{this.id}}</span>
-                        <small class="text-muted">{{timeAgo this.time}}</small>
+                <div class="list-group mt-4">
+                    <div class="list-group-item list-group-item-secondary">
+                        <h5 class="mb-0">Recent Games</h5>
                     </div>
-                    <div class="card-body">
-                        <div class="row align-items-center">
-                            <div class="col-5 text-center">
-                                <a href="/profile/{{this.winnerId}}"
-                                    class="h5 mb-0 win-text">{{this.winnerUsername}}</a>
-                                <br>
-                                <small class="text-muted">#{{this.winnerId}}</small>
+                    {{#each games}}
+                    <div class="list-group-item p-3">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="d-flex align-items-center">
+                                <h5 class="mb-0 mr-2">
+                                    <a href="/profile/{{../profile.id}}"
+                                        class="{{userColor ../profile.id}}">{{../profile.username}}</a>
+                                </h5>
+                                <span class="text-muted">({{#if (eq this.winnerId
+                                    ../profile.id)}}{{this.winnerNewRating}}{{else}}{{this.loserNewRating}}{{/if}})</span>
                             </div>
-                            <div class="col-2 text-center">
-                                <h4 class="mb-0">{{this.winnerScore}} - {{this.loserScore}}</h4>
+                            <div class="d-flex align-items-center">
+                                <h4 class="mb-0 mx-3">
+                                    {{#if (eq this.winnerId ../profile.id)}}
+                                    {{this.winnerScore}} - {{this.loserScore}}
+                                    {{else}}
+                                    {{this.loserScore}} - {{this.winnerScore}}
+                                    {{/if}}
+                                </h4>
+                                <span
+                                    class="text-{{#if (eq this.winnerId ../profile.id)}}success{{else}}danger{{/if}} mx-2">
+                                    {{#if (eq this.winnerId ../profile.id)}}
+                                    +{{this.ratingGained}}
+                                    {{else}}
+                                    -{{this.ratingLost}}
+                                    {{/if}}
+                                </span>
                             </div>
-                            <div class="col-5 text-center">
-                                <a href="/profile/{{this.loserId}}" class="h5 mb-0 lose-text">{{this.loserUsername}}</a>
-                                <br>
-                                <small class="text-muted">#{{this.loserId}}</small>
+                            <div class="d-flex align-items-center">
+                                <h5 class="mb-0 mr-2">
+                                    <a href="/profile/{{#if (eq this.winnerId ../profile.id)}}{{this.loserId}}{{else}}{{this.winnerId}}{{/if}}"
+                                        class="{{#if (eq this.winnerId ../profile.id)}}{{userColor this.loserId}}{{else}}{{userColor this.winnerId}}{{/if}}">
+                                        {{#if (eq this.winnerId ../profile.id)}}
+                                        {{this.loserUsername}}
+                                        {{else}}
+                                        {{this.winnerUsername}}
+                                        {{/if}}
+                                    </a>
+                                </h5>
+                                <span class="text-muted">({{#if (eq this.winnerId
+                                    ../profile.id)}}{{this.loserNewRating}}{{else}}{{this.winnerNewRating}}{{/if}})</span>
                             </div>
                         </div>
                     </div>
+                    <div
+                        class="list-group-item list-group-item-action {{#if (eq this.winnerId ../profile.id)}}list-group-item-success{{else}}list-group-item-danger{{/if}} d-flex justify-content-between align-items-center py-2">
+                        <small>{{translateWinReason this.winReason (eq this.winnerId ../profile.id)}}</small>
+                        <small>{{timeAgo this.time}}</small>
+                    </div>
+                    {{else}}
+                    <div class="list-group-item text-center py-4">
+                        <p class="mb-0">{{#if selfProfile}}You have{{else}}{{profile.username}} has{{/if}} not played
+                            any games yet.</p>
+                        <a href="/play" class="btn btn-primary mt-2">Play a game now</a>
+                    </div>
+                    {{/each}}
                 </div>
-                {{else}}
-                <div class="text-center border rounded px-3 py-5 mt-4">
-                    <p>{{#if selfProfile}}You have{{else}}{{profile.username}} has{{/if}} not played any games yet.</p>
-                    <a href="/play">Play a game now</a>
-                </div>
-                {{/each}}
 
+                <style>
+                    .list-group-item a {
+                        text-decoration: none;
+                    }
+
+                    .list-group-item a:hover {
+                        text-decoration: underline;
+                    }
+                </style>
             </div>
 
         </div>

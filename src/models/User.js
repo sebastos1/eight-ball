@@ -5,6 +5,7 @@ const bcrypt = require('bcryptjs');
 
 // Imports
 const database = require('../database');
+const Elo = require('../Elo')
 
 // Declare User object
 const User = {};
@@ -17,11 +18,11 @@ User.create = function (user, callback) {
         if (!err) {
 
             // SQL query
-            let sql = `INSERT INTO user (username, email, password, firstname, lastname)
-                       VALUES (?, ?, ?, ?, ?);`;
+            let sql = `INSERT INTO user (username, email, password)
+                       VALUES (?, ?, ?);`;
 
             // Query parameters
-            let params = [user.username, user.email, hash, user.firstname, user.lastname];
+            let params = [user.username, user.email || null, hash];
 
             // Execute the query
             database.run(sql, params, function (err) {
@@ -57,7 +58,7 @@ User.delete = function (id, callback) {
 User.findUserById = function (id, callback) {
 
     // SQL query
-    let sql = `SELECT id, username, email, firstname, lastname, wins, losses
+    let sql = `SELECT id, username, email, wins, losses, rating
                FROM user
                WHERE id = ?;`;
 
@@ -76,8 +77,7 @@ User.findIdByUsername = function (username, callback) {
     // SQL query
     let sql = `SELECT id
                FROM user
-               WHERE username = ?
-               COLLATE NOCASE;`;
+               WHERE username = ?;`;
 
     // Execute the query
     database.get(sql, username, (err, user) => {
@@ -94,8 +94,7 @@ User.findIdByEmail = function (email, callback) {
     // SQL query
     let sql = `SELECT id
                FROM user
-               WHERE email = ?
-               COLLATE NOCASE;`;
+               WHERE email = ?;`;
 
     // Execute the query
     database.get(sql, email, (err, user) => {
@@ -119,6 +118,22 @@ User.getPasswordFromId = function (id, callback) {
         if (err) console.log(err);
         // If a user was found, return their password
         callback(Boolean(err), user ? user.password : null);
+    });
+
+};
+
+User.getRatingFromId = function (id, callback) {
+
+    // SQL query
+    let sql = `SELECT rating
+               FROM user
+               WHERE id = ?;`;
+
+    // Execute the query
+    database.get(sql, id, (err, user) => {
+        if (err) console.log(err);
+        // If a user was found, return their rating
+        callback(Boolean(err), user ? user.rating : null);
     });
 
 };
@@ -147,9 +162,9 @@ User.queryIdByUsername = function (username, callback) {
 User.getLeaderboard = function (callback) {
 
     // SQL query
-    let sql = `SELECT id, username, email, firstname, lastname, wins, losses
+    let sql = `SELECT id, username, wins, losses, rating
                FROM user
-               ORDER BY wins DESC
+               ORDER BY rating DESC
                LIMIT 25;`;
 
     // Execute the query
@@ -159,6 +174,49 @@ User.getLeaderboard = function (callback) {
         callback(Boolean(err), users ? users : null);
     });
 
+};
+
+User.updateRatingsAfterGame = function (winnerId, loserId, callback) {
+    let sql = `SELECT id, rating FROM user WHERE id IN (?, ?);`;
+
+    database.all(sql, [winnerId, loserId], (err, users) => {
+        if (err) {
+            console.log(err);
+            return callback(true);
+        }
+
+        let winner = users.find(u => u.id === winnerId);
+        let loser = users.find(u => u.id === loserId);
+
+        if (!winner || !loser) {
+            return callback(true);
+        }
+
+        // might not have a rating yet
+        if (winner.rating === null) winner.rating = Elo.initialRating();
+        if (loser.rating === null) loser.rating = Elo.initialRating();
+
+        let { newWinnerRating, newLoserRating } = Elo.updateRatings(winner.rating, loser.rating);
+
+        let updateSql = `UPDATE user SET 
+                        rating = CASE 
+                        WHEN id = ? THEN ?
+                        WHEN id = ? THEN ?
+                        END,
+                        wins = CASE WHEN id = ? THEN wins + 1 ELSE wins END,
+                        losses = CASE WHEN id = ? THEN losses + 1 ELSE losses END
+                        WHERE id IN (?, ?);`;
+
+        database.run(updateSql, [winnerId, newWinnerRating, loserId, newLoserRating, winnerId, loserId, winnerId, loserId], (err) => {
+            if (err) console.log(err);
+            callback(Boolean(err), {
+                ratingGained: newWinnerRating - winner.rating,
+                ratingLost: loser.rating - newLoserRating,
+                winnerRating: winner.rating,
+                loserRating: loser.rating,
+            });
+        });
+    });
 };
 
 // Increment the wins of a user

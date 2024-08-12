@@ -1,0 +1,127 @@
+/* Base styles for all rank text */
+.wood-text,
+.copper-text,
+.bronze-text,
+.silver-text,
+.gold-text,
+.plat-text,
+.dia-text,
+.master-text,
+.gm-text,
+.champ-text {
+    font-weight: bold;
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-size: 200% auto;
+    animation: shimmer 3s linear infinite;
+}
+
+/* Individual rank colors and shimmer intensity */
+.wood-text {
+    background-image: linear-gradient(45deg, #8B4513, #A0522D 50%, #8B4513 100%);
+}
+
+.copper-text {
+    background-image: linear-gradient(45deg, #B87333, #DA8A67 50%, #B87333 100%);
+}
+
+.bronze-text {
+    background-image: linear-gradient(45deg, #CD7F32, #FFA500 50%, #CD7F32 100%);
+}
+
+.silver-text {
+    background-image: linear-gradient(45deg, #C0C0C0, #E8E8E8 50%, #C0C0C0 100%);
+}
+
+.gold-text {
+    background-image: linear-gradient(45deg, #FFD700, #FFF8DC 50%, #FFD700 100%);
+}
+
+.plat-text {
+    background-image: linear-gradient(45deg, #E5E4E2, #FFFFFF 50%, #E5E4E2 100%);
+}
+
+.dia-text {
+    background-image: linear-gradient(45deg, #0070FF, #00FFFF 50%, #0070FF 100%);
+}
+
+.master-text {
+    background-image: linear-gradient(45deg, #FF4500, #FFA500 50%, #FF4500 100%);
+}
+
+.gm-text {
+    background-image: linear-gradient(45deg, #8A2BE2, #E6E6FA 50%, #8A2BE2 100%);
+}
+
+.champ-text {
+    background-image: linear-gradient(45deg, #FF4500, #FFD700 50%, #FF4500 100%);
+}
+
+/* Shimmer animation */
+@keyframes shimmer {
+    to {
+        background-position: 200% center;
+    }
+}
+
+/* Shimmer intensity variations */
+.wood-text,
+.copper-text {
+    animation-duration: 6s;
+}
+
+.bronze-text,
+.silver-text {
+    animation-duration: 5s;
+}
+
+.gold-text,
+.plat-text {
+    animation-duration: 4s;
+}
+
+.dia-text,
+.master-text {
+    animation-duration: 3.5s;
+}
+
+.gm-text {
+    animation-duration: 3s;
+}
+
+.champ-text {
+    animation-duration: 2.5s;
+}
+
+/* Glow effect for top 3 ranks */
+.master-text,
+.gm-text,
+.champ-text {
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.7),
+        0 0 20px rgba(255, 255, 255, 0.5),
+        0 0 30px rgba(255, 255, 255, 0.3);
+}
+
+/* Ensure visibility in dark mode */
+[data-bs-theme="dark"] .wood-text,
+[data-bs-theme="dark"] .copper-text,
+[data-bs-theme="dark"] .bronze-text,
+[data-bs-theme="dark"] .silver-text,
+[data-bs-theme="dark"] .gold-text,
+[data-bs-theme="dark"] .plat-text,
+[data-bs-theme="dark"] .dia-text,
+[data-bs-theme="dark"] .master-text,
+[data-bs-theme="dark"] .gm-text,
+[data-bs-theme="dark"] .champ-text {
+    -webkit-text-fill-color: transparent !important;
+}
+
+/* Glow effect for top 3 ranks in dark mode */
+[data-bs-theme="dark"] .master-text,
+[data-bs-theme="dark"] .gm-text,
+[data-bs-theme="dark"] .champ-text {
+    text-shadow: 0 0 5px rgba(255, 145, 0, 0.7),
+        0 0 10px rgba(204, 0, 255, 0.5),
+        0 0 20px rgba(255, 0, 0, 0.3) !important;
+}

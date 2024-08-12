@@ -1,0 +1,46 @@
+/* leaderboard */
+.gold {
+    font-weight: bold;
+    color: gold;
+    text-shadow: 0 0 5px rgba(255, 215, 0, 0.5);
+}
+
+.silver {
+    font-weight: bold;
+    color: silver;
+    text-shadow: 0 0 5px rgba(192, 192, 192, 0.5);
+}
+
+.bronze {
+    font-weight: bold;
+    color: #cd7f32;
+    text-shadow: 0 0 5px rgba(205, 127, 50, 0.5);
+}
+
+/* very human */
+.lbd-grid {
+    display: grid;
+    grid-template-columns: 40px minmax(150px, 2fr) minmax(120px, 1fr) 80px 80px 80px 100px;
+    align-items: center;
+    gap: 10px;
+}
+
+.lbd-grid>div {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    padding: 0 5px;
+}
+
+.lbd-grid>div:not(:nth-child(2)):not(:nth-child(3)) {
+    text-align: center;
+}
+
+.lbd-username,
+.lbd-rank {
+    text-align: left;
+}
+
+.list-group-item {
+    padding: 0.75rem 1.25rem;
+}

@@ -1,6 +1,7 @@
 'use strict';
 
 // Components
+const Elo = require('../Elo');
 const Ball = require('./Ball');
 const Vector = require('./Vector');
 const physics = require('./physics');
@@ -48,6 +49,7 @@ const Game = function (player1, player2) {
 
     // This holds the winner and loser temporarily
     this.winner = null;
+    this.winReason = null;
 
     // Game balls array
     this.balls = [
@@ -122,7 +124,7 @@ game.update = function () {
     }
 
     if (this.winner) {
-        this.end(this.winner);
+        this.end(this.winner, this.winReason);
     }
 
     // Return whether there is an update in turns
@@ -141,43 +143,46 @@ game.shoot = function (player, power, angle) {
 };
 
 // Game end method
-game.end = function (winner) {
+game.end = function (winner, winReason) {
 
     // Get loser
     let loser = (winner == this.player1 ? this.player2 : this.player1);
 
-    // Create new game in the database
-    GameDB.create(winner, loser, (err) => {
-        if (err) console.log(err);
+    // update player rating
+    UserDB.updateRatingsAfterGame(winner.id, loser.id, (err, ratingChanges) => {
+        if (err) {
+            console.log("Error updating ratings:", err);
+            return;
+        }
 
-        // Increment the wins of the winner
-        UserDB.incrementWins(winner.id, (err) => {
+        // Create new game in the database
+        GameDB.create(winner, loser, ratingChanges, winReason, (err) => {
             if (err) console.log(err);
-
-            // Increment the losses of the loser
-            UserDB.incrementLosses(loser.id, (err) => {
-                if (err) console.log(err);
-
-                // Set ending game properties
-                this.active = false;
-                this.ended = true;
-
-                // Set player properties
-                this.player1.inGame = false;
-                this.player2.inGame = false;
-                delete this.player1.game;
-                delete this.player2.game;
-                delete this.player1.color;
-                delete this.player2.color;
-                delete this.player1.score;
-                delete this.player2.score;
-
-            });
-
         });
 
-    });
+        // Increment the wins/losses
+        UserDB.incrementWins(winner.id, (err) => {
+            if (err) console.log(err);
+        });
+        UserDB.incrementLosses(loser.id, (err) => {
+            if (err) console.log(err);
+        });
 
+        // Set ending game properties
+        this.active = false;
+        this.ended = true;
+
+        // Set player properties
+        this.player1.inGame = false;
+        this.player2.inGame = false;
+        delete this.player1.game;
+        delete this.player2.game;
+        delete this.player1.color;
+        delete this.player2.color;
+        delete this.player1.score;
+        delete this.player2.score;
+        // delete this.winner;
+    });
 };
 
 // Data that is sent to the players when the game starts
@@ -200,7 +205,7 @@ game.updateData = function () {
     };
 };
 
-// Data that is sent to the palyers when the turn changes
+// Data that is sent to the players when the turn changes
 game.turnData = function (player) {
     let opponent = (player == this.player1 ? this.player2 : this.player1);
     return {
@@ -211,8 +216,11 @@ game.turnData = function (player) {
 };
 
 // Data that is sent to the players when the game ends
-game.endData = function (player) {
-    return { winner: player === this.winner };
+game.endData = function (player, winReason) {
+    return {
+        winner: player === this.winner,
+        winReason: winReason,
+    };
 };
 
 // Export game class

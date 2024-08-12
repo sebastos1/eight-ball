@@ -39,7 +39,10 @@ const events = function (io) {
                 // If player in queue, remove them from the queue
                 if (player.inQueue) queue.remove(player);
                 // If player in game, end the game with the opponent as the winner
-                if (player.inGame) player.game.winner = (player.game.player1 ? player.game.player2 : player.game.player1);
+                if (player.inGame) {
+                    player.game.winner = (player.game.player1 ? player.game.player2 : player.game.player1);
+                    player.game.winReason = 3; // player disconnect code
+                }
 
                 // Remove the player from players
                 players.delete(player.id);
@@ -129,8 +132,8 @@ const gameLoop = setInterval(() => {
         if (game.ended) {
 
             // Send ending data to the players
-            game.player1.socket.emit('game-end', game.endData(game.player1));
-            game.player2.socket.emit('game-end', game.endData(game.player2));
+            game.player1.socket.emit('game-end', game.endData(game.player1, game.winReason));
+            game.player2.socket.emit('game-end', game.endData(game.player2, game.winReason));
 
             // Remove the game from games
             games.delete(game_id);
@@ -169,3 +172,6 @@ module.exports = init;
 module.exports.playersOnline = () => players.size;
 module.exports.playersInQueue = () => queue.size;
 module.exports.gamesInProgress = () => games.size;
+
+// Gets a list of queued players, for the queue page
+module.exports.queuedPlayers = () => queue;

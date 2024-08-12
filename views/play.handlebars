@@ -20,25 +20,37 @@
         {{> flash}}
 
         <div id="menu" class="border shadow-lg text-center mx-auto py-5 px-5">
-            <h1 class="display-3">Eight-Ball</h1>
+            <h1 class="display-3">Eight Ball</h1>
+            <p>
+                {{#if queuedPlayers}}
+                In queue:
+                {{#each queuedPlayers}}
+                <span class="{{userColor this.id}}">{{this.username}}</span>{{#unless @last}}, {{/unless}}
+                {{/each}}
+                {{/if}}
+            </p>
             <hr class="my-5">
-            <button type="button" id="btn-joinQueue" class="btn btn-lg btn-primary">Join Queue</button>
+            <button type="button" id="btn-joinQueue" class="btn btn-lg btn-primary">Find opponent</button>
         </div>
+
 
         <div id="queue" class="border shadow-lg text-center mx-auto py-5 px-5">
-            <h1 class="display-3">Queue</h1>
+            <h1 class="display-3">Waiting for opponent...</h1>
             <div class="loader mx-auto my-5"></div>
-            <button type="button" id="btn-leaveQueue" class="btn btn-danger">Leave Queue</button>
+            <button type="button" id="btn-leaveQueue" class="btn btn-lg btn-danger">Cancel queue</button>
         </div>
 
-        <div id="game" class="text-center">
+
+        {{!-- <div id="game" class="text-center">
             <div class="d-flex border border-bottom-0 mx-0 pt-2">
                 <div class="d-flex w-50 flex-column flex-sm-row justify-content-around">
-                    <a id="playerUsername" href="#" class="h3 d-block text-truncate">playerUsername</a>
+                    <a id="playerUsername" href="#" target="_blank" rel="noopener noreferrer"
+                        class="h3 d-block text-truncate">playerUsername</a>
                     <span id="playerScore" class="h3 d-block">pScore</span>
                 </div>
                 <div class="d-flex w-50 flex-column flex-sm-row-reverse justify-content-around">
-                    <a id="opponentUsername" href="#" class="h3 d-block text-truncate">opponentUsername</a>
+                    <a id="opponentUsername" href="#" target="_blank" rel="noopener noreferrer"
+                        class="h3 d-block text-truncate">opponentUsername</a>
                     <span id="opponentScore" class="h3 d-block">oScore</span>
                 </div>
             </div>
@@ -49,15 +61,69 @@
                 </div>
             </div>
             <canvas id="canvas" class="d-block w-100 h-auto mh-100"></canvas>
+        </div> --}}
+
+        <style>
+            .player-ball {
+                width: 30px;
+                height: 30px;
+                border-radius: 50%;
+                display: inline-block;
+            }
+
+            .score-box {
+                border-radius: 15px;
+                padding: 5px 20px;
+                margin: 0 15px;
+            }
+
+            .score {
+                font-size: 2.5rem;
+                font-weight: bold;
+                line-height: 1;
+                margin: 0;
+            }
+
+            .player-name {
+                max-width: 150px;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+        </style>
+
+        <div id="game" class="container mt-4">
+            <div class="row mb-3">
+                <div class="col-12">
+                    <div class="d-flex justify-content-center align-items-center">
+                        <div id="playercolor" class="player-ball"></div>
+                        <a id="playerUsername" href="#" target="_blank" rel="noopener noreferrer"
+                            class="h5 mb-0 ms-2 player-name text-decoration-none">Player1</a>
+                        <div class="score-box">
+                            <p id="playerScore" class="score">3</p>
+                        </div>
+                        <div class="score-box background-secondary">
+                            <p id="opponentScore" class="score">6</p>
+                        </div>
+                        <a id="opponentUsername" href="#" target="_blank" rel="noopener noreferrer"
+                            class="h5 mb-0 me-2 player-name text-decoration-none">Player2</a>
+                        <div id="opponentcolor" class="player-ball"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <canvas id="canvas" class="w-100 h-auto" style="max-height: 80vh;"></canvas>
+                </div>
+            </div>
         </div>
 
         <div id="gameEnd" class="border shadow-lg text-center mx-auto py-5 px-5">
-            <h1 id="endMsg" class="display-3">Game End</h1>
+            <h4>The winner is:</h4>
+            <h2 id="winnerName" class="display-3">User</h2>
+            <h5 id="winReason" class="display-5">reason</h5>
             <hr class="my-5">
-            <button type="button" id="btn-showMenu" class="btn btn-lg btn-success mb-3"><i
-                    class="fas fa-arrow-left"></i> Back to Menu</button><br>
-            <a href="/profile/" class="btn btn-primary mx-1" role="button">Profile</a>
-            <a href="/leaderboard/" class="btn btn-danger mx-1" role="button">Leaderboard</a>
+            <button type="button" id="btn-requeue" class="btn btn-lg btn-primary">Requeue</button>
         </div>
 
     </div>
