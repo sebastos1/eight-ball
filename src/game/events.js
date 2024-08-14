@@ -9,6 +9,7 @@ const events = {
         switch (ball.color) {
             case 'red':
             case 'yellow':
+                // this.handleBlackBall(game); // for testing
                 this.handleColoredBall(game, ball);
                 break;
             case 'white':

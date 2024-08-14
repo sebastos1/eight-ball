@@ -160,14 +160,6 @@ game.end = function (winner, winReason) {
             if (err) console.log(err);
         });
 
-        // Increment the wins/losses
-        UserDB.incrementWins(winner.id, (err) => {
-            if (err) console.log(err);
-        });
-        UserDB.incrementLosses(loser.id, (err) => {
-            if (err) console.log(err);
-        });
-
         // Set ending game properties
         this.active = false;
         this.ended = true;

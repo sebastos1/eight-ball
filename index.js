@@ -29,8 +29,9 @@ const PORT = process.env.PORT || 8080;
 app.set('port', PORT);
 
 // Set view engine
-app.engine('handlebars', expressHandlebars(
+app.engine('hbs', expressHandlebars(
     {
+        extname: '.hbs',
         defaultLayout: false,
         helpers: {
             userColor: colors.colorPicker,
@@ -42,7 +43,7 @@ app.engine('handlebars', expressHandlebars(
         }
     }
 ));
-app.set('view engine', 'handlebars');
+app.set('view engine', 'hbs');
 
 // Set static path
 app.use(express.static('static'));
@@ -95,7 +96,11 @@ server.listen(PORT, () => {
 });
 
 
-// hbs helpers
+/*
+
+HBS HELPERS
+
+*/
 function eq(item1, item2) {
     return (item1 === item2);
 }
