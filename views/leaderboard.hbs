@@ -11,12 +11,12 @@
     {{> navbar active_leaderboard=true}}
     <div class="container">
         {{> flash}}
-        <h1 class="display-1 text-truncate mb-4">Leaderboard</h1>
+        <h1 class="display-4 text-truncate mb-4">Leaderboard</h1>
         <div class="list-group">
             <div class="list-group-item list-group-item-secondary">
                 <div class="lbd-grid font-weight-bold">
                     <div>#</div>
-                    <div class="lbd-username">Username</div>
+                    <div class="lbd-username"></div>
                     <div class="lbd-rank">Rank</div>
                     <div>Rating</div>
                     <div>Wins</div>
@@ -30,13 +30,20 @@
                 <div class="lbd-grid">
                     <div>{{this.position}}</div>
                     <div class="lbd-username {{userColor this.id}}">{{this.username}}</div>
+                    {{#if this.rating}}
                     <div class="lbd-rank {{getRankColor this.rating}}">{{getRank this.rating}}</div>
                     <div class="shimmer">{{this.rating}}</div>
+                    {{else}}
+                    <div>Unranked</div>
+                    <div>-</div>
+                    {{/if}}
                     <div>{{this.wins}}</div>
                     <div>{{this.gamesPlayed}}</div>
                     <div>{{this.winRate}}</div>
                 </div>
             </div>
+            {{else}}
+            <div class="d-flex justify-content-center mt-3">Nothing here yet!</div>
             {{/each}}
         </div>
     </div>

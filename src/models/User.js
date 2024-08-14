@@ -15,28 +15,40 @@ User.create = function (user, callback) {
 
     // Hash the password
     bcrypt.hash(user.password, 10, (err, hash) => {
-        if (!err) {
 
-            // SQL query
-            let sql = `INSERT INTO user (username, email, password)
-                       VALUES (?, ?, ?);`;
-
-            // Query parameters
-            let params = [user.username, user.email || null, hash];
-
-            // Execute the query
-            database.run(sql, params, function (err) {
-                if (err) console.log(err);
-                // If a new user was created, return the id
-                callback(Boolean(err), this.lastID ? this.lastID : null);
-            });
-
-        } else {
+        if (err) {
             console.log(err);
             callback(true, null);
         }
+
+        // SQL query
+        let sql = `INSERT INTO user (username, email, password)
+                       VALUES (?, ?, ?);`;
+
+        // Query parameters
+        let params = [user.username, user.email || null, hash];
+
+        // Execute the query
+        database.run(sql, params, function (err) {
+            if (err) console.log(err);
+            // If a new user was created, return the id
+            callback(Boolean(err), this.lastID ? this.lastID : null);
+        });
     });
 
+};
+
+// User deactivation
+User.deactivate = function (id, callback) {
+
+    let sql = `UPDATE user
+               SET is_active = 0
+               WHERE id = ?;`;
+
+    database.run(sql, id, (err) => {
+        if (err) console.log(err);
+        callback(Boolean(err));
+    });
 };
 
 // User delete
@@ -58,7 +70,7 @@ User.delete = function (id, callback) {
 User.findUserById = function (id, callback) {
 
     // SQL query
-    let sql = `SELECT id, username, email, wins, losses, rating
+    let sql = `SELECT id, username, email, wins, losses, rating, is_active
                FROM user
                WHERE id = ?;`;
 
@@ -85,7 +97,19 @@ User.findIdByUsername = function (username, callback) {
         // If a user was found, return their id
         callback(Boolean(err), user ? user.id : null);
     });
+};
 
+// step in for above
+User.findIdAndStatusByUsername = function (username, callback) {
+    // SQL query
+    let sql = `SELECT id, is_active
+               FROM user
+               WHERE username = ?;`;
+    // Execute the query
+    database.get(sql, username, (err, user) => {
+        if (err) console.log(err);
+        callback(Boolean(err), user ? user.id : null, user ? user.is_active : null);
+    });
 };
 
 // Find a user id by email
@@ -155,15 +179,15 @@ User.queryIdByUsername = function (username, callback) {
         // If a user was found, return their id
         callback(Boolean(err), user ? user.id : null);
     });
-
 };
 
 // Get the leaderbord 
 User.getLeaderboard = function (callback) {
 
     // SQL query
-    let sql = `SELECT id, username, wins, losses, rating
+    let sql = `SELECT id, username, wins, losses, rating, is_active
                FROM user
+               WHERE is_active = 1
                ORDER BY rating DESC
                LIMIT 25;`;
 

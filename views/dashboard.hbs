@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+
+<head>
+    {{> meta}}
+    <title>Dashboard | Eight Ball</title>
+    {{> css}}
+</head>
+
+<body>
+    {{> navbar}}
+    <div class="container">
+        {{> flash}}
+        <div class="jumbotron mb-0 d-flex flex-lg-row flex-column justify-content-sm-between align-items-center">
+            <h1 class="display-1 text-truncate mw-100 {{userColor user.id}}">{{user.username}}</h1>
+        </div>
+        <div class="row mt-0">
+            <div class="col-md-5 col-lg-4">
+                <div class="sticky-top pt-4">
+                    <div class="list-group">
+                        <div
+                            class="list-group-item list-group-item-secondary d-flex justify-content-between align-items-center border-bottom-0">
+                            {{#if profile.rating}}
+                            <span class="h5 mb-0 rank-text {{getRankColor user.rating}}">{{getRank user.rating}}
+                                ({{user.rating}})</span>
+                            {{else}}
+                            <span class="h5 mb-0 rank-text">Unranked</span>
+                            {{/if}}
+                        </div>
+                        <button class="list-group-item list-group-item-action list-group-item-primary border"
+                            type="button" onclick="window.location.href='play'">
+                            <div class="d-flex justify-content-center">
+                                <h1>PLAY</h1>
+                            </div>
+                        </button>
+                        <div class="list-group-item bg-dark text-light p-3">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span>Active players:</span>
+                                <span class="badge bg-secondary rounded-pill px-3 py-2">{{playersOnline}}</span>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span>Queued players:</span>
+                                <span class="badge bg-secondary rounded-pill px-3 py-2">{{playersInQueue}}</span>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span>Ongoing games:</span>
+                                <span class="badge bg-secondary rounded-pill px-3 py-2">{{gamesInProgress}}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-7 col-lg-8">
+                {{#if game}}
+                <div class="list-group mt-4">
+                    <div class="list-group-item list-group-item-secondary">
+                        <h5 class="mb-0">Last game</h5>
+                    </div>
+                    {{> gamelist game=game profile=user}}
+                </div>
+                {{else}}
+                <div class="list-group mt-4">
+                    <div class="list-group-item list-group-item-secondary">
+                        <h5 class="mb-0">Last game</h5>
+                    </div>
+                    <div class="list-group-item text-center py-4">
+                        <p class="mb-0">You have not played any games yet!</p>
+                        <a href="/play" class="btn btn-primary mt-2">Play a game now</a>
+                    </div>
+                </div>
+                {{/if}}
+                <div class="list-group mt-4">
+                    <div class="list-group-item list-group-item-secondary">
+                        <h5 class="mb-0">What's new?</h5>
+                    </div>
+                    <div class="list-group-item">
+                        <h4 class="mb-2">Where is profile?</h4>
+                        <p class="mb-1">Click the top right, with your brand-new, state-of-the-art profile picture!</p>
+                        <small class="text-muted">Posted 5 minutes ago</small>
+                    </div>
+                    <div class="list-group-item">
+                        <h4 class="mb-2">This is an example post</h4>
+                        <p class="mb-1">And this could be some text to describe your post!</p>
+                        <small class="text-muted">Posted 25289 years ago</small>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    {{> js}}
+</body>
+
+</html>

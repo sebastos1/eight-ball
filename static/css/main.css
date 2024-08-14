@@ -35,3 +35,7 @@ body {
 .list-group-item a:hover {
     text-decoration: underline;
 }
+
+.deactivated {
+    color: #921919;
+}

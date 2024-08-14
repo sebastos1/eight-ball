@@ -36,7 +36,8 @@ Game.getGamesByUserId = function (id, callback) {
                LEFT JOIN user AS user1 ON user1.id = game.winnerId
                LEFT JOIN user AS user2 ON user2.id = game.loserId
                WHERE game.winnerId = ? OR game.loserId = ?
-               ORDER BY game.time DESC;`;
+               ORDER BY game.time DESC
+               LIMIT 25;`;
 
     // Execute the query
     database.all(sql, [id, id], (err, games) => {

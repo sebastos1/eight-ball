@@ -22,7 +22,8 @@ database.serialize(() => {
                         password TEXT NOT NULL,
                         wins INTEGER DEFAULT 0,
                         losses INTEGER DEFAULT 0,
-                        rating INTEGER
+                        rating INTEGER,
+                        is_active BOOL DEFAULT TRUE
                     );`;
     database.run(sql_user, (err) => { if (err) throw err; });
 
