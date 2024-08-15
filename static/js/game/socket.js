@@ -101,22 +101,22 @@ socket.on('game-update', (data) => {
 });
 
 socket.on('game-scoreUpdate', (data) => {
-    if (game) {
-        // Update the game object
-        game.player.score = data.player;
-        game.opponent.score = data.opponent;
-        game.player.color = data.playercolor;
-        game.opponent.color = data.opponentcolor;
+    if (!game) return;
 
-        // Update the displayed scores
-        $('#playerScore').text(game.player.score);
-        $('#opponentScore').text(game.opponent.score);
+    // Update the game object
+    game.player.score = data.player;
+    game.opponent.score = data.opponent;
+    game.player.color = data.playercolor;
+    game.opponent.color = data.opponentcolor;
 
-        // Update player and opponent colors
-        if (data.gameColorSet) {
-            $('#playercolor').css('background-color', (game.player.color == "red") ? RED_COL : YELLOW_COL);
-            $('#opponentcolor').css('background-color', (game.opponent.color == "red") ? RED_COL : YELLOW_COL);
-        }
+    // Update the displayed scores
+    $('#playerScore').text(game.player.score);
+    $('#opponentScore').text(game.opponent.score);
+
+    // Update player and opponent colors
+    if (data.gameColorSet) {
+        $('#playercolor').css('background-color', (game.player.color == "red") ? RED_COL : YELLOW_COL);
+        $('#opponentcolor').css('background-color', (game.opponent.color == "red") ? RED_COL : YELLOW_COL);
     }
 });
 

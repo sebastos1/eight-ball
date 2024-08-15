@@ -32,6 +32,7 @@ router.get('/', (req, res, next) => {
 
         // Render the dashboard page and pass in game status and the latest game played
         return res.render('dashboard', {
+            queuedPlayers: socket.queuedPlayers()._queue,
             playersOnline: socket.playersOnline,
             playersInQueue: socket.playersInQueue,
             gamesInProgress: socket.gamesInProgress,

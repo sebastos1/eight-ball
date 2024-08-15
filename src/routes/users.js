@@ -93,20 +93,17 @@ router.post('/login', (req, res) => {
 // GET '/logout' route
 router.get('/logout', (req, res) => {
 
-    // If the request is authenticated
-    if (req.authenticated) {
-        // Logout the user
-        req.logout();
-        log(`${req.user.username}#${req.user_id} has logged out`);
-        // Send a successful logout flash message and redirect to the index route
-        req.flash('success', 'You have successfully logged out.');
-        return res.redirect('/');
-        // If the request is not authenticated send an error flash message and redirect to the login route
-    } else {
+    if (!req.authenticated) {
         req.flash('danger', 'You are not logged in.');
         return res.redirect('/login');
     }
 
+    // Logout the user
+    req.logout();
+    log(`${req.user.username}#${req.user_id} has logged out`);
+    // Send a successful logout flash message and redirect to the index route
+    req.flash('success', 'You have successfully logged out.');
+    return res.redirect('/');
 });
 
 /**
@@ -120,10 +117,10 @@ router.get('/register', (req, res) => {
     if (!req.authenticated) {
         return res.render('register', { register: req.session.register });
         // If the request is already authenticated send an error flash message and redirect to the dashboard
-    } else {
-        req.flash('danger', 'You are already logged in.');
-        return res.redirect('/');
     }
+
+    req.flash('danger', 'You are already logged in.');
+    return res.redirect('/');
 
 });
 
