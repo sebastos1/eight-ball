@@ -16,8 +16,8 @@
             <div class="list-group-item list-group-item-secondary">
                 <div class="lbd-grid font-weight-bold">
                     <div>#</div>
-                    <div class="lbd-username"></div>
-                    <div class="lbd-rank">Rank</div>
+                    <div></div>
+                    <div>Rank</div>
                     <div>Rating</div>
                     <div>Wins</div>
                     <div>Games</div>
@@ -25,13 +25,23 @@
                 </div>
             </div>
             {{#each users}}
-            <div class="list-group-item list-group-item-action {{#if this.self}}lbd-highlight{{/if}} {{#if (eq this.position 1)}}gold{{else if (eq this.position 2)}}silver{{else if (eq this.position 3)}}bronze{{/if}}"
-                onclick="window.location='/profile/{{this.id}}'" style="cursor:pointer">
+            <div class="list-group-item list-group-item-action 
+            {{#if this.self}}
+            bg-dark-subtle
+            {{/if}}
+            {{#if (eq this.position 1)}}
+            gold
+            {{else if (eq this.position 2)}}
+            silver
+            {{else if (eq this.position 3)}}
+            bronze
+            {{/if}}" onclick="window.location='/profile/{{this.id}}'" style="cursor:pointer">
                 <div class="lbd-grid">
                     <div>{{this.position}}</div>
-                    <div class="lbd-username {{userColor this.id}}">{{this.username}}</div>
+                    <div class="{{userColor this.id}}" style="color:{{userSolidColor this.username}}">{{this.username}}
+                    </div>
                     {{#if this.rating}}
-                    <div class="lbd-rank {{getRankColor this.rating}}">{{getRank this.rating}}</div>
+                    <div class="{{getRankColor this.rating}}">{{getRank this.rating}}</div>
                     <div class="shimmer">{{this.rating}}</div>
                     {{else}}
                     <div>Unranked</div>

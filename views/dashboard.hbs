@@ -12,7 +12,8 @@
     <div class="container">
         {{> flash}}
         <div class="jumbotron mb-0 d-flex flex-lg-row flex-column justify-content-sm-between align-items-center">
-            <h1 class="display-1 text-truncate mw-100 {{userColor user.id}}">{{user.username}}</h1>
+            <h1 class="display-1 text-truncate mw-100 {{userColor user.id}}"
+                style="color:{{userSolidColor user.username}}">{{user.username}}</h1>
         </div>
         <div class="row mt-0">
             <div class="col-md-5 col-lg-4">
@@ -20,7 +21,7 @@
                     <div class="list-group">
                         <div
                             class="list-group-item list-group-item-secondary d-flex justify-content-between align-items-center border-bottom-0">
-                            {{#if profile.rating}}
+                            {{#if user.rating}}
                             <span class="h5 mb-0 rank-text {{getRankColor user.rating}}">{{getRank user.rating}}
                                 ({{user.rating}})</span>
                             {{else}}
@@ -34,18 +35,27 @@
                             </div>
                         </button>
                         <div class="list-group-item bg-dark text-light p-3">
+                            <div class="align-items-center mb-2 h4">
+                                {{#if queuedPlayers}}
+                                <span>In queue: </span>
+                                {{#each queuedPlayers}}
+                                <span class="{{userColor this.id}}">{{this.username}}</span>{{#unless @last}},
+                                {{/unless}}
+                                {{/each}}
+                                {{/if}}
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span>Ongoing games:</span>
+                                <span class="badge bg-secondary rounded-pill px-3 py-2">{{gamesInProgress}}</span>
+                            </div>
                             <div class="d-flex justify-content-between align-items-center mb-2">
                                 <span>Active players:</span>
                                 <span class="badge bg-secondary rounded-pill px-3 py-2">{{playersOnline}}</span>
                             </div>
-                            <div class="d-flex justify-content-between align-items-center mb-2">
+                            {{!-- <div class="d-flex justify-content-between align-items-center mb-2">
                                 <span>Queued players:</span>
                                 <span class="badge bg-secondary rounded-pill px-3 py-2">{{playersInQueue}}</span>
-                            </div>
-                            <div class="d-flex justify-content-between align-items-center">
-                                <span>Ongoing games:</span>
-                                <span class="badge bg-secondary rounded-pill px-3 py-2">{{gamesInProgress}}</span>
-                            </div>
+                            </div> --}}
                         </div>
                     </div>
                 </div>

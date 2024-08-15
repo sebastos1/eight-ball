@@ -40,6 +40,7 @@ app.engine('hbs', expressHandlebars(
             getRank: getRank,
             getRankColor: getRankColor,
             translateWinReason: translateWinReason,
+            userSolidColor: userSolidColor,
         }
     }
 ));
@@ -196,4 +197,29 @@ function translateWinReason(reason, didUserWin) {
         default:
             return "❓ " + string + "unknown"; // question mark
     }
+}
+
+function userSolidColor(username) {
+    console.log(username);
+
+    const minBrightness = 128;
+    const maxBrightness = 230;
+
+    let hash = 0;
+    for (let i = 0; i < username.length; i++) {
+        hash = username.charCodeAt(i) + ((hash << 5) - hash);
+    }
+
+    let r = (hash & 0xFF0000) >> 16;
+    let g = (hash & 0x00FF00) >> 8;
+    let b = hash & 0x0000FF;
+
+    r = Math.max(r, minBrightness);
+    g = Math.max(g, minBrightness);
+    b = Math.max(b, minBrightness);
+    r = Math.min(r, maxBrightness);
+    g = Math.min(g, maxBrightness);
+    b = Math.min(b, maxBrightness);
+
+    return `#${((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1)}`;
 }

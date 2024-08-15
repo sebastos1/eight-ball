@@ -2,25 +2,20 @@
 <html lang="en" data-bs-theme="dark">
 
 <head>
-
     {{> meta}}
-
     <title>{{profile.username}} | Eight Ball</title>
-
     {{> css}}
-
 </head>
 
 <body>
-
     {{> navbar active_profile=true}}
-
     <div class="container">
         {{> flash}}
 
         {{#if profile.is_active}}
         <div class="jumbotron mb-0 d-flex flex-lg-row flex-column justify-content-sm-between align-items-center">
-            <h1 class="display-1 text-truncate mw-100 {{userColor profile.id}}">{{profile.username}}</h1>
+            <h1 class="display-1 text-truncate mw-100 {{userColor profile.id}}"
+                style="color:{{userSolidColor profile.username}}">{{profile.username}}</h1>
             <h1 class="display-3 text-muted">
                 <span class="badge badge-secondary">
                     <span style="color: rgb(117, 255, 117);">{{profile.wins}}W</span> -
@@ -51,9 +46,9 @@
                         <div class="list-group-item">Games Played: {{gamesPlayed}}<br>Winrate: {{winRate}}</div>
                         {{#if selfProfile}}
                         <a href="/logout"
-                            class="list-group-item list-group-item-action list-group-item-warning">Logout</a>
+                            class="list-group-item list-group-item-action list-group-item-warning border border-top-0">Logout</a>
                         <button type="button" data-toggle="modal" data-target="#deleteProfile"
-                            class="list-group-item list-group-item-action list-group-item-danger">Delete
+                            class="list-group-item list-group-item-action list-group-item-danger border border-top-0">Delete
                             Profile</button>
                         {{/if}}
                     </div>
@@ -79,9 +74,7 @@
                     {{/each}}
                 </div>
             </div>
-
         </div>
-
     </div>
 
     {{#if selfProfile}}

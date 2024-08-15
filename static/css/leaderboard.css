@@ -32,13 +32,9 @@
     padding: 0 5px;
 }
 
+/* not the username and the uhhhhh other one */
 .lbd-grid>div:not(:nth-child(2)):not(:nth-child(3)) {
     text-align: center;
-}
-
-.lbd-username,
-.lbd-rank {
-    text-align: left;
 }
 
 .list-group-item {
