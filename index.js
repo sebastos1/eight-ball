@@ -200,8 +200,6 @@ function translateWinReason(reason, didUserWin) {
 }
 
 function userSolidColor(username) {
-    console.log(username);
-
     const minBrightness = 128;
     const maxBrightness = 230;
 
