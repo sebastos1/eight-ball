@@ -38,7 +38,7 @@ physics.ballMotion = function (ball) {
 // Resolve the collisions between a ball and the table
 physics.collideCushions = function (ball, width, height) {
 
-    // Check if about to collide with cushiong
+    // Check if about to collide with cushioning
     if (ball.position.x + ball.velocity.x + ball.radius >= width || ball.position.x + ball.velocity.x - ball.radius <= 0) {
         // Reverse velocity
         ball.velocity.x = -ball.velocity.x;
@@ -46,7 +46,7 @@ physics.collideCushions = function (ball, width, height) {
         ball.velocity.multiply(1 - 10 * FRICTION);
     }
 
-    // Check if about to collide with cushiong
+    // Check if about to collide with cushioning
     if (ball.position.y + ball.velocity.y + ball.radius >= height || ball.position.y + ball.velocity.y - ball.radius <= 0) {
         // Reverse velocity
         ball.velocity.y = -ball.velocity.y;

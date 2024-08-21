@@ -28,20 +28,30 @@ const events = function (io) {
         // Check if the socket has been authenticated
         if (socket.request.session.authenticated) {
 
-            // Create new player and add to players
-            const player = new Player(socket);
-            players.set(player.id, player);
+            // Create new player or check if it already exists
+            let player;
+            if (players.has(socket.request.session.user.id)) {
+                player = players.get(socket.request.session.user.id);
+                player.socket = socket;
+            } else {
+                player = new Player(socket);
+                players.set(player.id, player);
+            }
             log(`${player.username}#${player.id} has connected - ${players.size} player(s) online`);
 
             // On socket disconnect
             socket.on('disconnect', () => {
 
+                console.log(player.username, "left the game");
+
                 // If player in queue, remove them from the queue
                 if (player.inQueue) queue.remove(player);
                 // If player in game, end the game with the opponent as the winner
                 if (player.inGame) {
-                    player.game.winner = (player.game.player1 ? player.game.player2 : player.game.player1);
-                    player.game.winReason = 3; // player disconnect code
+                    const game = player.game;
+                    game.winner = (game.player1 === player ? game.player2 : game.player1);
+                    game.winReason = 3; // player disconnect code
+                    game.end(game.winner, game.winReason);
                 }
 
                 // Remove the player from players
@@ -51,14 +61,20 @@ const events = function (io) {
             });
 
             // On socket joining the queue
-            socket.on('queue-join', () => {
-
-                // Check if the player is not in queue or in game and enqueue them
-                if (!player.inQueue && !player.inGame) {
+            socket.on('queue-join', (callback) => {
+                if (player.inGame) {
+                    callback({
+                        success: false,
+                        message: "Previous game is still in progress!",
+                    });
+                } else {
                     queue.enqueue(player);
+                    callback({
+                        success: true,
+                        message: "You have successfully joined the queue.",
+                    });
                     log(`${player.username}#${player.id} has joined the queue - ${queue.size} player(s) in queue`);
                 }
-
             });
 
             // On socket leaving the queue
@@ -125,7 +141,6 @@ const gameLoop = setInterval(() => {
                 game.player1.socket.emit('game-updateTurn', game.turnData(game.player1));
                 game.player2.socket.emit('game-updateTurn', game.turnData(game.player2));
             }
-
         }
 
         // Check if the game has ended

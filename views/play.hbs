@@ -12,7 +12,7 @@
     <div class="container">
         {{> flash}}
 
-        <div id="menu" class="border shadow-lg text-center mx-auto py-5 px-5">
+        <div id="menu" class="bg-dark text-center py-5 px-5 rounded">
             <h1 class="display-3">Eight Ball</h1>
             <p class="h3 pt-3">
                 {{#if queuedPlayers}}
@@ -27,11 +27,12 @@
                 {{/if}}
             </p>
             <hr class=" my-5">
+            <div id="queueMessage" class="mb-3"></div>
             <button type="button" id="btn-joinQueue" class="btn btn-lg btn-primary">Find opponent</button>
         </div>
 
 
-        <div id="queue" class="border shadow-lg text-center mx-auto py-5 px-5">
+        <div id="queue" class="bg-dark text-center py-5 px-5 rounded">
             <h1 class="display-3">Waiting for opponent...</h1>
             <div class="loader mx-auto my-5"></div>
             <button type="button" id="btn-leaveQueue" class="btn btn-lg btn-danger">Cancel queue</button>
@@ -43,12 +44,14 @@
                 height: 30px;
                 border-radius: 50%;
                 display: inline-block;
+                flex-shrink: 0;
             }
 
             .score-box {
                 border-radius: 15px;
                 padding: 5px 20px;
                 margin: 0 15px;
+                flex-shrink: 0;
             }
 
             .score {
@@ -59,40 +62,66 @@
             }
 
             .player-name {
-                max-width: 150px;
+                width: 150px;
                 white-space: nowrap;
                 overflow: hidden;
                 text-overflow: ellipsis;
+                text-align: center;
+            }
+
+            .scoreboard-container {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                width: 100%;
+            }
+
+            .player-container {
+                display: flex;
+                align-items: center;
+                justify-content: flex-end;
+                width: 50%;
+            }
+
+            .opponent-container {
+                display: flex;
+                align-items: center;
+                justify-content: flex-start;
+                width: 50%;
             }
         </style>
 
         <div id="game" class="container mt-4">
             <div class="row mb-3">
                 <div class="col-12">
-                    <div class="d-flex justify-content-center align-items-center">
-                        <div id="playercolor" class="player-ball"></div>
-                        <a id="playerUsername" href="#" target="_blank" rel="noopener noreferrer"
-                            class="h5 mb-0 ms-2 player-name text-decoration-none">Player1</a>
-                        <div class="score-box">
-                            <p id="playerScore" class="score">3</p>
+                    <div class="scoreboard-container">
+                        <div class="player-container">
+                            <div id="playercolor" class="player-ball"></div>
+                            <a id="playerUsername" href="#" target="_blank" rel="noopener noreferrer"
+                                class="h5 mb-0 ms-2 player-name text-decoration-none">Player1</a>
+                            <div class="score-box">
+                                <p id="playerScore" class="score">3</p>
+                            </div>
                         </div>
-                        <div class="score-box background-secondary">
-                            <p id="opponentScore" class="score">6</p>
+                        <div class="opponent-container">
+                            <div class="score-box background-secondary">
+                                <p id="opponentScore" class="score">6</p>
+                            </div>
+                            <a id="opponentUsername" href="#" target="_blank" rel="noopener noreferrer"
+                                class="h5 mb-0 me-2 player-name text-decoration-none">Player2</a>
+                            <div id="opponentcolor" class="player-ball"></div>
                         </div>
-                        <a id="opponentUsername" href="#" target="_blank" rel="noopener noreferrer"
-                            class="h5 mb-0 me-2 player-name text-decoration-none">Player2</a>
-                        <div id="opponentcolor" class="player-ball"></div>
                     </div>
                 </div>
             </div>
             <div class="row">
                 <div class="col-12">
-                    <canvas id="canvas" class="d-block w-100 h-auto mh-100"></canvas>
+                    <canvas id="canvas" class="d-block w-100 h-auto mh-100 rounded"></canvas>
                 </div>
             </div>
         </div>
 
-        <div id="gameEnd" class="border shadow-lg text-center mx-auto py-5 px-5">
+        <div id="gameEnd" class="bg-dark text-center py-5 px-5 rounded">
             <h4>The winner is:</h4>
             <h2 id="winnerName" class="display-3">User</h2>
             <h5 id="winReason" class="display-5">reason</h5>

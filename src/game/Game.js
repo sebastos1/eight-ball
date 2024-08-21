@@ -1,7 +1,6 @@
 'use strict';
 
 // Components
-const Elo = require('../Elo');
 const Ball = require('./Ball');
 const Vector = require('./Vector');
 const physics = require('./physics');
@@ -46,38 +45,52 @@ const Game = function (player1, player2) {
     this.nextTurn = this.player2;
     this.foul = false;
     this.potted = false;
+    this.whiteBallPotted = false;
 
     // This holds the winner and loser temporarily
     this.winner = null;
     this.winReason = null;
 
-    // Game balls array
-    this.balls = [
-        [320, 360, 'white'],
-        [1030, 360, 'black'],
-        [960, 360, 'red'],
-        [995, 340, 'yellow'],
-        [995, 380, 'red'],
-        [1030, 320, 'red'],
-        [1030, 400, 'yellow'],
-        [1065, 300, 'yellow'],
-        [1065, 340, 'red'],
-        [1065, 380, 'yellow'],
-        [1065, 420, 'red'],
-        [1100, 280, 'yellow'],
-        [1100, 320, 'red'],
-        [1100, 360, 'yellow'],
-        [1100, 400, 'red'],
-        [1100, 440, 'yellow']
-    ].map(params => new Ball(new Vector(params[0], params[1]), BALL_RADIUS, params[2]));
+    // Create balls
+    this.balls = this.setupBalls();
 
     // Game white and black balls
     this.cueBall = this.balls[0];
     this.blackBall = this.balls[1];
-
 };
 
 const game = Game.prototype;
+
+game.setupBalls = function () {
+    // Spawn the white ball in a random position since it's deterministic
+    const deviation = 200;
+    const whiteX = 320 + (Math.random() * 2 - 1) * deviation;
+    const whiteY = 360 + (Math.random() * 2 - 1) * deviation;
+
+    const ballSetup = [
+        { pos: [whiteX, whiteY], color: 'white' },
+        { pos: [1030, 360], color: 'black' },
+        { pos: [960, 360] }, { pos: [995, 340] },
+        { pos: [995, 380] }, { pos: [1030, 320] },
+        { pos: [1030, 400] }, { pos: [1065, 300] },
+        { pos: [1065, 340] }, { pos: [1065, 380] },
+        { pos: [1065, 420] }, { pos: [1100, 280] },
+        { pos: [1100, 320] }, { pos: [1100, 360] },
+        { pos: [1100, 400] }, { pos: [1100, 440] }
+    ];
+
+    // Add shuffled colors
+    const colors = [...Array(7).fill('red'), ...Array(7).fill('yellow')];
+    for (let i = 2; i < ballSetup.length; i++) {
+        const randomIndex = Math.floor(Math.random() * colors.length);
+        ballSetup[i].color = colors.splice(randomIndex, 1)[0];
+    }
+
+    return ballSetup.map(
+        ({ pos, color }) => new Ball(new Vector(pos[0], pos[1]), BALL_RADIUS, color)
+    );
+}
+
 
 // Update class method
 game.update = function () {
@@ -118,9 +131,14 @@ game.update = function () {
         // If there was a foul or no ball potted, change the turn
         if (this.foul || !this.potted) [this.turn, this.nextTurn] = [this.nextTurn, this.turn];
 
-        // Reset foul and potted properties
+        if (this.whiteBallPotted) {
+            this.cueBall.position.set(320, 360);
+        }
+
+        // Reset properties
         this.foul = false;
         this.potted = false;
+        this.whiteBallPotted = false;
     }
 
     if (this.winner) {
@@ -144,37 +162,45 @@ game.shoot = function (player, power, angle) {
 
 // Game end method
 game.end = function (winner, winReason) {
+    if (this.ended) return;
+
+    // No rank update if a player played against themselves
+    if (this.player1.id === this.player2.id) {
+        this.cleanUp();
+        return;
+    }
 
     // Get loser
     let loser = (winner == this.player1 ? this.player2 : this.player1);
 
     // update player rating
     UserDB.updateRatingsAfterGame(winner.id, loser.id, (err, ratingChanges) => {
-        if (err) {
-            console.log("Error updating ratings:", err);
-            return;
-        }
+        if (err) console.log("Error updating ratings, logging anyway:", err);
 
         // Create new game in the database
         GameDB.create(winner, loser, ratingChanges, winReason, (err) => {
-            if (err) console.log(err);
+            if (err) console.log("Error writing a completed game into db:", err);
         });
 
-        // Set ending game properties
-        this.active = false;
-        this.ended = true;
-
-        // Set player properties
-        this.player1.inGame = false;
-        this.player2.inGame = false;
-        delete this.player1.game;
-        delete this.player2.game;
-        delete this.player1.color;
-        delete this.player2.color;
-        delete this.player1.score;
-        delete this.player2.score;
-        // delete this.winner;
+        this.cleanUp();
     });
+
+    this.active = false;
+    this.ended = true;
+};
+
+game.cleanUp = function () {
+    // Set player properties
+    this.player1.inGame = false;
+    this.player2.inGame = false;
+
+    delete this.player1.game;
+    delete this.player2.game;
+    delete this.player1.color;
+    delete this.player2.color;
+    delete this.player1.score;
+    delete this.player2.score;
+    // delete this.winner;
 };
 
 // Data that is sent to the players when the game starts
