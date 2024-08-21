@@ -1,10 +1,7 @@
 'use strict';
 
-const Vector = require('./Vector');
-
 const events = {
     ballPotted(game, ball) {
-        let changeTurn = true;
 
         switch (ball.color) {
             case 'red':
@@ -56,14 +53,16 @@ const events = {
 
     handleWhiteBall(game, ball) {
         game.foul = true;
-        ball.position.set(320, 360);
+        ball.position.set(1000, 1000);
         ball.velocity.set(0, 0);
         ball.acceleration.set(0, 0);
+        game.whiteBallPotted = true;
     },
 
     handleBlackBall(game) {
         if (game.turn.score >= 7) {
-            game.winner = game.turn
+            game.winner = game.turn;
+            game.winner.score++;
             game.winReason = 1;
         } else {
             game.winner = game.nextTurn;

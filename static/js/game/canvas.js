@@ -21,6 +21,12 @@ canvas._context = canvas._DOM.getContext('2d');
 canvas._DOM.width = canvas.width = WIDTH + 2 * BORDER;
 canvas._DOM.height = canvas.height = HEIGHT + 2 * BORDER;
 
+// Make the canvas more gamey
+canvas._DOM.style.userSelect = 'none';
+canvas._DOM.style.msUserSelect = 'none';
+canvas._DOM.style.mozUserSelect = 'none';
+canvas._DOM.ondragstart = function () { return false; };
+
 /**
  * Mouse
  */
@@ -28,7 +34,8 @@ canvas._DOM.height = canvas.height = HEIGHT + 2 * BORDER;
 // Initialise canvas mouse object
 canvas.mouse = {
     position: new Vector(),
-    down: false
+    down: false,
+    inside: false
 };
 
 // Mouse move event
@@ -38,13 +45,28 @@ document.onmousemove = function (e) {
     // Get position of mouse relative to the canvas
     canvas.mouse.position.x = (e.pageX - rect.left - window.scrollX) * canvas.width / rect.width - BORDER;
     canvas.mouse.position.y = (e.pageY - rect.top - window.scrollY) * canvas.height / rect.height - BORDER;
+
+    // Update mouse inside state
+    canvas.mouse.inside = (e.target === canvas._DOM);
 };
 
 // Mouse down event
-canvas._DOM.onmousedown = () => canvas.mouse.down = true;
+canvas._DOM.onmousedown = function (e) {
+    e.preventDefault();
+    canvas.mouse.down = true;
+    canvas.mouse.inside = true;
+};
 
 // Mouse up event
 canvas._DOM.onmouseup = () => canvas.mouse.down = false;
+
+document.onmouseup = function () {
+    if (canvas.mouse.down && !canvas.mouse.inside) canvas.mouse.down = false;
+};
+
+canvas._DOM.ontouchstart = () => canvas.mouse.down = true;
+
+canvas._DOM.ontouchend = () => canvas.mouse.down = false;
 
 // Touch move event
 canvas._DOM.ontouchmove = function (e) {
@@ -56,10 +78,6 @@ canvas._DOM.ontouchmove = function (e) {
     canvas.mouse.position.x = (e.touches[0].pageX - rect.left - window.scrollX) * canvas.width / rect.width - BORDER;
     canvas.mouse.position.y = (e.touches[0].pageY - rect.top - window.scrollY) * canvas.height / rect.height - BORDER;
 };
-
-canvas._DOM.ontouchstart = () => canvas.mouse.down = true;
-
-canvas._DOM.ontouchend = () => canvas.mouse.down = false;
 
 /**
  * Drawing to the canvas
@@ -129,4 +147,15 @@ canvas.drawBorders = function () {
     canvas.drawCircle(new Vector(WIDTH / 2, HEIGHT + 10), TABLE, BALL_RADIUS * 2, HOLE_COL);
     canvas.drawCircle(new Vector(WIDTH, HEIGHT), TABLE, BALL_RADIUS * 2, HOLE_COL);
     canvas.strokeRect(new Vector(0, 0), new Vector(0, 0), new Vector(canvas.width, canvas.height), EDGE_COL, 50);
+};
+
+canvas.drawLine = function (start, end, color, lineWidth = 1) {
+    canvas._context.save();
+    canvas._context.strokeStyle = color;
+    canvas._context.lineWidth = lineWidth;
+    canvas._context.beginPath();
+    canvas._context.moveTo(start.x, start.y);
+    canvas._context.lineTo(end.x, end.y);
+    canvas._context.stroke();
+    canvas._context.restore();
 };

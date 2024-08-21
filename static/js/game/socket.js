@@ -9,7 +9,6 @@ const socket = io();
 // Initialise game variable
 let game;
 
-
 // Main game loop
 const gameloop = function () {
     // If there is a game, draw it to the canvas
@@ -21,11 +20,24 @@ window.requestAnimationFrame(gameloop);
 
 // Join queue button click event
 $('#btn-joinQueue').click(() => {
-    // Send queue join event to server
-    socket.emit('queue-join');
-    // Show the queue
-    showQueue();
+    joinQueue();
 });
+
+// Show menu button click event
+$('#btn-requeue').click(() => {
+    joinQueue();
+});
+
+// couldnt have same name i guess
+function joinQueue() {
+    socket.emit('queue-join', (response) => {
+        if (response.success) {
+            showQueue();
+        } else {
+            $('#queueMessage').text(response.message);
+        }
+    });
+}
 
 // Leave queue button click event
 $('#btn-leaveQueue').click(() => {
@@ -33,12 +45,6 @@ $('#btn-leaveQueue').click(() => {
     socket.emit('queue-leave');
     // Show the menu
     showMenu();
-});
-
-// Show menu button click event
-$('#btn-requeue').click(() => {
-    socket.emit('queue-join');
-    showQueue();
 });
 
 // Shoot function
@@ -91,7 +97,6 @@ socket.on('game-start', (data) => {
 
     // Show the game
     showGame();
-
 });
 
 // Game update event listener

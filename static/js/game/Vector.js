@@ -25,3 +25,11 @@ Vector.multiply = function (vector, scalar) {
 Vector.divide = function (vector, scalar) {
     return new Vector(vector.x / scalar, vector.y / scalar);
 };
+
+Vector.prototype.length = function () {
+    return Math.sqrt(this.x * this.x + this.y * this.y);
+};
+
+Vector.dot = function (vector1, vector2) {
+    return vector1.x * vector2.x + vector1.y * vector2.y;
+};
