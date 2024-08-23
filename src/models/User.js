@@ -22,11 +22,11 @@ User.create = function (user, callback) {
         }
 
         // SQL query
-        let sql = `INSERT INTO user (username, email, password)
-                       VALUES (?, ?, ?);`;
+        let sql = `INSERT INTO user (username, email, password, country)
+                       VALUES (?, ?, ?, ?);`;
 
         // Query parameters
-        let params = [user.username, user.email || null, hash];
+        let params = [user.username, user.email || null, hash, user.country];
 
         // Execute the query
         database.run(sql, params, function (err) {
@@ -70,7 +70,7 @@ User.delete = function (id, callback) {
 User.findUserById = function (id, callback) {
 
     // SQL query
-    let sql = `SELECT id, username, email, wins, losses, rating, is_active
+    let sql = `SELECT id, username, email, wins, losses, rating, is_active, country
                FROM user
                WHERE id = ?;`;
 
@@ -126,7 +126,6 @@ User.findIdByEmail = function (email, callback) {
         // If a user was found, return their id
         callback(Boolean(err), user ? user.id : null);
     });
-
 };
 
 // Get the password from a user id
@@ -143,7 +142,6 @@ User.getPasswordFromId = function (id, callback) {
         // If a user was found, return their password
         callback(Boolean(err), user ? user.password : null);
     });
-
 };
 
 User.getRatingFromId = function (id, callback) {
@@ -159,7 +157,6 @@ User.getRatingFromId = function (id, callback) {
         // If a user was found, return their rating
         callback(Boolean(err), user ? user.rating : null);
     });
-
 };
 
 // Query for a user id using a username
@@ -185,7 +182,7 @@ User.queryIdByUsername = function (username, callback) {
 User.getLeaderboard = function (callback) {
 
     // SQL query
-    let sql = `SELECT id, username, wins, losses, rating, is_active
+    let sql = `SELECT id, username, wins, losses, rating, is_active, country
                FROM user
                WHERE is_active = 1
                ORDER BY rating DESC
@@ -197,7 +194,6 @@ User.getLeaderboard = function (callback) {
         // If users were found, return the users
         callback(Boolean(err), users ? users : null);
     });
-
 };
 
 User.updateRatingsAfterGame = function (winnerId, loserId, callback) {

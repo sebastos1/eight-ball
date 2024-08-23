@@ -38,7 +38,8 @@
             {{/if}}" onclick="window.location='/profile/{{this.id}}'" style="cursor:pointer">
                 <div class="lbd-grid">
                     <div>{{this.position}}</div>
-                    <div class="{{userColor this.id}}" style="color:{{userSolidColor this.username}}">{{this.username}}
+                    <div class="{{userColor this.id}}" style="color:{{userSolidColor this.username}}">{{userFlag
+                        this.country}} {{this.username}}
                     </div>
                     {{#if this.rating}}
                     <div class="{{getRankColor this.rating}}">{{getRank this.rating}}</div>

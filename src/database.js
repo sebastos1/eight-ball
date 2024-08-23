@@ -23,6 +23,7 @@ database.serialize(() => {
                         wins INTEGER DEFAULT 0,
                         losses INTEGER DEFAULT 0,
                         rating INTEGER,
+                        country TEXT,
                         is_active BOOL DEFAULT TRUE
                     );`;
     database.run(sql_user, (err) => { if (err) throw err; });
@@ -60,20 +61,31 @@ database.sessionStore = (session) => new (connectSQLite(session))({ db: 'databas
 module.exports = database;
 
 
-function generateFixedUsername(index) {
-    return `user${index + 1}`;
+
+// POPULATING
+function generateRandomUsername() {
+    const adjectives = ['Happy', 'Sunny', 'Clever', 'Swift', 'Brave', 'Witty', 'Gentle', 'Calm', 'Eager', 'Jolly'];
+    const nouns = ['Panda', 'Tiger', 'Eagle', 'Dolphin', 'Fox', 'Wolf', 'Bear', 'Lion', 'Hawk', 'Owl'];
+    const adj = adjectives[Math.floor(Math.random() * adjectives.length)];
+    const noun = nouns[Math.floor(Math.random() * nouns.length)];
+    const number = Math.floor(Math.random() * 100);
+    return `${adj}${noun}${number}`;
 }
 
-function createUser(username, rating, callback) {
-    const sql = `INSERT INTO user (username, email, password, rating) VALUES (?, ?, ?, ?);`;
-    const params = [username, null, 'a', rating]; // Fixed password 'a'
+function getRandomCountryCode() {
+    const countryCodesPool = ['US', 'GB', 'CA', 'AU', 'DE', 'FR', 'JP', 'BR', 'IN', 'CN', 'RU', 'MX', 'ES', 'IT', 'NL', 'SE', 'NO', 'DK', 'FI', 'CH'];
+    return countryCodesPool[Math.floor(Math.random() * countryCodesPool.length)];
+}
 
+function createUser(username, rating, country, callback) {
+    const sql = `INSERT INTO user (username, email, password, rating, country) VALUES (?, ?, ?, ?, ?);`;
+    const params = [username, null, 'a', rating, country];
     database.run(sql, params, function (err) {
         if (err) {
             console.log(`Failed to create user: ${username}`);
             return callback(err);
         }
-        console.log(`User created: ${username} with rating: ${rating}`);
+        console.log(`User created: ${username} with rating: ${rating} and country: ${country}`);
         callback(null);
     });
 }
@@ -91,7 +103,6 @@ function createUsersWithFixedRanks(callback) {
         { min: 800, max: 899 }, // Grandmaster
         { min: 900, max: 1000 } // Champion
     ];
-
     let usersCreated = 0;
     const totalUsers = 20; // Two users for each rank
 
@@ -100,14 +111,12 @@ function createUsersWithFixedRanks(callback) {
             // Move to the next rank
             return userCreatedCallback(null);
         }
-
-        const username = generateFixedUsername(usersCreated);
+        const username = generateRandomUsername();
         const rank = ranks[rankIndex];
         const rating = Math.floor(Math.random() * (rank.max - rank.min + 1)) + rank.min;
-
-        createUser(username, rating, (err) => {
+        const country = getRandomCountryCode();
+        createUser(username, rating, country, (err) => {
             if (err) return userCreatedCallback(err);
-
             usersCreated++;
             createUserForRank(rankIndex, userIndex + 1, userCreatedCallback);
         });
@@ -117,10 +126,8 @@ function createUsersWithFixedRanks(callback) {
         if (rankIndex >= ranks.length) {
             return callback(null);
         }
-
         createUserForRank(rankIndex, 0, (err) => {
             if (err) return callback(err);
-
             processNextRank(rankIndex + 1);
         });
     }
