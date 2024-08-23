@@ -10,9 +10,10 @@ const Player = function (socket) {
     // Properties
     this.id = socket.request.session.user_id;
     this.username = socket.request.session.user.username;
+    this.country = socket.request.session.user.country;
+
     this.inQueue = false;
     this.inGame = false;
-
 };
 
 // Export Player class

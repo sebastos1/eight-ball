@@ -38,7 +38,8 @@
                 <a href="/profile" class="nav-link p-0 {{#if active_profile}}active{{/if}}">
                     <div class="d-flex align-items-center bg-secondary bg-opacity-25 rounded-pill px-3 py-1">
                         <span class="me-2 {{userColor user.id}}"
-                            style="color:{{userSolidColor user.username}}">{{user.username}}</span>
+                            style="color:{{userSolidColor user.username}}">{{userFlag
+                            user.country}} {{user.username}}</span>
                         <img src="/img/AINTNOWAY.png" width="30" height="30" class="rounded-circle" alt="Avatar">
                     </div>
                 </a>

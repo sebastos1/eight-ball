@@ -185,3 +185,12 @@ socket.on('game-end', (data) => {
     // Show game ending
     showGameEnd();
 });
+
+// dashboard page for live updates on players online/in queue
+socket.on('online-update', (data) => {
+    $('#playersOnline').text(data.playersOnline);
+});
+
+socket.on('queue-update', (data) => {
+    $('#playersInQueue').text(data.playersInQueue);
+});

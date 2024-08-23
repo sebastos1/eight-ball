@@ -7,20 +7,40 @@
     {{> css}}
 </head>
 
+<!-- Socket.IO JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.js"
+    integrity="sha256-ji09tECORKvr8xB9iCl8DJ8iNMLriDchC1+p+yt1hSs=" crossorigin="anonymous"></script>
+
+{{> js}}
+<script src="/js/game/online.js"></script>
+
 <body>
     {{> navbar}}
     <div class="container">
         {{> flash}}
-        <div class="jumbotron mb-0 d-flex flex-lg-row flex-column justify-content-sm-between align-items-center">
-            <h1 class="display-1 text-truncate mw-100 {{userColor user.id}}"
-                style="color:{{userSolidColor user.username}}">{{user.username}}</h1>
+        <div class="jumbotron mb-0 d-flex flex-lg-row flex-column justify-content-between align-items-center">
+            <h1 class="display-1 text-truncate mw-100 {{userColor user.id}}">
+                Hello, <span style="color:{{userSolidColor user.username}}">{{user.username}}</span>!
+            </h1>
+            <div class="d-flex align-items-center">
+                <img src="/img/eight-ball.svg" width="60" height="60" class="d-inline-block align-top me-2"
+                    alt="Eight Ball Logo">
+                <span class="fs-2 fw-bold">Eight Ball</span>
+            </div>
         </div>
+
         <div class="row mt-0">
             <div class="col-md-5 col-lg-4">
                 <div class="sticky-top pt-4">
-                    <div class="list-group">
+                    <!-- Play button -->
+                    <div class="list-group mb-4">
+                        <button
+                            class="list-group-item list-group-item-action list-group-item-success border fs-2 fw-bold py-3 text-center"
+                            type="button" onclick="window.location.href='play'">
+                            PLAY
+                        </button>
                         <div
-                            class="list-group-item list-group-item-secondary d-flex justify-content-between align-items-center border-bottom-0">
+                            class="list-group-item list-group-item-secondary d-flex justify-content-center align-items-center">
                             {{#if user.rating}}
                             <span class="h5 mb-0 rank-text {{getRankColor user.rating}}">{{getRank user.rating}}
                                 ({{user.rating}})</span>
@@ -28,38 +48,26 @@
                             <span class="h5 mb-0 rank-text">Unranked</span>
                             {{/if}}
                         </div>
-                        <button class="list-group-item list-group-item-action list-group-item-primary border"
-                            type="button" onclick="window.location.href='play'">
-                            <div class="d-flex justify-content-center">
-                                <h1>PLAY</h1>
-                            </div>
-                        </button>
-                        <div class="list-group-item bg-dark text-light p-3">
-                            <div class="align-items-center mb-2 h4">
-                                {{#if queuedPlayers}}
-                                <span>In queue: </span>
-                                {{#each queuedPlayers}}
-                                <span class="{{userColor this.id}}">{{this.username}}</span>{{#unless @last}},
-                                {{/unless}}
-                                {{/each}}
-                                {{/if}}
-                            </div>
-                            <div class="d-flex justify-content-between align-items-center mb-2">
-                                <span>Ongoing games:</span>
-                                <span class="badge bg-secondary rounded-pill px-3 py-2">{{gamesInProgress}}</span>
-                            </div>
-                            <div class="d-flex justify-content-between align-items-center mb-2">
-                                <span>Active players:</span>
-                                <span class="badge bg-secondary rounded-pill px-3 py-2">{{playersOnline}}</span>
-                            </div>
-                            {{!-- <div class="d-flex justify-content-between align-items-center mb-2">
-                                <span>Queued players:</span>
-                                <span class="badge bg-secondary rounded-pill px-3 py-2">{{playersInQueue}}</span>
-                            </div> --}}
+                    </div>
+
+                    <!-- Online part -->
+                    <div class="list-group">
+                        <div class="list-group-item list-group-item-secondary">
+                            <h5 class="mb-0">Online Players</h5>
+                        </div>
+                        <div class="list-group-item bg-dark text-light">
+                            <h6>Online</h6>
+                            <div id="playersOnline" class="player-list"></div>
+                        </div>
+                        <div class="list-group-item bg-dark text-light">
+                            <h6>In Queue</h6>
+                            <div id="playersInQueue" class="player-list"></div>
                         </div>
                     </div>
                 </div>
             </div>
+
+
             <div class="col-md-7 col-lg-8">
                 {{#if game}}
                 <div class="list-group mt-4">
@@ -75,13 +83,18 @@
                     </div>
                     <div class="list-group-item text-center py-4">
                         <p class="mb-0">You have not played any games yet!</p>
-                        <a href="/play" class="btn btn-primary mt-2">Play a game now</a>
+                        <a href="/play" class="btn btn-success mt-2">Play a game now</a>
                     </div>
                 </div>
                 {{/if}}
                 <div class="list-group mt-4">
                     <div class="list-group-item list-group-item-secondary">
                         <h5 class="mb-0">What's new?</h5>
+                    </div>
+                    <div class="list-group-item">
+                        <h4 class="mb-2">New about page and nationality flags</h4>
+                        <p class="mb-1">Check out the new <a href='/about'>about</a> page!</p>
+                        <small class="text-muted">Posted today!</small>
                     </div>
                     <div class="list-group-item">
                         <h4 class="mb-2">Patch notes august</h4>
@@ -102,7 +115,26 @@
             </div>
         </div>
     </div>
-    {{> js}}
 </body>
+
+<style>
+    .player-list-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        max-width: 100%;
+        overflow-x: auto;
+    }
+
+    .player-item {
+        white-space: nowrap;
+    }
+
+    .player-item:not(:last-child)::after {
+        content: ",";
+        margin-right: 4px;
+        color: white;
+    }
+</style>
 
 </html>

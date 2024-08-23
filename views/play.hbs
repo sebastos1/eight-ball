@@ -14,21 +14,9 @@
 
         <div id="menu" class="bg-dark text-center py-5 px-5 rounded">
             <h1 class="display-3">Eight Ball</h1>
-            <p class="h3 pt-3">
-                {{#if queuedPlayers}}
-                In queue:
-                {{#each queuedPlayers}}
-                <span class="{{userColor this.id}}"
-                    style="color:{{userSolidColor this.username}}">{{this.username}}</span>{{#unless @last}},
-                {{/unless}}
-                {{/each}}
-                {{else}}
-                <span>No players in queue right now.</span>
-                {{/if}}
-            </p>
             <hr class=" my-5">
             <div id="queueMessage" class="mb-3"></div>
-            <button type="button" id="btn-joinQueue" class="btn btn-lg btn-primary">Find opponent</button>
+            <button type="button" id="btn-joinQueue" class="btn btn-lg btn-success">Find opponent</button>
         </div>
 
 
@@ -37,59 +25,6 @@
             <div class="loader mx-auto my-5"></div>
             <button type="button" id="btn-leaveQueue" class="btn btn-lg btn-danger">Cancel queue</button>
         </div>
-
-        <style>
-            .player-ball {
-                width: 30px;
-                height: 30px;
-                border-radius: 50%;
-                display: inline-block;
-                flex-shrink: 0;
-            }
-
-            .score-box {
-                border-radius: 15px;
-                padding: 5px 20px;
-                margin: 0 15px;
-                flex-shrink: 0;
-            }
-
-            .score {
-                font-size: 2.5rem;
-                font-weight: bold;
-                line-height: 1;
-                margin: 0;
-            }
-
-            .player-name {
-                width: 150px;
-                white-space: nowrap;
-                overflow: hidden;
-                text-overflow: ellipsis;
-                text-align: center;
-            }
-
-            .scoreboard-container {
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                width: 100%;
-            }
-
-            .player-container {
-                display: flex;
-                align-items: center;
-                justify-content: flex-end;
-                width: 50%;
-            }
-
-            .opponent-container {
-                display: flex;
-                align-items: center;
-                justify-content: flex-start;
-                width: 50%;
-            }
-        </style>
 
         <div id="game" class="container mt-4">
             <div class="row mb-3">
@@ -126,7 +61,7 @@
             <h2 id="winnerName" class="display-3">User</h2>
             <h5 id="winReason" class="display-5">reason</h5>
             <hr class="my-5">
-            <button type="button" id="btn-requeue" class="btn btn-lg btn-primary">Requeue</button>
+            <button type="button" id="btn-requeue" class="btn btn-lg btn-success">Requeue</button>
         </div>
 
     </div>
@@ -144,7 +79,59 @@
     <script src="/js/game/Stick.js"></script>
     <script src="/js/game/Game.js"></script>
     <script src="/js/game/socket.js"></script>
-
 </body>
 
 </html>
+
+<style>
+    .player-ball {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        display: inline-block;
+        flex-shrink: 0;
+    }
+
+    .score-box {
+        border-radius: 15px;
+        padding: 5px 20px;
+        margin: 0 15px;
+        flex-shrink: 0;
+    }
+
+    .score {
+        font-size: 2.5rem;
+        font-weight: bold;
+        line-height: 1;
+        margin: 0;
+    }
+
+    .player-name {
+        width: 150px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        text-align: center;
+    }
+
+    .scoreboard-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+    }
+
+    .player-container {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        width: 50%;
+    }
+
+    .opponent-container {
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        width: 50%;
+    }
+</style>
