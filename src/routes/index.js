@@ -18,26 +18,16 @@ const router = express.Router();
 // GET '/' route
 router.get('/', (req, res, next) => {
 
-    if (!req.authenticated) {
-        // Render the login page and pass in saved login infomation
-        return res.render('login', { login: req.session.login });
-    }
+    // Render the login page and pass in saved login infomation
+    if (!req.authenticated) return res.render('login', { login: req.session.login });
 
     // Find the latest game played by the user from the database
     Game.getLatestByUserId(req.user_id, (err, game) => {
 
-        if (err) {
-            return next('Database error.');
-        }
+        if (err) return next('Database error.');
 
         // Render the dashboard page and pass in game status and the latest game played
-        return res.render('dashboard', {
-            queuedPlayers: socket.queuedPlayers()._queue,
-            playersOnline: socket.playersOnline,
-            playersInQueue: socket.playersInQueue,
-            gamesInProgress: socket.gamesInProgress,
-            game
-        });
+        return res.render('dashboard', { game });
     });
 });
 
@@ -49,14 +39,12 @@ router.get('/', (req, res, next) => {
 router.get('/play', (req, res, _) => {
 
     if (!req.authenticated) {
-        req.flash('danger', 'You are not logged in.');
+        req.flash('danger', 'Log in to play :)');
         return res.redirect('/login');
     }
 
     // Render the play page
-    return res.render('play', {
-        queuedPlayers: socket.queuedPlayers()._queue,
-    });
+    return res.render('play');
 });
 
 /**

@@ -47,5 +47,6 @@ body {
 .twemoji-flag {
     height: 1.2em;
     width: auto;
-    vertical-align: -0.25em;
+    vertical-align: -0.30em;
+    margin: 0 0.15em;
 }

@@ -135,7 +135,7 @@ router.post('/register', (req, res) => {
     let { username, email, password, passwordConfirm } = req.body;
 
     // Data sanitisation
-    username = escape(trim(username));
+    username = trim(username);  // Remove trim() from inside escape()
     if (email != "") email = escape(normalizeEmail(trim(email)));
 
     // Save the sanitised data to saved registration data
@@ -148,8 +148,13 @@ router.post('/register', (req, res) => {
         errors.push('Username and password fields must be filled.');
     } else {
         // username
-        if (!/^[\w\s@.-]+$/.test(username)) errors.push('Usernames can only contain letters, numbers, spaces, and the characters @, ., -');
-        if (!isLength(username, { min: 3, max: 30 })) errors.push('Usernames must be between 3 and 30 characters long.');
+        // this allows an extended latin alphabet, numbers, and spaces
+        if (!/^[A-Za-zÀ-ÿ0-9 ]+$/.test(username)) {
+            errors.push('Username can only contain Latin letters, numbers, and spaces.');
+        }
+        if (!isLength(username, { min: 3, max: 30 })) {
+            errors.push('Usernames must be between 3 and 30 characters long.');
+        }
 
         // password
         if (!isLength(password, { min: 4, max: 32 })) errors.push('Passwords must be between 4 and 32 characters.');

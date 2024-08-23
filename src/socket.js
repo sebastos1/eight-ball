@@ -2,110 +2,138 @@
 
 // Dependencies
 const http = require('http');
-const socket = require('socket.io');
 const chalk = require('chalk');
+const socket = require('socket.io');
 
 // Imports
-const Player = require('./game/Player');
-const Queue = require('./game/Queue');
 const Game = require('./game/Game');
+const Queue = require('./game/Queue');
+const Player = require('./game/Player');
 
 // Constants
 const TICKRATE = 60;
 
 // Data structures
-const players = new Map();
 const games = new Map();
+const players = new Map();
 const queue = new Queue();
 
 // Log function
 const log = (string) => console.log(`${chalk.bold.underline.red(`GAME [${players.size}][${queue.size}][${games.size}]`)} ${chalk.yellow('»')} ${chalk.yellow(string)}`);
 
+function emitOnlineUpdate(io) {
+    io.emit('online-update', {
+        playersOnline: Array.from(players.values()).map(player => ({
+            id: player.id,
+            username: player.username,
+            country: player.country
+        }))
+    });
+}
+
+function emitQueueUpdate(io) {
+    io.emit('queue-update', {
+        playersInQueue: queue._queue.map(player => ({
+            id: player.id,
+            username: player.username,
+            country: player.country
+        }))
+    });
+}
+
 // Socket events
 const events = function (io) {
     // On socket connection
     io.on('connection', (socket) => {
-        // Check if the socket has been authenticated
-        if (socket.request.session.authenticated) {
+        // check if authenticated
+        if (!socket.request.session.authenticated) return;
 
-            // Create new player or check if it already exists
-            let player;
-            if (players.has(socket.request.session.user.id)) {
-                player = players.get(socket.request.session.user.id);
-                player.socket = socket;
-            } else {
-                player = new Player(socket);
-                players.set(player.id, player);
-            }
-            log(`${player.username}#${player.id} has connected - ${players.size} player(s) online`);
+        // Create new player or check if it already exists
+        let player;
+        const userId = socket.request.session.user.id;
 
-            // On socket disconnect
-            socket.on('disconnect', () => {
-
-                console.log(player.username, "left the game");
-
-                // If player in queue, remove them from the queue
-                if (player.inQueue) queue.remove(player);
-                // If player in game, end the game with the opponent as the winner
-                if (player.inGame) {
-                    const game = player.game;
-                    game.winner = (game.player1 === player ? game.player2 : game.player1);
-                    game.winReason = 3; // player disconnect code
-                    game.end(game.winner, game.winReason);
-                }
-
-                // Remove the player from players
-                players.delete(player.id);
-                log(`${player.username}#${player.id} has disconnected - ${players.size} player(s) online`);
-
-            });
-
-            // On socket joining the queue
-            socket.on('queue-join', (callback) => {
-                if (player.inGame) {
-                    callback({
-                        success: false,
-                        message: "Previous game is still in progress!",
-                    });
-                } else {
-                    queue.enqueue(player);
-                    callback({
-                        success: true,
-                        message: "You have successfully joined the queue.",
-                    });
-                    log(`${player.username}#${player.id} has joined the queue - ${queue.size} player(s) in queue`);
-                }
-            });
-
-            // On socket leaving the queue
-            socket.on('queue-leave', () => {
-
-                // Check that the player is in the queue and remove them
-                if (player.inQueue) {
-                    queue.remove(player);
-                    log(`${player.username}#${player.id} has left the queue - ${queue.size} player(s) in queue`);
-                }
-
-            });
-
-            // On socket shooting the cue ball
-            socket.on('shoot', (data) => {
-
-                // Check that the player is in game and then call the shoot method on their game
-                if (player.inGame) {
-                    player.game.shoot(player, data.power, data.angle);
-                }
-
-            });
-
+        if (players.has(userId)) {
+            player = players.get(userId);
+            player.socket = socket;
+        } else {
+            player = new Player(socket);
+            players.set(player.id, player);
         }
+        log(`${player.username}#${player.id} has connected - ${players.size} player(s) online`);
+
+        // Broadcast online update
+        emitOnlineUpdate(io)
+
+        // On socket disconnect
+        socket.on('disconnect', () => {
+
+            console.log(player.username, "left the game");
+
+            // If player in queue, remove them from the queue
+            if (player.inQueue) queue.remove(player);
+            // If player in game, end the game with the opponent as the winner
+            if (player.inGame) {
+                const game = player.game;
+                game.winner = (game.player1 === player ? game.player2 : game.player1);
+                game.winReason = 3; // player disconnect code
+                game.end(game.winner, game.winReason);
+            }
+
+            // Remove the player from players
+            players.delete(player.id);
+            log(`${player.username}#${player.id} has disconnected - ${players.size} player(s) online`);
+
+            emitQueueUpdate(io)
+            emitOnlineUpdate(io)
+        });
+
+        // On socket joining the queue
+        socket.on('queue-join', (callback) => {
+            if (player.inGame) {
+                callback({
+                    success: false,
+                    message: "Previous game is still in progress!",
+                });
+            } else {
+                queue.enqueue(player);
+                callback({
+                    success: true,
+                    message: "You have successfully joined the queue.",
+                });
+                log(`${player.username}#${player.id} has joined the queue - ${queue.size} player(s) in queue`);
+
+                emitQueueUpdate(io)
+            }
+        });
+
+        // On socket leaving the queue
+        socket.on('queue-leave', () => {
+            if (!player.inQueue) return;
+
+            queue.remove(player);
+            log(`${player.username}#${player.id} has left the queue - ${queue.size} player(s) in queue`);
+
+            emitQueueUpdate(io)
+        });
+
+        // On socket shooting the cue ball
+        socket.on('shoot', (data) => {
+
+            // Check that the player is in game and then call the shoot method on their game
+            if (player.inGame) player.game.shoot(player, data.power, data.angle);
+        });
+
+        socket.on('requestOnlineUpdate', () => {
+            emitOnlineUpdate(io);
+            emitQueueUpdate(io);
+        });
     });
 };
 
 // Main game loop
 const gameLoop = setInterval(() => {
 
-    // If the queue has more than two players
+    // If the queue has two or more players
     if (queue.size >= 2) {
 
         // Remove two players from the front of the queue
@@ -121,6 +149,7 @@ const gameLoop = setInterval(() => {
         player1.socket.emit('game-start', game.startData(player1));
         player2.socket.emit('game-start', game.startData(player2));
 
+        // todo: send queue update when someone joins a game. maybe track ongoing games after all.
     }
 
     // Iterate throuh every game in games
@@ -183,10 +212,6 @@ const init = function (app) {
 // Export init function
 module.exports = init;
 
-// Export functions that return the size of players, games and the queue
-module.exports.playersOnline = () => players.size;
-module.exports.playersInQueue = () => queue.size;
-module.exports.gamesInProgress = () => games.size;
-
-// Gets a list of queued players, for the queue page
-module.exports.queuedPlayers = () => queue;
+// Export functions that return the online and queued player info
+module.exports.playersInQueue = () => queue._queue;
+module.exports.playersOnline = () => players;
