@@ -149,9 +149,11 @@ router.get('/leaderboard', (req, res, next) => {
 
         // Render the leaderboard page and pass in the users array
         return res.render('leaderboard', { users });
-
     });
+});
 
+router.get('/about', (req, res) => {
+    return res.render('about');
 });
 
 // Export router

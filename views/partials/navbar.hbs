@@ -1,50 +1,52 @@
-<nav class="navbar navbar-dark bg-dark mb-3">
-    <div class="container">
-        <a class="navbar-brand" href="/">
-            <img src="/img/eight-ball.svg" width="30" height="30" class="d-inline-block align-top"
-                alt="Eight Ball Logo">
-            Eight Ball
-        </a>
-        <ul class="navbar-nav d-flex flex-row me-auto">
-            <li class="nav-item me-3">
-                <a class="nav-link {{#if active_leaderboard}}active{{/if}}" href="/leaderboard">Leaderboard</a>
-            </li>
-            {{#if authenticated}}
-            <li class="nav-item me-3">
-                <a class="nav-link {{#if active_play}}active{{/if}}" href="/play">Play</a>
-            </li>
-            {{/if}}
-            {{#unless authenticated}}
-            <li class="nav-item me-3">
-                <a class="nav-link {{#if active_login}}active{{/if}}" href="/login">Login</a>
-            </li>
-            <li class="nav-item me-3">
-                <a class="nav-link {{#if active_register}}active{{/if}}" href="/register">Register</a>
-            </li>
-            {{/unless}}
-        </ul>
-        <div class="d-flex align-items-center">
-            <form class="d-flex me-3" action="/profile/" method="GET">
-                <div class="input-group bg-secondary bg-opacity-25 rounded-pill">
-                    <input type="text" name="username" class="form-control border-0 bg-transparent"
-                        placeholder="Find player" required>
-                    <button class="btn btn-link text-light" type="submit">
-                        <i class="fas fa-search"></i>
-                    </button>
-                </div>
-            </form>
-            {{#if authenticated}}
-            <a href="/profile" class="nav-link p-0 {{#if active_profile}}active{{/if}}">
-                <div class="d-flex align-items-center bg-secondary bg-opacity-25 rounded-pill px-3 py-1">
-                    <span class="me-2 {{userColor user.id}}"
-                        style="color:{{userSolidColor user.username}}">{{user.username}}</span>
-                    <img src="/img/AINTNOWAY.png" width="30" height="30" class="rounded-circle" alt="Avatar">
-                </div>
+<div class="container">
+    <nav class="navbar navbar-dark bg-dark mb-3 rounded-bottom">
+        <div class="container-fluid px-0">
+            <a class="navbar-brand" href="/">
+                <img src="/img/eight-ball.svg" width="30" height="30" class="d-inline-block align-top"
+                    alt="Eight Ball Logo">
+                Eight Ball
             </a>
-            {{/if}}
+            <ul class="navbar-nav d-flex flex-row me-auto">
+                <li class="nav-item me-3">
+                    <a class="nav-link {{#if active_leaderboard}}active{{/if}}" href="/leaderboard">Leaderboard</a>
+                </li>
+                {{#if authenticated}}
+                <li class="nav-item me-3">
+                    <a class="nav-link {{#if active_play}}active{{/if}}" href="/play">Play</a>
+                </li>
+                {{/if}}
+                {{#unless authenticated}}
+                <li class="nav-item me-3">
+                    <a class="nav-link {{#if active_login}}active{{/if}}" href="/login">Login</a>
+                </li>
+                <li class="nav-item me-3">
+                    <a class="nav-link {{#if active_register}}active{{/if}}" href="/register">Register</a>
+                </li>
+                {{/unless}}
+            </ul>
+            <div class="d-flex align-items-center">
+                <form class="d-flex me-3" action="/profile/" method="GET">
+                    <div class="input-group bg-secondary bg-opacity-25 rounded-pill">
+                        <input type="text" name="username" class="form-control border-0 bg-transparent"
+                            placeholder="Find player" required>
+                        <button class="btn btn-link text-light" type="submit">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                </form>
+                {{#if authenticated}}
+                <a href="/profile" class="nav-link p-0 {{#if active_profile}}active{{/if}}">
+                    <div class="d-flex align-items-center bg-secondary bg-opacity-25 rounded-pill px-3 py-1">
+                        <span class="me-2 {{userColor user.id}}"
+                            style="color:{{userSolidColor user.username}}">{{user.username}}</span>
+                        <img src="/img/AINTNOWAY.png" width="30" height="30" class="rounded-circle" alt="Avatar">
+                    </div>
+                </a>
+                {{/if}}
+            </div>
         </div>
-    </div>
-</nav>
+    </nav>
+</div>
 
 <style>
     .input-group input:focus {
@@ -54,5 +56,10 @@
 
     .input-group:focus-within {
         box-shadow: 0;
+    }
+
+    .navbar {
+        width: 100%;
+        padding: 0.5em 1em 0.75em;
     }
 </style>

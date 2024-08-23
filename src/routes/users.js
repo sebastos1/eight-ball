@@ -4,6 +4,7 @@
 const express = require('express');
 const validator = require('validator');
 const chalk = require('chalk');
+const geoip = require('geoip-lite');
 
 // Imports
 const User = require('../models/User');
@@ -116,7 +117,6 @@ router.get('/register', (req, res) => {
     // If the request is not authenticated render the register page and pass in saved registration info
     if (!req.authenticated) {
         return res.render('register', { register: req.session.register });
-        // If the request is already authenticated send an error flash message and redirect to the dashboard
     }
 
     req.flash('danger', 'You are already logged in.');
@@ -136,9 +136,7 @@ router.post('/register', (req, res) => {
 
     // Data sanitisation
     username = escape(trim(username));
-    if (email != "") {
-        email = escape(normalizeEmail(trim(email)));
-    }
+    if (email != "") email = escape(normalizeEmail(trim(email)));
 
     // Save the sanitised data to saved registration data
     req.session.register = { username, email };
@@ -154,13 +152,15 @@ router.post('/register', (req, res) => {
         if (!isLength(username, { min: 3, max: 30 })) errors.push('Usernames must be between 3 and 30 characters long.');
 
         // password
-        if (!isLength(password, { min: 8 })) errors.push('Passwords must be at least 8 characters long.');
-        if (!isLength(password, { max: 64 })) errors.push('Passwords cannot be longer than 64 characters long.');
+        if (!isLength(password, { min: 4, max: 32 })) errors.push('Passwords must be between 4 and 32 characters.');
         if (!equals(password, passwordConfirm)) errors.push('Passwords must match.');
 
         if (email) {
             if (!isEmail(email)) errors.push('Emails must be valid.');
             if (!isLength(email, { max: 64 })) errors.push('Emails cannot be longer than 64 characters.');
+            User.findIdByEmail(email, (err, user_id) => {
+                if (!err && user_id) errors.push('Email already taken.');
+            });
         }
     }
 
@@ -168,35 +168,51 @@ router.post('/register', (req, res) => {
     User.findIdByUsername(username, (err, user_id) => {
         if (!err && user_id) errors.push('Username already taken.');
 
-        // Check if the email has already been used in the database
-        if (email) {
-            User.findIdByEmail(email, (err, user_id) => {
-                if (!err && user_id) errors.push('Email already taken.');
-            });
-        }
-
         if (errors.length) {
             req.flash('danger', errors);
             return res.redirect('/register');
         }
 
-        User.create({ username, email, password }, (err, user_id) => {
+        const ip = req.ip || req.socket.remoteAddress;
 
-            if (err) {
-                req.flash('danger', 'Database error.');
-                return res.redirect('/register');
-            }
+        tryGetLocationFromIp(ip, (country) => {
 
-            // Login the user and save the username to saved login data
-            req.login(user_id);
-            log(`${username}#${user_id} has registered`);
-            req.session.login = { username };
+            console.log(country);
 
-            req.flash('success', 'You have successfully registered.');
-            return res.redirect('/');
+            User.create({ username, email, password, country }, (err, user_id) => {
+
+                if (err) {
+                    req.flash('danger', 'Database error.');
+                    return res.redirect('/register');
+                }
+
+                // Login the user and save the username to saved login data
+                req.login(user_id);
+                log(`${username}#${user_id} has registered from ${country}`);
+                req.session.login = { username };
+
+                req.flash('success', 'You have successfully registered.');
+                return res.redirect('/');
+            });
         });
     });
 });
+
+function tryGetLocationFromIp(ip, callback) {
+    if (ip === '::1' || ip === '127.0.0.1') {
+        ip = '72.229.28.185'; // example norwegian ip
+    }
+
+    try {
+        const geo = geoip.lookup(ip);
+        const country = (geo && geo.country) ? geo.country : 'un'; // for unknown
+        callback(country);
+    } catch (error) {
+        console.error('Error in IP geolocation:', error);
+        callback('UN');
+    }
+}
+
 
 /**
  * Delete route
@@ -238,7 +254,6 @@ router.post('/delete', (req, res) => {
                 // Send a successful logout flash message and redirect to the index route
                 req.flash('success', 'Your account has been deactivated.');
                 res.redirect('/');
-                // If there was an error
 
             });
         });
