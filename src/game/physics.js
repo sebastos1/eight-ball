@@ -1,7 +1,5 @@
-'use strict';
-
 // Imports
-const Vector = require('./Vector');
+import Vector from './Vector.js';
 
 // Constants
 const FRICTION = 0.01;
@@ -98,5 +96,4 @@ physics.collideBalls = function (ball1, ball2) {
 
 };
 
-// Export physics module
-module.exports = physics;
+export default physics;

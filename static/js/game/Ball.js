@@ -1,5 +1,3 @@
-'use strict';
-
 const skull = new Image();
 skull.src = "/img/AINTNOWAY.png";
 

@@ -1,11 +1,9 @@
-'use strict';
-
 // Dependencies
-const express = require('express');
+import express from 'express';
 
 // Imports
-const Users = require('../db/Users');
-const Games = require('../db/Games');
+import Users from '../db/Users.js';
+import Games from '../db/Games.js';
 
 // Initialise route handler
 const router = express.Router();
@@ -142,4 +140,4 @@ router.get('/about', (_req, res) => {
 });
 
 // Export router
-module.exports = router;
+export default router;

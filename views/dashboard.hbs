@@ -8,8 +8,9 @@
 </head>
 
 <!-- Socket.IO JS -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.js"
-    integrity="sha256-ji09tECORKvr8xB9iCl8DJ8iNMLriDchC1+p+yt1hSs=" crossorigin="anonymous"></script>
+<script src="https://cdn.socket.io/4.7.5/socket.io.min.js"
+    integrity="sha384-2huaZvOR9iDzHqslqwpR87isEmrfxqyWOF7hr7BY6KG0+hVKLoEXMPUJw3ynWuhO"
+    crossorigin="anonymous"></script>
 
 {{> js}}
 <script src="/js/game/online.js"></script>
@@ -21,8 +22,7 @@
         <div class="jumbotron mb-0 d-flex flex-lg-row flex-column justify-content-between align-items-center">
             {{#if loggedIn}}
             <h1 class="display-1 text-truncate mw-100">
-                Hello, <span class="{{userColor user.id}}"
-                    style="color:{{userSolidColor user.username}}">{{user.username}}</span>!
+                Hello, <span style="color:{{userSolidColor user.username}}">{{user.username}}</span>!
             </h1>
             {{else}}
             <h1 class="display-1 text-truncate mw-100">

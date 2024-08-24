@@ -1,12 +1,10 @@
-'use strict';
-
 // Components
-const Ball = require('./Ball');
-const Vector = require('./Vector');
-const physics = require('./physics');
-const events = require('./events');
-const Games = require('../db/Games');
-const Users = require('../db/Users');
+import Ball from './Ball.js';
+import Vector from './Vector.js';
+import physics from './physics.js';
+import events from './events.js';
+import Games from '../db/Games.js';
+import Users from '../db/Users.js';
 
 // Constants
 const WIDTH = 1280;
@@ -241,5 +239,4 @@ game.endData = function (player, winReason) {
     };
 };
 
-// Export game class
-module.exports = Game;
+export default Game;

@@ -1,5 +1,3 @@
-'use strict';
-
 // Show menu method
 const showMenu = function () {
 

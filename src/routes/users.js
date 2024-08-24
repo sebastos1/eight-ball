@@ -1,14 +1,12 @@
-'use strict';
-
 // Dependencies
-const express = require('express');
-const validator = require('validator');
-const chalk = require('chalk');
-const geoip = require('geoip-lite');
+import express from 'express';
+import validator from 'validator';
+import chalk from 'chalk';
+import geoip from 'geoip-lite';
 
-// Imports
-const User = require('../db/Users');
-const authentication = require('../authentication');
+// imports
+import User from '../db/Users.js';
+import authentication from '../authentication.js';
 
 // Initialise route handler
 const router = express.Router();
@@ -265,4 +263,4 @@ router.post('/delete', (req, res) => {
     });
 });
 
-module.exports = router;
+export default router;

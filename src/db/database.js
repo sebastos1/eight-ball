@@ -1,15 +1,15 @@
-'use strict';
-
 // Dependencies
-const sqlite = require('sqlite3');
-const connectSQLite = require('connect-sqlite3');
-const chalk = require('chalk');
+import sqlite from 'sqlite3';
+import connectSQLite from 'connect-sqlite3';
+import chalk from 'chalk';
 
 // Initialise database connection
 const database = new sqlite.Database('./database.db', (err) => {
     if (err) throw err;
     console.log(chalk.bold.red('Database connected...'));
 });
+
+export default database;
 
 // Execute in serialised mode
 database.serialize(() => {
@@ -56,9 +56,6 @@ database.serialize(() => {
 
 // Session store
 database.sessionStore = (session) => new (connectSQLite(session))({ db: 'database.db' });
-
-// Export the database module
-module.exports = database;
 
 
 

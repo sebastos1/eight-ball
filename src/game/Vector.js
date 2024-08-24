@@ -1,5 +1,3 @@
-'use strict';
-
 // Vector class constructor
 const Vector = function (x = 0, y = 0) {
     this.x = x;
@@ -118,5 +116,4 @@ Vector.distanceSquared = function (vector1, vector2) {
     return Vector.subtract(vector1, vector2).lengthSquared;
 };
 
-// Export Vector class
-module.exports = Vector;
+export default Vector;

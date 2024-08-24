@@ -1,14 +1,12 @@
-'use strict';
-
 // Dependencies
-const http = require('http');
-const chalk = require('chalk');
-const socket = require('socket.io');
+import http from 'http';
+import chalk from 'chalk';
+import { Server } from 'socket.io';
 
 // Imports
-const Game = require('./game/Game');
-const Queue = require('./game/Queue');
-const Player = require('./game/Player');
+import Game from './game/Game.js';
+import Queue from './game/Queue.js';
+import Player from './game/Player.js';
 
 // Constants
 const TICKRATE = 60;
@@ -43,6 +41,7 @@ function emitQueueUpdate(io) {
 
 // Socket events
 const events = function (io) {
+
     // On socket connection
     io.on('connection', (socket) => {
         // check if authenticated
@@ -196,22 +195,28 @@ const init = function (app) {
 
     // Create a new http server and attach socket
     const server = http.createServer(app);
-    const io = socket(server);
+
+    // new socket io instance
+    const io = new Server(server);
 
     // Set events to the socket
     events(io);
 
-    // Export session middleware function
-    module.exports.session = (session) => io.use((socket, next) => session(socket.request, socket.request.res, next));
-
     // Return the http server
-    return server;
-
+    return { server, io };
 };
 
-// Export init function
-module.exports = init;
-
 // Export functions that return the online and queued player info
-module.exports.playersInQueue = () => queue._queue;
-module.exports.playersOnline = () => players;
+export default init;
+export const playersInQueue = () => queue._queue;
+export const playersOnline = () => players;
+export const setupSessionMiddleware = (session, io) => {
+    io.use((socket, next) => {
+        const req = socket.request;
+
+        // Manually attach an empty `res` object to satisfy the `session` middleware.
+        req.res = {};
+
+        session(req, req.res, next);
+    });
+};

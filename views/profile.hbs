@@ -14,8 +14,8 @@
 
         {{#if profile.is_active}}
         <div class="jumbotron mb-0 d-flex flex-lg-row flex-column justify-content-sm-between align-items-center">
-            <h1 class="display-1 text-truncate mw-100 {{userColor profile.id}}"
-                style="color:{{userSolidColor profile.username}}">{{profile.username}} {{userFlag profile.country}}</h1>
+            <h1 class="display-1 text-truncate mw-100" style="color:{{userSolidColor profile.username}}">
+                {{profile.username}} {{userFlag profile.country}}</h1>
             <h1 class="display-3 text-muted">
                 <span class="badge badge-secondary">
                     <span style="color: rgb(117, 255, 117);">{{profile.wins}}W</span> -

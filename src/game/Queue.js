@@ -1,5 +1,3 @@
-'use strict';
-
 // Queue class constructor
 const Queue = function () {
     this._queue = [];
@@ -34,5 +32,4 @@ Queue.prototype.remove = function (player) {
     player.inQueue = false;
 };
 
-// Export Queue class
-module.exports = Queue;
+export default Queue;

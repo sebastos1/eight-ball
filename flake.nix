@@ -1,5 +1,5 @@
 {
-  inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixos-23.05";
+  inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.05";
   inputs.flake-utils.url = "github:numtide/flake-utils";
 
   outputs = { self, nixpkgs, flake-utils }:
@@ -12,7 +12,7 @@
       in {
         devShell = pkgs.mkShell {
           buildInputs = with pkgs; [
-            nodejs-18_x
+            nodejs_20
 	    python3
             sqlite
           ];

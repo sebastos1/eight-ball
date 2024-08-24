@@ -1,5 +1,3 @@
-'use strict';
-
 // Constants
 const BALL_RADIUS = 20;
 
