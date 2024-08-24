@@ -1,5 +1,3 @@
-'use strict';
-
 const YELLOW_COL = "#1CCC7F"; // teal
 const RED_COL = "#C43E64"; // purple ish
 
@@ -75,9 +73,6 @@ socket.on('game-start', (data) => {
     // Display player and opponent colors
     $('#playercolor').css('background-color', game.player.color);
     $('#opponentcolor').css('background-color', game.opponent.color);
-
-    $('#playerUsername').addClass(Colors.colorPicker(game.player.id));
-    $('#opponentUsername').addClass(Colors.colorPicker(game.opponent.id));
 
     // If player's turn
     if (game.turn) {
@@ -156,10 +151,10 @@ socket.on('game-end', (data) => {
 
     // If player has won, display win text
     if (data.winner) {
-        $('#winnerName').text(game.player.username).addClass(Colors.colorPicker(game.player.id));
+        $('#winnerName').text(game.player.username);
         string = "You won ";
     } else {
-        $('#winnerName').text(game.opponent.username).addClass(Colors.colorPicker(game.opponent.id));
+        $('#winnerName').text(game.opponent.username);
         string = "You lost ";
     }
 

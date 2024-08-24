@@ -1,5 +1,3 @@
-'use strict';
-
 const events = {
     ballPotted(game, ball) {
 
@@ -71,5 +69,4 @@ const events = {
     },
 };
 
-// Export events module 
-module.exports = events;
+export default events;

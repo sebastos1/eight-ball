@@ -1,10 +1,8 @@
-'use strict';
-
 // Dependencies
-const bcrypt = require('bcryptjs');
+import bcrypt from 'bcryptjs';
 
 // Imports
-const User = require('./db/Users');
+import User from './db/Users.js';
 
 // Custom express middleware function
 const authentication = function (req, res, next) {
@@ -91,5 +89,4 @@ authentication.comparePassword = function (password, hash, callback) {
     });
 };
 
-// Export authentication module
-module.exports = authentication;
+export default authentication;

@@ -1,5 +1,3 @@
-'use strict';
-
 // Player class constructor
 const Player = function (socket) {
 
@@ -17,4 +15,4 @@ const Player = function (socket) {
 };
 
 // Export Player class
-module.exports = Player;
+export default Player;

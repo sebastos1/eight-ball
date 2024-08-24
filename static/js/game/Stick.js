@@ -1,5 +1,3 @@
-'use strict';
-
 const MAX_POWER = 50;
 const MAX_DRAG_DISTANCE = 200; // max drag in px for max power
 const STICK_WIDTH = 20;

@@ -1,11 +1,9 @@
-'use strict';
-
 // Dependencies
-const bcrypt = require('bcryptjs');
+import bcrypt from 'bcryptjs';
 
 // Imports
-const database = require('./database');
-const Elo = require('../game/Elo')
+import Elo from '../game/Elo.js';
+import database from './database.js';
 
 // Declare User object
 const Users = {};
@@ -268,8 +266,6 @@ Users.incrementLosses = function (id, callback) {
         if (err) console.log(err);
         callback(Boolean(err));
     });
-
 };
 
-// Export the User module
-module.exports = Users;
+export default Users;

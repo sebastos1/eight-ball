@@ -1,7 +1,5 @@
-'use strict';
-
 // Imports
-const database = require('./database');
+import database from './database.js';
 
 // Declare Game object
 const Games = {};
@@ -69,5 +67,4 @@ Games.getLatestByUserId = function (id, callback) {
 
 };
 
-// Export the Game module
-module.exports = Games;
+export default Games;

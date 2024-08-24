@@ -1,7 +1,5 @@
-'use strict';
-
 // Imports
-const Vector = require('./Vector');
+import Vector from './Vector.js';
 
 // Ball class constructor
 const Ball = function (position, radius, color) {
@@ -15,5 +13,4 @@ const Ball = function (position, radius, color) {
 
 };
 
-// Export Ball class
-module.exports = Ball;
+export default Ball;
