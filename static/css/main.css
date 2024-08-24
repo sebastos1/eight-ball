@@ -50,3 +50,23 @@ body {
     vertical-align: -0.30em;
     margin: 0 0.15em;
 }
+
+/* For the onlien players list */
+
+.player-list-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    max-width: 100%;
+    overflow-x: auto;
+}
+
+.player-item {
+    white-space: nowrap;
+}
+
+.player-item:not(:last-child)::after {
+    content: ",";
+    margin-right: 4px;
+    color: white;
+}

@@ -4,10 +4,10 @@
 const database = require('../database');
 
 // Declare Game object
-const Game = {};
+const Games = {};
 
 // Game create
-Game.create = function (winner, loser, ratingInfo, winReason, callback) {
+Games.create = function (winner, loser, ratingInfo, winReason, callback) {
 
     // SQL query
     let sql = `INSERT INTO game (winnerId, loserId, winnerScore, loserScore, winnerNewRating, loserNewRating, ratingGained, ratingLost, winReason)
@@ -28,7 +28,7 @@ Game.create = function (winner, loser, ratingInfo, winReason, callback) {
 };
 
 // Get the games of a user from their id
-Game.getGamesByUserId = function (id, callback) {
+Games.getGamesByUserId = function (id, callback) {
 
     // SQL query
     let sql = `SELECT game.id, game.winnerId, game.loserId, game.winnerScore, game.loserScore, game.time, user1.username AS winnerUsername, user2.username AS loserUsername, winnerNewRating, loserNewRating, ratingGained, ratingLost, winReason
@@ -49,7 +49,7 @@ Game.getGamesByUserId = function (id, callback) {
 };
 
 // Get the latest game played by a user from their id
-Game.getLatestByUserId = function (id, callback) {
+Games.getLatestByUserId = function (id, callback) {
 
     // SQL query
     let sql = `SELECT game.id, game.winnerId, game.loserId, game.winnerScore, game.loserScore, game.time, user1.username AS winnerUsername, user2.username AS loserUsername, winnerNewRating, loserNewRating, ratingGained, ratingLost, winReason
@@ -70,4 +70,4 @@ Game.getLatestByUserId = function (id, callback) {
 };
 
 // Export the Game module
-module.exports = Game;
+module.exports = Games;

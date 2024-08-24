@@ -19,9 +19,16 @@
     <div class="container">
         {{> flash}}
         <div class="jumbotron mb-0 d-flex flex-lg-row flex-column justify-content-between align-items-center">
-            <h1 class="display-1 text-truncate mw-100 {{userColor user.id}}">
-                Hello, <span style="color:{{userSolidColor user.username}}">{{user.username}}</span>!
+            {{#if loggedIn}}
+            <h1 class="display-1 text-truncate mw-100">
+                Hello, <span class="{{userColor user.id}}"
+                    style="color:{{userSolidColor user.username}}">{{user.username}}</span>!
             </h1>
+            {{else}}
+            <h1 class="display-1 text-truncate mw-100">
+                Welcome to Eight Ball!
+            </h1>
+            {{/if}}
             <div class="d-flex align-items-center">
                 <img src="/img/eight-ball.svg" width="60" height="60" class="d-inline-block align-top me-2"
                     alt="Eight Ball Logo">
@@ -36,9 +43,10 @@
                     <div class="list-group mb-4">
                         <button
                             class="list-group-item list-group-item-action list-group-item-success border fs-2 fw-bold py-3 text-center"
-                            type="button" onclick="window.location.href='play'">
-                            PLAY
+                            type="button" onclick="window.location.href='{{#if loggedIn}}play{{else}}login{{/if}}'">
+                            {{#if loggedIn}}PLAY{{else}}LOG IN TO PLAY{{/if}}
                         </button>
+                        {{#if loggedIn}}
                         <div
                             class="list-group-item list-group-item-secondary d-flex justify-content-center align-items-center">
                             {{#if user.rating}}
@@ -48,6 +56,7 @@
                             <span class="h5 mb-0 rank-text">Unranked</span>
                             {{/if}}
                         </div>
+                        {{/if}}
                     </div>
 
                     <!-- Online part -->
@@ -67,8 +76,8 @@
                 </div>
             </div>
 
-
             <div class="col-md-7 col-lg-8">
+                {{#if loggedIn}}
                 {{#if game}}
                 <div class="list-group mt-4">
                     <div class="list-group-item list-group-item-secondary">
@@ -84,6 +93,18 @@
                     <div class="list-group-item text-center py-4">
                         <p class="mb-0">You have not played any games yet!</p>
                         <a href="/play" class="btn btn-success mt-2">Play a game now</a>
+                    </div>
+                </div>
+                {{/if}}
+                {{else}}
+                <div class="list-group mt-4">
+                    <div class="list-group-item list-group-item-secondary">
+                        <h5 class="mb-0">Get Started</h5>
+                    </div>
+                    <div class="list-group-item text-center py-4">
+                        <p class="mb-0">Login or create an account to start playing!</p>
+                        <a href="/login" class="btn btn-success mt-2 me-2">Login</a>
+                        <a href="/register" class="btn btn-success mt-2">Register</a>
                     </div>
                 </div>
                 {{/if}}
@@ -116,25 +137,5 @@
         </div>
     </div>
 </body>
-
-<style>
-    .player-list-container {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 8px;
-        max-width: 100%;
-        overflow-x: auto;
-    }
-
-    .player-item {
-        white-space: nowrap;
-    }
-
-    .player-item:not(:last-child)::after {
-        content: ",";
-        margin-right: 4px;
-        color: white;
-    }
-</style>
 
 </html>
