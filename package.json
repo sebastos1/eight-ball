@@ -29,7 +29,7 @@
     "geoip-lite": "^1.4.10",
     "morgan": "^1.9.1",
     "socket.io": "^2.3.0",
-    "sqlite3": "^4.1.1",
+    "sqlite3": "^5.1.7",
     "validator": "^11.1.0"
   },
   "devDependencies": {
