@@ -34,6 +34,9 @@ app.engine('hbs', engine({
 }));
 app.set('view engine', 'hbs');
 
+// for geoloc
+app.set('trust proxy', true);
+
 // Set static path
 app.use(express.static('static'));
 

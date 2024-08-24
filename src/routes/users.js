@@ -176,7 +176,7 @@ router.post('/register', (req, res) => {
             return res.redirect('/register');
         }
 
-        const ip = req.ip || req.socket.remoteAddress;
+        const ip = req.headers["x-real-ip"] || req.headers["x-forwarded-for"];
 
         tryGetLocationFromIp(ip, (country) => {
 
@@ -203,7 +203,7 @@ router.post('/register', (req, res) => {
 
 function tryGetLocationFromIp(ip, callback) {
     if (ip === '::1' || ip === '127.0.0.1') {
-        ip = '72.229.28.185'; // example norwegian ip
+        ip = '72.229.28.185'; // example for testing
     }
 
     try {
@@ -212,7 +212,7 @@ function tryGetLocationFromIp(ip, callback) {
         callback(country);
     } catch (error) {
         console.error('Error in IP geolocation:', error);
-        callback('UN');
+        callback('un');
     }
 }
 
