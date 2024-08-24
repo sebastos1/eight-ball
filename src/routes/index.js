@@ -137,7 +137,7 @@ router.get('/leaderboard', (req, res, next) => {
     });
 });
 
-router.get('/about', (req, res) => {
+router.get('/about', (_req, res) => {
     return res.render('about');
 });
 

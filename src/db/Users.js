@@ -4,7 +4,7 @@
 const bcrypt = require('bcryptjs');
 
 // Imports
-const database = require('../database');
+const database = require('./database');
 const Elo = require('../game/Elo')
 
 // Declare User object

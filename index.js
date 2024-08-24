@@ -7,10 +7,9 @@ const expressSession = require('express-session');
 const flash = require('connect-flash');
 const logger = require('morgan');
 const chalk = require('chalk');
-const path = require('path');
 
 // Imports
-const database = require('./src/database.js');
+const database = require('./src/db/database.js');
 const socket = require('./src/socket');
 const authentication = require('./src/authentication');
 const helpers = require('./src/helpers');
@@ -55,7 +54,7 @@ const session = expressSession({
     secret: 'secret',
     resave: false,
     saveUninitialized: false,
-    cookie: { maxAge: 1 * 24 * 60 * 60 * 1000 } // 1 day
+    cookie: { maxAge: 3 * 24 * 60 * 60 * 1000 } // 3 day
 });
 app.use(session);
 socket.session(session);
@@ -78,10 +77,10 @@ app.use('/', indexRouter);
 app.use('/', usersRouter);
 
 // Invalid route
-app.get('*', (req, res, next) => next('Page not found.'));
+app.get('*', (_req, _res, next) => next('Page not found.'));
 
 // Error handler
-app.use((err, req, res, next) => res.render('error', { error: err }));
+app.use((err, _req, res, _next) => res.render('error', { error: err }));
 
 // Start the server
 server.listen(PORT, () => {
