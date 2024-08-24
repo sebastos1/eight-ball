@@ -60,5 +60,3 @@ socket.on('queue-update', (data) => {
 });
 
 socket.emit('requestOnlineUpdate');
-
-

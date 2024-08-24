@@ -1,7 +1,5 @@
 // Dependencies
-import http from 'http';
 import chalk from 'chalk';
-import { Server } from 'socket.io';
 
 // Imports
 import Game from './game/Game.js';
@@ -40,10 +38,11 @@ function emitQueueUpdate(io) {
 }
 
 // Socket events
-const events = function (io) {
+const socketEvents = function (io) {
 
     // On socket connection
     io.on('connection', (socket) => {
+
         // check if authenticated
         if (!socket.request.session.authenticated) return;
 
@@ -189,34 +188,7 @@ const gameLoop = setInterval(() => {
     // Tickrate of the game loop in ms
 }, 1000 / TICKRATE);
 
-
-// Initialise http server then return the server
-const init = function (app) {
-
-    // Create a new http server and attach socket
-    const server = http.createServer(app);
-
-    // new socket io instance
-    const io = new Server(server);
-
-    // Set events to the socket
-    events(io);
-
-    // Return the http server
-    return { server, io };
-};
-
+export default socketEvents;
 // Export functions that return the online and queued player info
-export default init;
 export const playersInQueue = () => queue._queue;
 export const playersOnline = () => players;
-export const setupSessionMiddleware = (session, io) => {
-    io.use((socket, next) => {
-        const req = socket.request;
-
-        // Manually attach an empty `res` object to satisfy the `session` middleware.
-        req.res = {};
-
-        session(req, req.res, next);
-    });
-};

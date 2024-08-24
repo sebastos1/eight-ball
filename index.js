@@ -5,10 +5,12 @@ import expressSession from 'express-session';
 import flash from 'connect-flash';
 import logger from 'morgan';
 import chalk from 'chalk';
+import { Server } from 'socket.io';
+import http from 'http';
 
 // imports
-import database from './src/db/database.js';
-import initSocket, { setupSessionMiddleware } from './src/socket.js';
+import { database, sessionStore } from './src/db/database.js';
+import socketEvents from './src/socket.js';
 import authentication from './src/authentication.js';
 import helpers from './src/helpers.js';
 
@@ -16,8 +18,9 @@ import helpers from './src/helpers.js';
 import indexRouter from './src/routes/index.js';
 import usersRouter from './src/routes/users.js';
 
-// Initialise app
+// Init
 const app = express();
+const server = http.createServer(app);
 
 // Set port
 const PORT = process.env.PORT || 8080;
@@ -43,17 +46,28 @@ app.use(express.urlencoded({ extended: true }));
 
 // Session middleware
 const session = expressSession({
-    store: database.sessionStore(expressSession),
+    store: sessionStore(expressSession),
     secret: 'secret',
     resave: false,
     saveUninitialized: false,
-    cookie: { maxAge: 3 * 24 * 60 * 60 * 1000 } // 3 day
+    cookie: {
+        maxAge: 3 * 24 * 60 * 60 * 1000, // 3 day
+        secure: 'auto',
+    }
 });
 app.use(session);
 
-// Socket.io setup
-const { server, io } = initSocket(app);
-setupSessionMiddleware(session, io);
+// socket.io with events
+const io = new Server(server);
+
+// middleware thingy
+const wrap = middleware => (socket, next) => {
+    middleware(socket.request, socket.request.res || new http.ServerResponse(socket.request), next);
+};
+io.use(wrap(session));
+
+// socket events, like on connect and such
+socketEvents(io);
 
 // Authentication middleware
 app.use(authentication);
