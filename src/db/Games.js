@@ -1,7 +1,7 @@
 'use strict';
 
 // Imports
-const database = require('../database');
+const database = require('./database');
 
 // Declare Game object
 const Games = {};
