@@ -5,8 +5,8 @@ const Ball = require('./Ball');
 const Vector = require('./Vector');
 const physics = require('./physics');
 const events = require('./events');
-const GameDB = require('../models/Game');
-const UserDB = require('../models/User');
+const Games = require('../db/Games');
+const Users = require('../db/Users');
 
 // Constants
 const WIDTH = 1280;
@@ -174,11 +174,11 @@ game.end = function (winner, winReason) {
     let loser = (winner == this.player1 ? this.player2 : this.player1);
 
     // update player rating
-    UserDB.updateRatingsAfterGame(winner.id, loser.id, (err, ratingChanges) => {
+    Users.updateRatingsAfterGame(winner.id, loser.id, (err, ratingChanges) => {
         if (err) console.log("Error updating ratings, logging anyway:", err);
 
         // Create new game in the database
-        GameDB.create(winner, loser, ratingChanges, winReason, (err) => {
+        Games.create(winner, loser, ratingChanges, winReason, (err) => {
             if (err) console.log("Error writing a completed game into db:", err);
         });
 

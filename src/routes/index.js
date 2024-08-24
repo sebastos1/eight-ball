@@ -4,9 +4,8 @@
 const express = require('express');
 
 // Imports
-const User = require('../models/User');
-const Game = require('../models/Game');
-const socket = require('../socket');
+const Users = require('../db/Users');
+const Games = require('../db/Games');
 
 // Initialise route handler
 const router = express.Router();
@@ -18,16 +17,15 @@ const router = express.Router();
 // GET '/' route
 router.get('/', (req, res, next) => {
 
-    // Render the login page and pass in saved login infomation
-    if (!req.authenticated) return res.render('login', { login: req.session.login });
+    // display a user friendly index page to new users, instead of straight sending them to login with no context lol
+    let loggedIn = req.authenticated;
 
     // Find the latest game played by the user from the database
-    Game.getLatestByUserId(req.user_id, (err, game) => {
-
+    Games.getLatestByUserId(req.user_id, (err, game) => {
         if (err) return next('Database error.');
 
         // Render the dashboard page and pass in game status and the latest game played
-        return res.render('dashboard', { game });
+        return res.render('dashboard', { game, loggedIn });
     });
 });
 
@@ -36,8 +34,7 @@ router.get('/', (req, res, next) => {
  */
 
 // GET '/play' route
-router.get('/play', (req, res, _) => {
-
+router.get('/play', (req, res, _next) => {
     if (!req.authenticated) {
         req.flash('danger', 'Log in to play :)');
         return res.redirect('/login');
@@ -69,7 +66,7 @@ router.get('/profile', (req, res, next) => {
 
 
     // Query the database for a user with a username similar to the query
-    User.queryIdByUsername(req.query.username, (err, id) => {
+    Users.queryIdByUsername(req.query.username, (err, id) => {
 
         if (err || !id) {
             return next(err ? 'Database error.' : 'User not found.');
@@ -83,7 +80,7 @@ router.get('/profile', (req, res, next) => {
 router.get('/profile/:id', (req, res, next) => {
 
     // Find a user in the database with the id specified in the url
-    User.findUserById(req.params.id, (err, profile) => {
+    Users.findUserById(req.params.id, (err, profile) => {
 
         if (err || !profile) {
             // Send a suitable message to the error handler
@@ -97,7 +94,7 @@ router.get('/profile/:id', (req, res, next) => {
         let winRate = gamesPlayed ? Math.round(profile.wins * 100 / gamesPlayed) + '%' : '-';
 
         // Find the games played by the user
-        Game.getGamesByUserId(profile.id, (err, games) => {
+        Games.getGamesByUserId(profile.id, (err, games) => {
 
             if (err) next('Database error.');
 
@@ -115,7 +112,7 @@ router.get('/profile/:id', (req, res, next) => {
 router.get('/leaderboard', (req, res, next) => {
 
     // Get all of the users from the database
-    User.getLeaderboard((err, users) => {
+    Users.getLeaderboard((err, users) => {
 
         if (err || !users) {
             return next('Database error.');

@@ -4,7 +4,7 @@
 const bcrypt = require('bcryptjs');
 
 // Imports
-const User = require('./models/User');
+const User = require('./db/Users');
 
 // Custom express middleware function
 const authentication = function (req, res, next) {

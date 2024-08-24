@@ -7,7 +7,7 @@ const chalk = require('chalk');
 const geoip = require('geoip-lite');
 
 // Imports
-const User = require('../models/User');
+const User = require('../db/Users');
 const authentication = require('../authentication');
 
 // Initialise route handler

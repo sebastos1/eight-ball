@@ -5,13 +5,13 @@ const bcrypt = require('bcryptjs');
 
 // Imports
 const database = require('../database');
-const Elo = require('../Elo')
+const Elo = require('../game/Elo')
 
 // Declare User object
-const User = {};
+const Users = {};
 
 // User create
-User.create = function (user, callback) {
+Users.create = function (user, callback) {
 
     // Hash the password
     bcrypt.hash(user.password, 10, (err, hash) => {
@@ -39,7 +39,7 @@ User.create = function (user, callback) {
 };
 
 // User deactivation
-User.deactivate = function (id, callback) {
+Users.deactivate = function (id, callback) {
 
     let sql = `UPDATE user
                SET is_active = 0
@@ -52,7 +52,7 @@ User.deactivate = function (id, callback) {
 };
 
 // User delete
-User.delete = function (id, callback) {
+Users.delete = function (id, callback) {
 
     // SQL query
     let sql = `DELETE FROM user
@@ -67,7 +67,7 @@ User.delete = function (id, callback) {
 };
 
 // Find a user by id
-User.findUserById = function (id, callback) {
+Users.findUserById = function (id, callback) {
 
     // SQL query
     let sql = `SELECT id, username, email, wins, losses, rating, is_active, country
@@ -84,7 +84,7 @@ User.findUserById = function (id, callback) {
 };
 
 // Find a user id by username
-User.findIdByUsername = function (username, callback) {
+Users.findIdByUsername = function (username, callback) {
 
     // SQL query
     let sql = `SELECT id
@@ -100,7 +100,7 @@ User.findIdByUsername = function (username, callback) {
 };
 
 // step in for above
-User.findIdAndStatusByUsername = function (username, callback) {
+Users.findIdAndStatusByUsername = function (username, callback) {
     // SQL query
     let sql = `SELECT id, is_active
                FROM user
@@ -113,7 +113,7 @@ User.findIdAndStatusByUsername = function (username, callback) {
 };
 
 // Find a user id by email
-User.findIdByEmail = function (email, callback) {
+Users.findIdByEmail = function (email, callback) {
 
     // SQL query
     let sql = `SELECT id
@@ -129,7 +129,7 @@ User.findIdByEmail = function (email, callback) {
 };
 
 // Get the password from a user id
-User.getPasswordFromId = function (id, callback) {
+Users.getPasswordFromId = function (id, callback) {
 
     // SQL query
     let sql = `SELECT password
@@ -144,7 +144,7 @@ User.getPasswordFromId = function (id, callback) {
     });
 };
 
-User.getRatingFromId = function (id, callback) {
+Users.getRatingFromId = function (id, callback) {
 
     // SQL query
     let sql = `SELECT rating
@@ -160,7 +160,7 @@ User.getRatingFromId = function (id, callback) {
 };
 
 // Query for a user id using a username
-User.queryIdByUsername = function (username, callback) {
+Users.queryIdByUsername = function (username, callback) {
 
     // SQL query
     let sql = `SELECT id
@@ -179,7 +179,7 @@ User.queryIdByUsername = function (username, callback) {
 };
 
 // Get the leaderbord 
-User.getLeaderboard = function (callback) {
+Users.getLeaderboard = function (callback) {
 
     // SQL query
     let sql = `SELECT id, username, wins, losses, rating, is_active, country
@@ -196,7 +196,7 @@ User.getLeaderboard = function (callback) {
     });
 };
 
-User.updateRatingsAfterGame = function (winnerId, loserId, callback) {
+Users.updateRatingsAfterGame = function (winnerId, loserId, callback) {
     let sql = `SELECT id, rating FROM user WHERE id IN (?, ?);`;
 
     database.all(sql, [winnerId, loserId], (err, users) => {
@@ -240,7 +240,7 @@ User.updateRatingsAfterGame = function (winnerId, loserId, callback) {
 };
 
 // Increment the wins of a user
-User.incrementWins = function (id, callback) {
+Users.incrementWins = function (id, callback) {
 
     // SQL query
     let sql = `UPDATE user
@@ -256,7 +256,7 @@ User.incrementWins = function (id, callback) {
 };
 
 // Increment the losses of a user
-User.incrementLosses = function (id, callback) {
+Users.incrementLosses = function (id, callback) {
 
     // SQL query
     let sql = `UPDATE user
@@ -272,4 +272,4 @@ User.incrementLosses = function (id, callback) {
 };
 
 // Export the User module
-module.exports = User;
+module.exports = Users;

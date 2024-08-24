@@ -11,13 +11,13 @@ const path = require('path');
 
 // Imports
 const database = require('./src/database.js');
-const socket = require('./src/socket.js');
-const authentication = require('./src/authentication.js');
+const socket = require('./src/socket');
+const authentication = require('./src/authentication');
 const helpers = require('./src/helpers');
 
 // Routers
 const indexRouter = require('./src/routes/index');
-const usersRouter = require('./src/routes/users.js');
+const usersRouter = require('./src/routes/users');
 
 // Initialise app
 const app = express();
