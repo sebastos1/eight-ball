@@ -1,5 +1,5 @@
 // Imports
-import database from './database.js';
+import { database } from './database.js';
 
 // Declare Game object
 const Games = {};
@@ -22,7 +22,6 @@ Games.create = function (winner, loser, ratingInfo, winReason, callback) {
         // If a new game was created, return the id
         callback(Boolean(err), this.lastID ? this.lastID : null);
     });
-
 };
 
 // Get the games of a user from their id
@@ -64,7 +63,6 @@ Games.getLatestByUserId = function (id, callback) {
         // If games were found, return the games
         callback(Boolean(err), game ? game : null);
     });
-
 };
 
 export default Games;

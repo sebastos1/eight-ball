@@ -17,6 +17,7 @@ router.get('/', (req, res, next) => {
 
     // display a user friendly index page to new users, instead of straight sending them to login with no context lol
     let loggedIn = req.authenticated;
+    if (!loggedIn) return res.render('dashboard', { loggedIn });
 
     // Find the latest game played by the user from the database
     Games.getLatestByUserId(req.user_id, (err, game) => {

@@ -3,7 +3,7 @@ import bcrypt from 'bcryptjs';
 
 // Imports
 import Elo from '../game/Elo.js';
-import database from './database.js';
+import { database } from './database.js';
 
 // Declare User object
 const Users = {};
