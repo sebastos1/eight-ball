@@ -1,19 +1,19 @@
 /* leaderboard */
 .gold {
     font-weight: bold;
-    color: gold;
+    color: rgb(255, 232, 100);
     text-shadow: 0 0 5px rgba(255, 215, 0, 0.5);
 }
 
 .silver {
     font-weight: bold;
-    color: silver;
+    color: rgb(188, 188, 188);
     text-shadow: 0 0 5px rgba(192, 192, 192, 0.5);
 }
 
 .bronze {
     font-weight: bold;
-    color: #cd7f32;
+    color: #e8a35d;
     text-shadow: 0 0 5px rgba(205, 127, 50, 0.5);
 }
 

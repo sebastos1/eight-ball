@@ -202,17 +202,17 @@ router.post('/register', (req, res) => {
 });
 
 function tryGetLocationFromIp(ip, callback) {
-    if (ip === '::1' || ip === '127.0.0.1') {
+    if (!ip || ip === '::1') {
         ip = '72.229.28.185'; // example for testing
     }
 
     try {
         const geo = geoip.lookup(ip);
-        const country = (geo && geo.country) ? geo.country : 'un'; // for unknown
+        const country = (geo && geo.country) ? geo.country : null; // for unknown
         callback(country);
     } catch (error) {
         console.error('Error in IP geolocation:', error);
-        callback('un');
+        callback(null);
     }
 }
 

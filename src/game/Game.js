@@ -176,7 +176,7 @@ game.end = function (winner, winReason) {
         if (err) console.log("Error updating ratings, logging anyway:", err);
 
         // Create new game in the database
-        Games.create(winner, loser, ratingChanges, winReason, (err) => {
+        Games.create(winner, loser, ratingChanges, winReason, winner.country, loser.country, (err) => {
             if (err) console.log("Error writing a completed game into db:", err);
         });
 
