@@ -1,8 +1,15 @@
-const YELLOW_COL = "#1CCC7F"; // teal
-const RED_COL = "#C43E64"; // purple ish
+import Game from './Game.js';
+import { getSolidColor, YELLOW_COL, RED_COL } from './helpers.js';
+import { showMenu, showQueue, showGame, showGameEnd } from './menu.js';
+import { launchConfetti } from './confetti.js';
+import { initQueueTracking } from './online.js';
 
 // Connect
 const socket = io();
+
+// queue and online tracking and grab latest
+initQueueTracking(socket, 'playersInQueue2');
+socket.emit('requestOnlineUpdate');
 
 // Initialise game variable
 let game;
@@ -46,7 +53,7 @@ $('#btn-leaveQueue').click(() => {
 });
 
 // Shoot function
-const shoot = function (power, angle) {
+export const shoot = function (power, angle) {
     // Send shoot event to server
     socket.emit('shoot', { power, angle });
 };
@@ -151,10 +158,11 @@ socket.on('game-end', (data) => {
 
     // If player has won, display win text
     if (data.winner) {
-        $('#winnerName').text(game.player.username);
+        $('#winnerName').text(game.player.username).css('color', getSolidColor(game.player.username));
         string = "You won ";
+        launchConfetti();
     } else {
-        $('#winnerName').text(game.opponent.username);
+        $('#winnerName').text(game.opponent.username).css('color', getSolidColor(game.opponent.username));
         string = "You lost ";
     }
 
@@ -173,7 +181,9 @@ socket.on('game-end', (data) => {
             break;
     }
 
-    $('#winReason').text(string);
+    let color = (data.winner) ? '#4cb568' : '#b54c4c';
+
+    $('#winReason').text(string).css('color', color);
 
     game = null;
 

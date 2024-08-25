@@ -77,16 +77,7 @@
     </div>
 </div>
 <div
-    class="list-group-item border {{#if (eq game.winnerId profile.id)}}list-group-item-success{{else}}list-group-item-danger{{/if}} d-flex justify-content-between align-items-center py-2">
+    class="list-group-item border {{#if (eq game.winnerId profile.id)}}list-group-item-success{{else}}list-group-item-danger{{/if}} d-flex justify-content-between align-items-center py-2 {{#if @last}}rounded-bottom{{/if}}{{#if single}}rounded-bottom{{/if}}">
     <small>{{translateWinReason game.winReason (eq game.winnerId profile.id)}}</small>
     <small>{{timeAgo game.time}}</small>
 </div>
-<style>
-    .list-group-item a {
-        text-decoration: none;
-    }
-
-    .list-group-item a:hover {
-        text-decoration: underline;
-    }
-</style>

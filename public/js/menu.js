@@ -1,7 +1,8 @@
 // Show menu method
-const showMenu = function () {
+export const showMenu = function () {
 
     // Show the menu element and hide the others
+    $('#gameContainer').show();
     $('#menu').show();
     $('#queue').hide();
     $('#game').hide();
@@ -10,9 +11,10 @@ const showMenu = function () {
 };
 
 // Show queue method
-const showQueue = function () {
+export const showQueue = function () {
 
     // Show the queue element and hide the others
+    $('#gameContainer').show();
     $('#menu').hide();
     $('#queue').show();
     $('#game').hide();
@@ -21,9 +23,10 @@ const showQueue = function () {
 };
 
 // Show game method
-const showGame = function () {
+export const showGame = function () {
 
     // Show the game element and hide the others
+    $('#gameContainer').hide();
     $('#menu').hide();
     $('#queue').hide();
     $('#game').show();
@@ -32,9 +35,10 @@ const showGame = function () {
 };
 
 // Show game end method
-const showGameEnd = function () {
+export const showGameEnd = function () {
 
     // Show the game end element and hide the others
+    $('#gameContainer').show();
     $('#menu').hide();
     $('#queue').hide();
     $('#game').hide();

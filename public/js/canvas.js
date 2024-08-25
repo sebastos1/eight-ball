@@ -1,8 +1,11 @@
+import Vector from './Vector.js';
+import { BALL_RADIUS } from './Ball.js';
+
 // Constants
 const WIDTH = 1280;
 const HEIGHT = 720;
 const BORDER = 50;
-const TABLE = new Vector(BORDER, BORDER); // Origin for drawing to table
+export const TABLE = new Vector(BORDER, BORDER); // Origin for drawing to table
 
 const HOLE_COL = '#1E211A';
 const EDGE_COL = '#563220';
@@ -157,3 +160,5 @@ canvas.drawLine = function (start, end, color, lineWidth = 1) {
     canvas._context.stroke();
     canvas._context.restore();
 };
+
+export default canvas;

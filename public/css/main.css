@@ -1,6 +1,7 @@
 @import url('usernames.css');
 @import url('leaderboard.css');
 @import url('ranks.css');
+@import url('loader.css');
 
 body {
     font-family: 'Lato', sans-serif !important;
@@ -12,26 +13,20 @@ body {
     padding-left: calc(100vw - 100%);
 }
 
-.loader {
-    border: 15px solid #f0f0f0;
-    border-radius: 100%;
-    border-top: 15px solid #17a2b8;
-    border-bottom: 15px solid #17a2b8;
-    width: 100px;
-    height: 100px;
-    animation: spin 2.5s linear infinite;
+/* play screens */
+.game-section {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 18rem;
 }
 
-@keyframes spin {
-    0% {
-        transform: rotate(0deg)
-    }
-
-    100% {
-        transform: rotate(360deg)
-    }
+.game-section>button {
+    align-self: center;
+    width: auto;
 }
 
+/* score thingys */
 .list-group-item a {
     text-decoration: none;
 }
@@ -40,6 +35,7 @@ body {
     text-decoration: underline;
 }
 
+/* for accounts that have been: */
 .deactivated {
     color: #921919;
 }
@@ -52,7 +48,6 @@ body {
 }
 
 /* For the onlien players list */
-
 .player-list-container {
     display: flex;
     flex-wrap: wrap;

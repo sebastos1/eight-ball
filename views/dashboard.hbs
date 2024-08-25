@@ -13,7 +13,7 @@
     crossorigin="anonymous"></script>
 
 {{> js}}
-<script src="/js/game/online.js"></script>
+<script type="module" src="/js/indexSocket.js"></script>
 
 <body>
     {{> navbar}}
@@ -83,7 +83,7 @@
                     <div class="list-group-item list-group-item-secondary">
                         <h5 class="mb-0">Last game</h5>
                     </div>
-                    {{> gamelist game=game profile=user}}
+                    {{> gamelist game=game profile=user single=true}}
                 </div>
                 {{else}}
                 <div class="list-group mt-4">

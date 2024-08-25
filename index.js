@@ -10,7 +10,7 @@ import http from 'http';
 
 // imports
 import { database, sessionStore } from './src/db/database.js';
-import socketEvents from './src/socket.js';
+import socketEvents from './src/serverSocket.js';
 import authentication from './src/authentication.js';
 import helpers from './src/helpers.js';
 
@@ -38,7 +38,7 @@ app.set('view engine', 'hbs');
 app.set('trust proxy', true);
 
 // Set static path
-app.use(express.static('static'));
+app.use(express.static('public'));
 
 // HTTP logger middleware
 app.use(logger('tiny'));

@@ -1,5 +1,11 @@
+import canvas, { TABLE } from "./canvas.js";
+import { YELLOW_COL, RED_COL } from "./helpers.js";
+
 const skull = new Image();
 skull.src = "/img/AINTNOWAY.png";
+
+// Constants
+export const BALL_RADIUS = 20;
 
 // Ball class constructor
 const Ball = function (position, radius, color) {
@@ -27,3 +33,5 @@ Ball.prototype.draw = function () {
             canvas.drawCircle(this.position, TABLE, this.radius, this.color);
     }
 };
+
+export default Ball;
