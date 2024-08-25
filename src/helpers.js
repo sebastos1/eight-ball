@@ -98,30 +98,29 @@ export function translateWinReason(reason, didUserWin) {
 }
 
 export function userSolidColor(username) {
-    const minBrightness = 128;
-    const maxBrightness = 230;
+    const minBrightness = 160;
+    const maxBrightness = 255;
 
-    let hash = 0;
-    for (let i = 0; i < username.length; i++) {
-        hash = username.charCodeAt(i) + ((hash << 5) - hash);
-    }
+    const hash = username.split('').reduce((acc, char, i) =>
+        acc + char.charCodeAt(0) * (i + 1), 0);
 
-    let r = (hash & 0xFF0000) >> 16;
-    let g = (hash & 0x00FF00) >> 8;
-    let b = hash & 0x0000FF;
+    const primary = Math.abs(hash) % 3;
 
-    r = Math.max(r, minBrightness);
-    g = Math.max(g, minBrightness);
-    b = Math.max(b, minBrightness);
-    r = Math.min(r, maxBrightness);
-    g = Math.min(g, maxBrightness);
-    b = Math.min(b, maxBrightness);
+    const r = minBrightness + (hash & 63);
+    const g = minBrightness + ((hash >> 6) & 63);
+    const b = minBrightness + ((hash >> 12) & 63);
 
-    return `#${((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1)}`;
+    const colors = [r, g, b].map((c, i) =>
+        i === primary
+            ? Math.min(c * 1.5, maxBrightness)
+            : Math.max(c * 0.6, minBrightness)
+    );
+
+    return `#${colors.map(c => Math.round(c).toString(16).padStart(2, '0')).join('')}`;
 }
 
 export function userFlag(country) {
-    if (!country || country == "UN") return;
+    if (!country) return;
 
     // Convert country code to flag emoji codepoints
     const codePoints = country.split('').map(char => (char.codePointAt(0) + 127397).toString(16)).join('-');

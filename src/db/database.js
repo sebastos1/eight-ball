@@ -33,6 +33,8 @@ function initializeTables(db) {
         ratingGained INTEGER,
         ratingLost INTEGER,
         winReason INTEGER,
+        winnerCountry TEXT,
+        loserCountry TEXT,
         time TEXT DEFAULT CURRENT_TIMESTAMP
     )`);
 }

@@ -15,6 +15,7 @@ const authentication = function (req, res, next) {
                 req.user_id = req.session.user_id;
                 req.authenticated = true;
                 req.user = user;
+                req.country = user.country;
                 res.locals.user_id = req.session.user_id;
                 res.locals.authenticated = true;
                 res.locals.user = user;

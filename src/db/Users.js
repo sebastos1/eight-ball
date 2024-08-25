@@ -206,15 +206,15 @@ Users.updateRatingsAfterGame = function (winnerId, loserId, callback) {
         let winner = users.find(u => u.id === winnerId);
         let loser = users.find(u => u.id === loserId);
 
-        if (!winner || !loser) {
-            return callback(true);
-        }
+        if (!winner || !loser) return callback(true);
 
         // might not have a rating yet
         if (winner.rating === null) winner.rating = Elo.initialRating();
         if (loser.rating === null) loser.rating = Elo.initialRating();
 
         let { newWinnerRating, newLoserRating } = Elo.updateRatings(winner.rating, loser.rating);
+        let ratingGained = newWinnerRating - winner.rating;
+        let ratingLost = loser.rating - newLoserRating;
 
         let updateSql = `UPDATE user SET 
                         rating = CASE 
@@ -224,19 +224,19 @@ Users.updateRatingsAfterGame = function (winnerId, loserId, callback) {
                         wins = CASE WHEN id = ? THEN wins + 1 ELSE wins END,
                         losses = CASE WHEN id = ? THEN losses + 1 ELSE losses END
                         WHERE id IN (?, ?);`;
-
         database.run(updateSql, [winnerId, newWinnerRating, loserId, newLoserRating, winnerId, loserId, winnerId, loserId], (err) => {
             if (err) console.log(err);
             callback(Boolean(err), {
-                ratingGained: newWinnerRating - winner.rating,
-                ratingLost: loser.rating - newLoserRating,
-                winnerRating: winner.rating,
-                loserRating: loser.rating,
+                winnerRating: newWinnerRating,
+                loserRating: newLoserRating,
+                ratingGained: ratingGained,
+                ratingLost: ratingLost,
+                winnerCountry: winner.country,
+                loserCountry: loser.country,
             });
         });
     });
 };
-
 // Increment the wins of a user
 Users.incrementWins = function (id, callback) {
 

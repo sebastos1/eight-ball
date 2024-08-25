@@ -1,41 +1,78 @@
 <div class="list-group-item p-3 border-bottom-0 border-top-0">
-    <div class="d-flex justify-content-between align-items-center">
-        <div class="d-flex align-items-center">
-            <h5 class="mb-0 mr-2">
-                <a href="/profile/{{profile.id}}">{{profile.username}}</a>
-            </h5>
-            <span class="text-muted">({{#if (eq game.winnerId
-                profile.id)}}{{game.winnerNewRating}}{{else}}{{game.loserNewRating}}{{/if}})</span>
+    <div class="row align-items-center">
+        <!-- Left user -->
+        <div class="col-5 d-flex justify-content-between align-items-center">
+            <div class="d-flex align-items-center">
+                <span style="font-size: 1.5em;">
+                    {{#if (eq game.winnerId profile.id)}}
+                    {{userFlag game.winnerCountry}}
+                    {{else}}
+                    {{userFlag game.loserCountry}}
+                    {{/if}}
+                </span>
+                <h5 class="mb-0 ms-2">
+                    <a href="/profile/{{profile.id}}"
+                        style="color: {{userSolidColor profile.username}};">{{profile.username}}</a>
+                </h5>
+            </div>
+            <div class="text-end">
+                <span class="text-muted">
+                    {{#if (eq game.winnerId profile.id)}}
+                    {{game.winnerNewRating}}
+                    {{else}}
+                    {{game.loserNewRating}}
+                    {{/if}}
+                </span>
+                <span
+                    class="text-{{#if (eq game.winnerId profile.id)}}success-emphasis{{else}}danger-emphasis{{/if}} small ms-1">
+                    ({{#if (eq game.winnerId profile.id)}}+{{game.ratingGained}}{{else}}-{{game.ratingLost}}{{/if}})
+                </span>
+            </div>
         </div>
-        <div class="d-flex align-items-center">
-            <h4 class="mb-0 mx-3">
+        <!-- Score -->
+        <div class="col-2 text-center">
+            <h4 class="mb-0">
                 {{#if (eq game.winnerId profile.id)}}
                 {{game.winnerScore}} - {{game.loserScore}}
                 {{else}}
                 {{game.loserScore}} - {{game.winnerScore}}
                 {{/if}}
             </h4>
-            <span class="text-{{#if (eq game.winnerId profile.id)}}success{{else}}danger{{/if}} mx-2">
-                {{#if (eq game.winnerId profile.id)}}
-                +{{game.ratingGained}}
-                {{else}}
-                -{{game.ratingLost}}
-                {{/if}}
-            </span>
         </div>
-        <div class="d-flex align-items-center">
-            <h5 class="mb-0 mr-2">
-                <a
-                    href="/profile/{{#if (eq game.winnerId profile.id)}}{{game.loserId}}{{else}}{{game.winnerId}}{{/if}}">
+        <!-- Right user -->
+        <div class="col-5 d-flex justify-content-between align-items-center">
+            <div class="text-start">
+                <span class="text-muted">
                     {{#if (eq game.winnerId profile.id)}}
-                    {{game.loserUsername}}
+                    {{game.loserNewRating}}
                     {{else}}
-                    {{game.winnerUsername}}
+                    {{game.winnerNewRating}}
                     {{/if}}
-                </a>
-            </h5>
-            <span class="text-muted">({{#if (eq game.winnerId
-                profile.id)}}{{game.loserNewRating}}{{else}}{{game.winnerNewRating}}{{/if}})</span>
+                </span>
+                <span
+                    class="text-{{#if (eq game.winnerId profile.id)}}danger-emphasis{{else}}success-emphasis{{/if}} small ms-1">
+                    ({{#if (eq game.winnerId profile.id)}}-{{game.ratingLost}}{{else}}+{{game.ratingGained}}{{/if}})
+                </span>
+            </div>
+            <div class="d-flex align-items-center">
+                <h5 class="mb-0 me-2">
+                    <a href="/profile/{{#if (eq game.winnerId profile.id)}}{{game.loserId}}{{else}}{{game.winnerId}}{{/if}}"
+                        style="color: {{#if (eq game.winnerId profile.id)}}{{userSolidColor game.loserUsername}}{{else}}{{userSolidColor game.winnerUsername}}{{/if}};">
+                        {{#if (eq game.winnerId profile.id)}}
+                        {{game.loserUsername}}
+                        {{else}}
+                        {{game.winnerUsername}}
+                        {{/if}}
+                    </a>
+                </h5>
+                <span style="font-size: 1.5em;">
+                    {{#if (eq game.winnerId profile.id)}}
+                    {{userFlag game.loserCountry}}
+                    {{else}}
+                    {{userFlag game.winnerCountry}}
+                    {{/if}}
+                </span>
+            </div>
         </div>
     </div>
 </div>
@@ -44,7 +81,6 @@
     <small>{{translateWinReason game.winReason (eq game.winnerId profile.id)}}</small>
     <small>{{timeAgo game.time}}</small>
 </div>
-
 <style>
     .list-group-item a {
         text-decoration: none;

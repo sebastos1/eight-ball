@@ -44,83 +44,84 @@ const socketEvents = function (io) {
     io.on('connection', (socket) => {
 
         // check if authenticated
-        if (!socket.request.session.authenticated) return;
+        if (socket.request.session.authenticated) {
+            // Create new player or check if it already exists
+            let player;
+            const userId = socket.request.session.user.id;
 
-        // Create new player or check if it already exists
-        let player;
-        const userId = socket.request.session.user.id;
-
-        if (players.has(userId)) {
-            player = players.get(userId);
-            player.socket = socket;
-        } else {
-            player = new Player(socket);
-            players.set(player.id, player);
-        }
-        log(`${player.username}#${player.id} has connected - ${players.size} player(s) online`);
-
-        // Broadcast online update
-        emitOnlineUpdate(io)
-
-        // On socket disconnect
-        socket.on('disconnect', () => {
-
-            console.log(player.username, "left the game");
-
-            // If player in queue, remove them from the queue
-            if (player.inQueue) queue.remove(player);
-            // If player in game, end the game with the opponent as the winner
-            if (player.inGame) {
-                const game = player.game;
-                game.winner = (game.player1 === player ? game.player2 : game.player1);
-                game.winReason = 3; // player disconnect code
-                game.end(game.winner, game.winReason);
-            }
-
-            // Remove the player from players
-            players.delete(player.id);
-            log(`${player.username}#${player.id} has disconnected - ${players.size} player(s) online`);
-
-            emitQueueUpdate(io)
-            emitOnlineUpdate(io)
-        });
-
-        // On socket joining the queue
-        socket.on('queue-join', (callback) => {
-            if (player.inGame) {
-                callback({
-                    success: false,
-                    message: "Previous game is still in progress!",
-                });
+            if (players.has(userId)) {
+                player = players.get(userId);
+                player.socket = socket;
             } else {
-                queue.enqueue(player);
-                callback({
-                    success: true,
-                    message: "You have successfully joined the queue.",
-                });
-                log(`${player.username}#${player.id} has joined the queue - ${queue.size} player(s) in queue`);
+                player = new Player(socket);
+                players.set(player.id, player);
+            }
+            log(`${player.username}#${player.id} has connected - ${players.size} player(s) online`);
+
+            // Broadcast online update
+            emitOnlineUpdate(io)
+
+            // On socket disconnect
+            socket.on('disconnect', () => {
+
+                console.log(player.username, "left the game");
+
+                // If player in queue, remove them from the queue
+                if (player.inQueue) queue.remove(player);
+                // If player in game, end the game with the opponent as the winner
+                if (player.inGame) {
+                    const game = player.game;
+                    game.winner = (game.player1 === player ? game.player2 : game.player1);
+                    game.winReason = 3; // player disconnect code
+                    game.end(game.winner, game.winReason);
+                }
+
+                // Remove the player from players
+                players.delete(player.id);
+                log(`${player.username}#${player.id} has disconnected - ${players.size} player(s) online`);
 
                 emitQueueUpdate(io)
-            }
-        });
+                emitOnlineUpdate(io)
+            });
 
-        // On socket leaving the queue
-        socket.on('queue-leave', () => {
-            if (!player.inQueue) return;
+            // On socket joining the queue
+            socket.on('queue-join', (callback) => {
+                if (player.inGame) {
+                    callback({
+                        success: false,
+                        message: "Previous game is still in progress!",
+                    });
+                } else {
+                    queue.enqueue(player);
+                    callback({
+                        success: true,
+                        message: "You have successfully joined the queue.",
+                    });
+                    log(`${player.username}#${player.id} has joined the queue - ${queue.size} player(s) in queue`);
 
-            queue.remove(player);
-            log(`${player.username}#${player.id} has left the queue - ${queue.size} player(s) in queue`);
+                    emitQueueUpdate(io)
+                }
+            });
 
-            emitQueueUpdate(io)
-        });
+            // On socket leaving the queue
+            socket.on('queue-leave', () => {
+                if (!player.inQueue) return;
 
-        // On socket shooting the cue ball
-        socket.on('shoot', (data) => {
+                queue.remove(player);
+                log(`${player.username}#${player.id} has left the queue - ${queue.size} player(s) in queue`);
 
-            // Check that the player is in game and then call the shoot method on their game
-            if (player.inGame) player.game.shoot(player, data.power, data.angle);
-        });
+                emitQueueUpdate(io)
+            });
 
+            // On socket shooting the cue ball
+            socket.on('shoot', (data) => {
+
+                // Check that the player is in game and then call the shoot method on their game
+                if (player.inGame) player.game.shoot(player, data.power, data.angle);
+            });
+        };
+
+        // keeping this here lets non-logged in users see the online players, very nice
         socket.on('requestOnlineUpdate', () => {
             emitOnlineUpdate(io);
             emitQueueUpdate(io);

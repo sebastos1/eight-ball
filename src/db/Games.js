@@ -5,16 +5,18 @@ import { database } from './database.js';
 const Games = {};
 
 // Game create
-Games.create = function (winner, loser, ratingInfo, winReason, callback) {
+Games.create = function (winner, loser, ratingInfo, winReason, winnerCountry, loserCountry, callback) {
 
     // SQL query
-    let sql = `INSERT INTO game (winnerId, loserId, winnerScore, loserScore, winnerNewRating, loserNewRating, ratingGained, ratingLost, winReason)
-               VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);`;
+    let sql = `INSERT INTO game (winnerId, loserId, winnerScore, loserScore, winnerNewRating, loserNewRating, ratingGained, ratingLost, winReason, winnerCountry, loserCountry)
+               VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);`;
 
     let { winnerRating, loserRating, ratingGained, ratingLost } = ratingInfo;
 
+    console.log(winnerCountry);
+
     // Query parameters
-    let params = [winner.id, loser.id, winner.score, loser.score, winnerRating, loserRating, ratingGained, ratingLost, winReason];
+    let params = [winner.id, loser.id, winner.score, loser.score, winnerRating, loserRating, ratingGained, ratingLost, winReason, winnerCountry, loserCountry];
 
     // Execute the query
     database.run(sql, params, function (err) {
@@ -28,7 +30,7 @@ Games.create = function (winner, loser, ratingInfo, winReason, callback) {
 Games.getGamesByUserId = function (id, callback) {
 
     // SQL query
-    let sql = `SELECT game.id, game.winnerId, game.loserId, game.winnerScore, game.loserScore, game.time, user1.username AS winnerUsername, user2.username AS loserUsername, winnerNewRating, loserNewRating, ratingGained, ratingLost, winReason
+    let sql = `SELECT game.id, game.winnerId, game.loserId, game.winnerScore, game.loserScore, game.time, user1.username AS winnerUsername, user2.username AS loserUsername, winnerNewRating, loserNewRating, ratingGained, ratingLost, winReason, winnerCountry, loserCountry
                FROM game
                LEFT JOIN user AS user1 ON user1.id = game.winnerId
                LEFT JOIN user AS user2 ON user2.id = game.loserId
@@ -49,7 +51,7 @@ Games.getGamesByUserId = function (id, callback) {
 Games.getLatestByUserId = function (id, callback) {
 
     // SQL query
-    let sql = `SELECT game.id, game.winnerId, game.loserId, game.winnerScore, game.loserScore, game.time, user1.username AS winnerUsername, user2.username AS loserUsername, winnerNewRating, loserNewRating, ratingGained, ratingLost, winReason
+    let sql = `SELECT game.id, game.winnerId, game.loserId, game.winnerScore, game.loserScore, game.time, user1.username AS winnerUsername, user2.username AS loserUsername, winnerNewRating, loserNewRating, ratingGained, ratingLost, winReason, winnerCountry, loserCountry
                FROM game
                LEFT JOIN user AS user1 ON user1.id = game.winnerId
                LEFT JOIN user AS user2 ON user2.id = game.loserId
