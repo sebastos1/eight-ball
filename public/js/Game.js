@@ -1,5 +1,8 @@
-// Constants
-const BALL_RADIUS = 20;
+import Ball from './Ball.js';
+import Stick from './Stick.js';
+import canvas from './canvas.js';
+import Vector from './Vector.js';
+import { BALL_RADIUS } from './Ball.js';
 
 // Game class constructor
 const Game = function (data) {
@@ -17,7 +20,6 @@ const Game = function (data) {
 
     // Game cue stick
     this.stick = new Stick(this.cueBall.position);
-
 };
 
 // Game update method
@@ -32,7 +34,6 @@ Game.prototype.update = function (data) {
 
     // Update cue stick position
     this.stick.position = this.cueBall.position;
-
 };
 
 // Game turn update method
@@ -48,7 +49,6 @@ Game.prototype.updateTurn = function (data) {
 
     // Update turn
     this.turn = data.turn;
-
 };
 
 // Game draw method
@@ -69,5 +69,6 @@ Game.prototype.draw = function () {
 
     // If it's the player's turn and the balls are not moving, draw the cue stick
     if (!this.active && this.turn) this.stick.draw();
-
 };
+
+export default Game;

@@ -1,3 +1,8 @@
+import Vector from './Vector.js';
+import { BALL_RADIUS } from './Ball.js';
+import { shoot } from './clientSocket.js';
+import canvas, { TABLE } from './canvas.js';
+
 const MAX_POWER = 50;
 const MAX_DRAG_DISTANCE = 200; // max drag in px for max power
 const STICK_WIDTH = 20;
@@ -160,3 +165,5 @@ Stick.prototype.drawZeroPowerIndicator = function () {
         2.5
     );
 };
+
+export default Stick;

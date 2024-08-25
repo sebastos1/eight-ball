@@ -12,18 +12,42 @@
     <div class="container">
         {{> flash}}
 
-        <div id="menu" class="bg-dark text-center py-5 px-5 rounded">
-            <h1 class="display-3">Eight Ball</h1>
-            <hr class=" my-5">
-            <div id="queueMessage" class="mb-3"></div>
-            <button type="button" id="btn-joinQueue" class="btn btn-lg btn-success">Find opponent</button>
-        </div>
+        <div id="gameContainer" class="bg-dark text-center py-5 px-5 rounded">
+            {{!-- <div id="menu" class="game-section">
+                <h1 class="display-3">Eight Ball</h1>
+                <div id="queuedPlayers">bruh</div>
+                <button type="button" id="btn-joinQueue" class="btn btn-lg btn-success">Find opponent</button>
+            </div> --}}
 
+            <div id="menu" class="game-section">
+                <h1 class="display-3 mb-4">Eight Ball</h1>
+                <div class="row justify-content-center mb-4">
+                    <div class="col-md-8 text-center">
+                        <h5 class="mb-3">In queue right now:</h5>
+                        <div id="playersInQueue2" class="player-list-container d-inline-block"></div>
+                    </div>
+                </div>
+                <button type="button" id="btn-joinQueue" class="btn btn-lg btn-success">Find opponent</button>
+            </div>
 
-        <div id="queue" class="bg-dark text-center py-5 px-5 rounded">
-            <h1 class="display-3">Waiting for opponent...</h1>
-            <div class="loader mx-auto my-5"></div>
-            <button type="button" id="btn-leaveQueue" class="btn btn-lg btn-danger">Cancel queue</button>
+            <div id="queue" class="game-section">
+                <h1 class="display-3">Waiting for opponent...</h1>
+                <div class="loader-container">
+                    <img src="/img/eight-ball-mono.svg" class="loader-ball" alt="8 ball">
+                    <img src="/img/eight-ball-mono.svg" class="loader-ball" alt="8 ball">
+                    <img src="/img/eight-ball-mono.svg" class="loader-ball" alt="8 ball">
+                </div>
+                <button type="button" id="btn-leaveQueue" class="btn btn-lg btn-danger">Cancel queue</button>
+            </div>
+
+            <div id="gameEnd" class="game-section">
+                <div>
+                    <h5 class="my-0">The winner is:</h5>
+                    <h1 id="winnerName" class="display-1 my-0">user</h1>
+                    <h3 id="winReason" class="mt-4">reason for win/loss</h3>
+                </div>
+                <button type="button" id="btn-requeue" class="btn btn-lg btn-success">Requeue</button>
+            </div>
         </div>
 
         <div id="game" class="container mt-4">
@@ -55,15 +79,6 @@
                 </div>
             </div>
         </div>
-
-        <div id="gameEnd" class="bg-dark text-center py-5 px-5 rounded">
-            <h4>The winner is:</h4>
-            <h2 id="winnerName" class="display-3">User</h2>
-            <h5 id="winReason" class="display-5">reason</h5>
-            <hr class="my-5">
-            <button type="button" id="btn-requeue" class="btn btn-lg btn-success">Requeue</button>
-        </div>
-
     </div>
 
     <!-- Socket.IO JS -->
@@ -71,15 +86,18 @@
         integrity="sha384-2huaZvOR9iDzHqslqwpR87isEmrfxqyWOF7hr7BY6KG0+hVKLoEXMPUJw3ynWuhO"
         crossorigin="anonymous"></script>
 
+    {{!-- confetti for the winner :D --}}
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+
     {{> js}}
 
-    <script src="/js/game/menu.js"></script>
-    <script src="/js/game/Vector.js"></script>
-    <script src="/js/game/canvas.js"></script>
-    <script src="/js/game/Ball.js"></script>
-    <script src="/js/game/Stick.js"></script>
-    <script src="/js/game/Game.js"></script>
-    <script src="/js/game/socket.js"></script>
+    <script type="module" src="/js/menu.js"></script>
+    <script type="module" src="/js/Vector.js"></script>
+    <script type="module" src="/js/canvas.js"></script>
+    <script type="module" src="/js/Ball.js"></script>
+    <script type="module" src="/js/Stick.js"></script>
+    <script type="module" src="/js/Game.js"></script>
+    <script type="module" src="/js/clientSocket.js"></script>
 </body>
 
 </html>
