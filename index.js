@@ -9,7 +9,7 @@ import { Server } from 'socket.io';
 import http from 'http';
 
 // imports
-import { database, sessionStore } from './src/db/database.js';
+import { sessionStore } from './src/db/database.js';
 import socketEvents from './src/serverSocket.js';
 import authentication from './src/authentication.js';
 import helpers from './src/helpers.js';

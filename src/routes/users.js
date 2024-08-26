@@ -2,7 +2,7 @@
 import express from 'express';
 import validator from 'validator';
 import chalk from 'chalk';
-import geoip from 'geoip-lite';
+import axios from 'axios';
 
 // imports
 import User from '../db/Users.js';
@@ -123,7 +123,7 @@ router.get('/register', (req, res) => {
 });
 
 // POST '/register' route
-router.post('/register', (req, res) => {
+router.post('/register', async (req, res) => {
 
     // Validators and sanitisers
     const { equals, isEmail, isEmpty, isLength } = validator;
@@ -168,7 +168,7 @@ router.post('/register', (req, res) => {
     }
 
     // Check if the username has already been taken in the database
-    User.findIdByUsername(username, (err, user_id) => {
+    User.findIdByUsername(username, async (err, user_id) => {
         if (!err && user_id) errors.push('Username already taken.');
 
         if (errors.length) {
@@ -178,44 +178,39 @@ router.post('/register', (req, res) => {
 
         const ip = req.headers["x-real-ip"] || req.headers["x-forwarded-for"];
 
-        tryGetLocationFromIp(ip, (country) => {
+        const country = await getLocationFromIp(ip);
+        console.log(`IP: ${ip}, Country: ${country || 'Unknown'}`);
 
-            console.log(country);
+        User.create({ username, email, password, country }, (err, user_id) => {
+            if (err) {
+                req.flash('danger', 'Database error.');
+                return res.redirect('/register');
+            }
 
-            User.create({ username, email, password, country }, (err, user_id) => {
+            // Login the user and save the username to saved login data
+            req.login(user_id);
+            log(`${username}#${user_id} has registered${country ? ` from ${country}` : ''}`);
+            req.session.login = { username };
 
-                if (err) {
-                    req.flash('danger', 'Database error.');
-                    return res.redirect('/register');
-                }
-
-                // Login the user and save the username to saved login data
-                req.login(user_id);
-                log(`${username}#${user_id} has registered from ${country}`);
-                req.session.login = { username };
-
-                req.flash('success', 'You have successfully registered.');
-                return res.redirect('/');
-            });
+            req.flash('success', 'You have successfully registered.');
+            return res.redirect('/');
         });
     });
 });
 
-function tryGetLocationFromIp(ip, callback) {
+async function getLocationFromIp(ip) {
     if (!ip || ip === '::1') {
         ip = '72.229.28.185'; // example for testing
     }
 
     try {
-        const geo = geoip.lookup(ip);
-        const country = (geo && geo.country) ? geo.country : null; // for unknown
-        callback(country);
+        const response = await axios.get(`https://ipapi.co/${ip}/country/`, { timeout: 5000 });
+        return response.data !== 'Undefined' ? response.data : null;
     } catch (error) {
         console.error('Error in IP geolocation:', error);
-        callback(null);
+        return null; // Return null instead of throwing, to simplify error handling
     }
 }
-
 
 /**
  * Delete route
