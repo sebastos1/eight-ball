@@ -23,6 +23,7 @@
   },
   "homepage": "https://github.com/sebastos1/eight-ball#readme",
   "dependencies": {
+    "axios": "^1.7.5",
     "bcryptjs": "^2.4.3",
     "chalk": "^5.3.0",
     "connect-flash": "^0.1.1",
@@ -30,7 +31,6 @@
     "express": "^4.17.1",
     "express-handlebars": "^8.0.1",
     "express-session": "^1.17.0",
-    "geoip-lite": "^1.4.10",
     "morgan": "^1.9.1",
     "socket.io": "^4.7.5",
     "sqlite3": "^5.1.7",
