@@ -1,8 +1,9 @@
 import Game from './Game.js';
-import { getSolidColor, YELLOW_COL, RED_COL } from './helpers.js';
+import { userColor } from '../site/helpers.js';
 import { showMenu, showQueue, showGame, showGameEnd } from './menu.js';
 import { launchConfetti } from './confetti.js';
-import { initQueueTracking } from './online.js';
+import { initQueueTracking } from '../site/online.js';
+import { YELLOW_COL, RED_COL } from './Ball.js';
 
 // Connect
 const socket = io();
@@ -158,11 +159,11 @@ socket.on('game-end', (data) => {
 
     // If player has won, display win text
     if (data.winner) {
-        $('#winnerName').text(game.player.username).css('color', getSolidColor(game.player.username));
+        $('#winnerName').text(game.player.username).css('color', userColor(game.player.username));
         string = "You won ";
         launchConfetti();
     } else {
-        $('#winnerName').text(game.opponent.username).css('color', getSolidColor(game.opponent.username));
+        $('#winnerName').text(game.opponent.username).css('color', userColor(game.opponent.username));
         string = "You lost ";
     }
 

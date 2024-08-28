@@ -38,7 +38,7 @@ function emitQueueUpdate(io) {
 }
 
 // Socket events
-const socketEvents = function (io) {
+const applySocketEvents = function (io) {
 
     // On socket connection
     io.on('connection', (socket) => {
@@ -189,7 +189,7 @@ const gameLoop = setInterval(() => {
     // Tickrate of the game loop in ms
 }, 1000 / TICKRATE);
 
-export default socketEvents;
+export default applySocketEvents;
 // Export functions that return the online and queued player info
-export const playersInQueue = () => queue._queue;
-export const playersOnline = () => players;
+export const playersInQueue = queue._queue;
+export const playersOnline = players;

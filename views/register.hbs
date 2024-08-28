@@ -17,7 +17,8 @@
         </div>
         <div class="row">
             <div class="col-md-6">
-                <form action="/register" method="post" class="mb-4" novalidate>
+                <form action="/register" method="post" class="mb-4">
+                    <input type="hidden" name="_csrf" value="{{csrfToken}}">
                     <div class="mb-3">
                         <label for="username" class="form-label">Username</label>
                         <input type="text" id="username" name="username" placeholder="Username"
@@ -54,21 +55,7 @@
 
     </div>
     {{> js}}
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const form = document.querySelector('form');
-            const emailInput = document.getElementById('email');
-
-            form.addEventListener('submit', function (event) {
-                if (emailInput.value.trim() === '') {
-                    emailInput.value = '';  // Clear any whitespace
-                    emailInput.removeAttribute('required');  // Remove required attribute
-                } else {
-                    emailInput.setAttribute('required', '');  // Add required attribute if email is not empty
-                }
-            });
-        });
-    </script>
+    <script src="/js/site/register.js"></script>
 </body>
 
 </html>

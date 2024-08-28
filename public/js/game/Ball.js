@@ -1,5 +1,7 @@
 import canvas, { TABLE } from "./canvas.js";
-import { YELLOW_COL, RED_COL } from "./helpers.js";
+
+export const YELLOW_COL = "#1CCC7F"; // teal
+export const RED_COL = "#C43E64"; // purple ish
 
 const skull = new Image();
 skull.src = "/img/AINTNOWAY.png";

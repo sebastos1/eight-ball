@@ -13,7 +13,7 @@
     crossorigin="anonymous"></script>
 
 {{> js}}
-<script type="module" src="/js/indexSocket.js"></script>
+<script type="module" src="/js/site/indexSocket.js"></script>
 
 <body>
     {{> navbar}}
@@ -22,7 +22,7 @@
         <div class="jumbotron mb-0 d-flex flex-lg-row flex-column justify-content-between align-items-center">
             {{#if loggedIn}}
             <h1 class="display-1 text-truncate mw-100">
-                Hello, <span style="color:{{userSolidColor user.username}}">{{user.username}}</span>!
+                Hello, <span style="color:{{userColor user.username}}">{{user.username}}</span>!
             </h1>
             {{else}}
             <h1 class="display-1 text-truncate mw-100">
@@ -41,11 +41,10 @@
                 <div class="sticky-top pt-4">
                     <!-- Play button -->
                     <div class="list-group mb-4">
-                        <button
-                            class="list-group-item list-group-item-action list-group-item-success border fs-2 fw-bold py-3 text-center"
-                            type="button" onclick="window.location.href='{{#if loggedIn}}play{{else}}login{{/if}}'">
+                        <a href="{{#if loggedIn}}/play{{else}}/login{{/if}}"
+                            class="list-group-item list-group-item-action list-group-item-success border fs-2 fw-bold py-3 text-center text-decoration-none">
                             {{#if loggedIn}}PLAY{{else}}LOG IN TO PLAY{{/if}}
-                        </button>
+                        </a>
                         {{#if loggedIn}}
                         <div
                             class="list-group-item list-group-item-secondary d-flex justify-content-center align-items-center">
