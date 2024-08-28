@@ -1,18 +1,18 @@
 // Dependencies
 import express from 'express';
 import { engine } from 'express-handlebars';
-import expressSession from 'express-session';
 import flash from 'connect-flash';
 import logger from 'morgan';
 import chalk from 'chalk';
 import { Server } from 'socket.io';
 import http from 'http';
 
+
 // imports
-import { sessionStore } from './src/db/database.js';
-import socketEvents from './src/serverSocket.js';
-import authentication from './src/authentication.js';
-import helpers from './src/helpers.js';
+import applySocketEvents from './src/serverSocket.js';
+import authentication from './src/site/authentication.js';
+import helpers from './src/site/helpers.js';
+import { applySecurityConfig, configureSession } from './src/site/security.js';
 
 // Routers
 import indexRouter from './src/routes/index.js';
@@ -21,6 +21,11 @@ import usersRouter from './src/routes/users.js';
 // Init
 const app = express();
 const server = http.createServer(app);
+
+app.use(express.urlencoded({ extended: true }));
+
+// Security middleware
+applySecurityConfig(app);
 
 // Set port
 const PORT = process.env.PORT || 8080;
@@ -34,10 +39,7 @@ app.engine('hbs', engine({
 }));
 app.set('view engine', 'hbs');
 
-// for geoloc
-app.set('trust proxy', true);
-
-// Set static path
+// Set static path to /public
 app.use(express.static('public'));
 
 // HTTP logger middleware
@@ -45,32 +47,24 @@ app.use(logger('tiny'));
 
 // Body parser middleware
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-
-// Session middleware
-const session = expressSession({
-    store: sessionStore(expressSession),
-    secret: 'secret',
-    resave: false,
-    saveUninitialized: false,
-    cookie: {
-        maxAge: 3 * 24 * 60 * 60 * 1000, // 3 day
-        secure: 'auto',
-    }
-});
-app.use(session);
 
 // socket.io with events
-const io = new Server(server);
+const io = new Server(server, {
+    cors: {
+        origin: '*',
+    },
+});
 
-// middleware thingy
+const session = configureSession(app);
+
+// middelware wrapper to translate socket.io to express
 const wrap = middleware => (socket, next) => {
     middleware(socket.request, socket.request.res || new http.ServerResponse(socket.request), next);
 };
 io.use(wrap(session));
 
 // socket events, like on connect and such
-socketEvents(io);
+applySocketEvents(io);
 
 // Authentication middleware
 app.use(authentication);

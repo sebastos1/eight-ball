@@ -7,7 +7,6 @@ export const showMenu = function () {
     $('#queue').hide();
     $('#game').hide();
     $('#gameEnd').hide();
-
 };
 
 // Show queue method
@@ -51,5 +50,5 @@ showMenu();
 
 // Prevent accidental game disconnect
 window.onbeforeunload = function () {
-    if (game) return 'Are you sure you want to leave your game?';
+    if (!game) return null;
 };

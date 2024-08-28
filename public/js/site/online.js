@@ -1,4 +1,4 @@
-import { getSolidColor, getUserFlag } from './helpers.js';
+import { userColor, getUserFlag } from './helpers.js';
 
 function updatePlayerList(elementId, players) {
     const element = $(`#${elementId}`);
@@ -7,7 +7,7 @@ function updatePlayerList(elementId, players) {
         element.html('<div>No players</div>');
     } else {
         const playerList = players.map(player =>
-            `<div class="player-item" style="color:${getSolidColor(player.username)}">
+            `<div class="player-item" style="color:${userColor(player.username)}">
                 ${getUserFlag(player.country)} ${player.username}
              </div>`
         ).join('');

@@ -25,7 +25,7 @@
                 </div>
             </div>
             {{#each users}}
-            <div class="list-group-item list-group-item-action 
+            <a class="list-group-item list-group-item-action 
             {{#if this.self}}
             bg-dark-subtle
             {{/if}}
@@ -35,24 +35,19 @@
             silver
             {{else if (eq this.position 3)}}
             bronze
-            {{/if}}" onclick="window.location='/profile/{{this.id}}'" style="cursor:pointer">
+            {{/if}}" href='/profile/{{this.id}}' cursor:pointer>
                 <div class="lbd-grid">
                     <div>{{this.position}}</div>
-                    <div style="color:{{userSolidColor this.username}}">{{userFlag
+                    <div style="color:{{userColor this.username}}">{{userFlag
                         this.country}} {{this.username}}
                     </div>
-                    {{#if this.rating}}
                     <div class="{{getRankColor this.rating}}">{{getRank this.rating}}</div>
                     <div class="shimmer">{{this.rating}}</div>
-                    {{else}}
-                    <div>Unranked</div>
-                    <div>-</div>
-                    {{/if}}
                     <div>{{this.wins}}</div>
                     <div>{{this.gamesPlayed}}</div>
                     <div>{{this.winRate}}</div>
                 </div>
-            </div>
+            </a>
             {{else}}
             <div class="d-flex justify-content-center mt-3">Nothing here yet!</div>
             {{/each}}

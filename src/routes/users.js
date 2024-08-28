@@ -6,7 +6,8 @@ import axios from 'axios';
 
 // imports
 import User from '../db/Users.js';
-import authentication from '../authentication.js';
+import authentication from '../site/authentication.js';
+import { csrfValidation } from '../site/security.js';
 
 // Initialise route handler
 const router = express.Router();
@@ -30,13 +31,17 @@ router.get('/login', (req, res) => {
 });
 
 // POST '/login' route
-router.post('/login', (req, res) => {
+router.post('/login', csrfValidation, (req, res) => {
 
     // Sanitisers
     const { escape, trim } = validator;
 
     // Extract data from the request's body
     let { username, password } = req.body;
+
+    if (!username || !password) {
+        req.flash('danger', 'Username and password fields must be filled.');
+    }
 
     // Data sanitisation
     username = escape((trim(username)));
@@ -123,7 +128,7 @@ router.get('/register', (req, res) => {
 });
 
 // POST '/register' route
-router.post('/register', async (req, res) => {
+router.post('/register', csrfValidation, async (req, res) => {
 
     // Validators and sanitisers
     const { equals, isEmail, isEmpty, isLength } = validator;
@@ -217,7 +222,7 @@ async function getLocationFromIp(ip) {
  */
 
 //POST '/delete' route
-router.post('/delete', (req, res) => {
+router.post('/delete', csrfValidation, (req, res) => {
 
     // Extract password from the request's body
     let { password } = req.body;
@@ -252,7 +257,6 @@ router.post('/delete', (req, res) => {
                 // Send a successful logout flash message and redirect to the index route
                 req.flash('success', 'Your account has been deactivated.');
                 res.redirect('/');
-
             });
         });
     });

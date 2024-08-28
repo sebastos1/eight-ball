@@ -1,5 +1,5 @@
 import bcrypt from 'bcryptjs';
-import User from './db/Users.js';
+import User from '../db/Users.js';
 
 const authentication = function (req, res, next) {
     req.login = (user_id) => req.session.user_id = user_id;

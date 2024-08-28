@@ -183,6 +183,7 @@ Users.getLeaderboard = function (callback) {
     let sql = `SELECT id, username, wins, losses, rating, is_active, country
                FROM user
                WHERE is_active = 1
+               AND rating IS NOT NULL
                ORDER BY rating DESC
                LIMIT 25;`;
 

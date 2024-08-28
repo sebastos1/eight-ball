@@ -12,7 +12,7 @@
                 </span>
                 <h5 class="mb-0 ms-2">
                     <a href="/profile/{{profile.id}}"
-                        style="color: {{userSolidColor profile.username}};">{{profile.username}}</a>
+                        style="color: {{userColor profile.username}};">{{profile.username}}</a>
                 </h5>
             </div>
             <div class="text-end">
@@ -57,7 +57,7 @@
             <div class="d-flex align-items-center">
                 <h5 class="mb-0 me-2">
                     <a href="/profile/{{#if (eq game.winnerId profile.id)}}{{game.loserId}}{{else}}{{game.winnerId}}{{/if}}"
-                        style="color: {{#if (eq game.winnerId profile.id)}}{{userSolidColor game.loserUsername}}{{else}}{{userSolidColor game.winnerUsername}}{{/if}};">
+                        style="color: {{#if (eq game.winnerId profile.id)}}{{userColor game.loserUsername}}{{else}}{{userColor game.winnerUsername}}{{/if}};">
                         {{#if (eq game.winnerId profile.id)}}
                         {{game.loserUsername}}
                         {{else}}

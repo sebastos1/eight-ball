@@ -97,32 +97,32 @@ export function translateWinReason(reason, didUserWin) {
     }
 }
 
-export function userSolidColor(username) {
-    const minBrightness = 160;
-    const maxBrightness = 255;
+const user_colors = [
+    ["Red", "#FF0000"],
+    ["Blue", "#0000FF"],
+    ["Green", "#00FF00"],
+    ["FireBrick", "#B22222"],
+    ["Coral", "#FF7F50"],
+    ["YellowGreen", "#9ACD32"],
+    ["OrangeRed", "#FF4500"],
+    ["SeaGreen", "#2E8B57"],
+    ["GoldenRod", "#DAA520"],
+    ["Chocolate", "#D2691E"],
+    ["CadetBlue", "#5F9EA0"],
+    ["DodgerBlue", "#1E90FF"],
+    ["HotPink", "#FF69B4"],
+    ["BlueViolet", "#8A2BE2"],
+    ["SpringGreen", "#00FF7F"],
+]
 
-    const hash = username.split('').reduce((acc, char, i) =>
-        acc + char.charCodeAt(0) * (i + 1), 0);
-
-    const primary = Math.abs(hash) % 3;
-
-    const r = minBrightness + (hash & 63);
-    const g = minBrightness + ((hash >> 6) & 63);
-    const b = minBrightness + ((hash >> 12) & 63);
-
-    const colors = [r, g, b].map((c, i) =>
-        i === primary
-            ? Math.min(c * 1.5, maxBrightness)
-            : Math.max(c * 0.6, minBrightness)
-    );
-
-    return `#${colors.map(c => Math.round(c).toString(16).padStart(2, '0')).join('')}`;
+export function userColor(username) {
+    let n = (username.charCodeAt(0) + username.charCodeAt(username.length - 1)) % user_colors.length;
+    return user_colors[n][1];
 }
 
 export function userFlag(country) {
     if (!country) return;
 
-    // Convert country code to flag emoji codepoints
     const codePoints = country.split('').map(char => (char.codePointAt(0) + 127397).toString(16)).join('-');
 
     const flagUrl = `https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/${codePoints}.svg`;
@@ -130,13 +130,12 @@ export function userFlag(country) {
     return new Handlebars.SafeString(`<img src="${flagUrl}" alt="${country}" class="twemoji-flag">`);
 }
 
-// If you need a default export as well, you can add:
 export default {
     eq,
     timeAgo,
     getRank,
     getRankColor,
     translateWinReason,
-    userSolidColor,
+    userColor,
     userFlag
 };

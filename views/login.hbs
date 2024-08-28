@@ -20,6 +20,7 @@
         <div>
             <div>
                 <form action="/login" method="post" class="mb-4">
+                    <input type="hidden" name="_csrf" value="{{csrfToken}}">
                     <div class="mb-3">
                         <input type="text" name="username" placeholder="Username" value="{{login.username}}"
                             class="form-control form-control-lg" required>
