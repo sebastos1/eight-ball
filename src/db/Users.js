@@ -1,272 +1,185 @@
-// Dependencies
+// userQueries.js
+import { User } from './database.js';
 import bcrypt from 'bcryptjs';
-
-// Imports
 import Elo from '../game/Elo.js';
-import { database } from './database.js';
+import { Op } from 'sequelize';
 
-// Declare User object
 const Users = {};
 
 // User create
-Users.create = function (user, callback) {
-
-    // Hash the password
-    bcrypt.hash(user.password, 10, (err, hash) => {
-
-        if (err) {
-            console.log(err);
-            callback(true, null);
-        }
-
-        // SQL query
-        let sql = `INSERT INTO user (username, email, password, country)
-                       VALUES (?, ?, ?, ?);`;
-
-        // Query parameters
-        let params = [user.username, user.email || null, hash, user.country];
-
-        // Execute the query
-        database.run(sql, params, function (err) {
-            if (err) console.log(err);
-            // If a new user was created, return the id
-            callback(Boolean(err), this.lastID ? this.lastID : null);
+Users.create = async function (user) {
+    try {
+        const hash = await bcrypt.hash(user.password, 10);
+        const newUser = await User.create({
+            username: user.username,
+            email: user.email || null,
+            password: hash,
+            country: user.country
         });
-    });
-
+        return newUser.id;
+    } catch (error) {
+        console.error('Error creating user:', error);
+        return null;
+    }
 };
 
 // User deactivation
-Users.deactivate = function (id, callback) {
-
-    let sql = `UPDATE user
-               SET is_active = 0
-               WHERE id = ?;`;
-
-    database.run(sql, id, (err) => {
-        if (err) console.log(err);
-        callback(Boolean(err));
-    });
+Users.deactivate = async function (id) {
+    try {
+        await User.update({ is_active: false }, { where: { id } });
+        return true;
+    } catch (error) {
+        console.error('Error deactivating user:', error);
+        return false;
+    }
 };
 
 // User delete
-Users.delete = function (id, callback) {
-
-    // SQL query
-    let sql = `DELETE FROM user
-               WHERE id = ?;`;
-
-    // Execute the query
-    database.run(sql, id, (err) => {
-        if (err) console.log(err);
-        callback(Boolean(err));
-    });
-
+Users.delete = async function (id) {
+    try {
+        await User.destroy({ where: { id } });
+        return true;
+    } catch (error) {
+        console.error('Error deleting user:', error);
+        return false;
+    }
 };
 
 // Find a user by id
-Users.findUserById = function (id, callback) {
-
-    // SQL query
-    let sql = `SELECT id, username, email, wins, losses, rating, is_active, country
-               FROM user
-               WHERE id = ?;`;
-
-    // Execute the query
-    database.get(sql, id, (err, user) => {
-        if (err) console.log(err);
-        // If a user was found, return the user
-        callback(Boolean(err), user ? user : null);
-    });
-
+Users.findUserById = async function (id) {
+    try {
+        const user = await User.findByPk(id, {
+            attributes: ['id', 'username', 'email', 'wins', 'losses', 'rating', 'is_active', 'country']
+        });
+        return user ? user.get({ plain: true }) : null;
+    } catch (error) {
+        console.error('Error finding user by ID:', error);
+        return null;
+    }
 };
 
 // Find a user id by username
-Users.findIdByUsername = function (username, callback) {
-
-    // SQL query
-    let sql = `SELECT id
-               FROM user
-               WHERE username = ?;`;
-
-    // Execute the query
-    database.get(sql, username, (err, user) => {
-        if (err) console.log(err);
-        // If a user was found, return their id
-        callback(Boolean(err), user ? user.id : null);
-    });
+Users.findIdByUsername = async function (username) {
+    try {
+        const user = await User.findOne({ where: { username }, attributes: ['id'] });
+        return user ? user.id : null;
+    } catch (error) {
+        console.error('Error finding user ID by username:', error);
+        return null;
+    }
 };
 
-// step in for above
-Users.findIdAndStatusByUsername = function (username, callback) {
-    // SQL query
-    let sql = `SELECT id, is_active
-               FROM user
-               WHERE username = ?;`;
-    // Execute the query
-    database.get(sql, username, (err, user) => {
-        if (err) console.log(err);
-        callback(Boolean(err), user ? user.id : null, user ? user.is_active : null);
-    });
+// Find id and status by username
+Users.findIdAndStatusByUsername = async function (username) {
+    try {
+        const user = await User.findOne({
+            where: { username },
+            attributes: ['id', 'is_active']
+        });
+        return user ? { id: user.id, is_active: user.is_active } : null;
+    } catch (error) {
+        console.error('Error finding user ID and status by username:', error);
+        return null;
+    }
 };
 
 // Find a user id by email
-Users.findIdByEmail = function (email, callback) {
-
-    // SQL query
-    let sql = `SELECT id
-               FROM user
-               WHERE email = ?;`;
-
-    // Execute the query
-    database.get(sql, email, (err, user) => {
-        if (err) console.log(err);
-        // If a user was found, return their id
-        callback(Boolean(err), user ? user.id : null);
-    });
+Users.findIdByEmail = async function (email) {
+    try {
+        const user = await User.findOne({ where: { email }, attributes: ['id'] });
+        return user ? user.id : null;
+    } catch (error) {
+        console.error('Error finding user ID by email:', error);
+        return null;
+    }
 };
 
 // Get the password from a user id
-Users.getPasswordFromId = function (id, callback) {
-
-    // SQL query
-    let sql = `SELECT password
-               FROM user
-               WHERE id = ?;`;
-
-    // Execute the query
-    database.get(sql, id, (err, user) => {
-        if (err) console.log(err);
-        // If a user was found, return their password
-        callback(Boolean(err), user ? user.password : null);
-    });
+Users.getPasswordFromId = async function (id) {
+    try {
+        const user = await User.findByPk(id, { attributes: ['password'] });
+        return user ? user.password : null;
+    } catch (error) {
+        console.error('Error getting password from user ID:', error);
+        return null;
+    }
 };
 
-Users.getRatingFromId = function (id, callback) {
-
-    // SQL query
-    let sql = `SELECT rating
-               FROM user
-               WHERE id = ?;`;
-
-    // Execute the query
-    database.get(sql, id, (err, user) => {
-        if (err) console.log(err);
-        // If a user was found, return their rating
-        callback(Boolean(err), user ? user.rating : null);
-    });
+Users.getRatingFromId = async function (id) {
+    try {
+        const user = await User.findByPk(id, { attributes: ['rating'] });
+        return user ? user.rating : null;
+    } catch (error) {
+        console.error('Error getting rating from user ID:', error);
+        return null;
+    }
 };
 
 // Query for a user id using a username
-Users.queryIdByUsername = function (username, callback) {
-
-    // SQL query
-    let sql = `SELECT id
-               FROM user
-               WHERE username LIKE ?;`;
-
-    // Query parameters
-    let params = ['%' + username + '%'];
-
-    // Execute the query
-    database.get(sql, params, (err, user) => {
-        if (err) console.log(err);
-        // If a user was found, return their id
-        callback(Boolean(err), user ? user.id : null);
-    });
-};
-
-// Get the leaderbord 
-Users.getLeaderboard = function (callback) {
-
-    // SQL query
-    let sql = `SELECT id, username, wins, losses, rating, is_active, country
-               FROM user
-               WHERE is_active = 1
-               AND rating IS NOT NULL
-               ORDER BY rating DESC
-               LIMIT 25;`;
-
-    // Execute the query
-    database.all(sql, (err, users) => {
-        if (err) console.log(err);
-        // If users were found, return the users
-        callback(Boolean(err), users ? users : null);
-    });
-};
-
-Users.updateRatingsAfterGame = function (winnerId, loserId, callback) {
-    let sql = `SELECT id, rating FROM user WHERE id IN (?, ?);`;
-
-    database.all(sql, [winnerId, loserId], (err, users) => {
-        if (err) {
-            console.log(err);
-            return callback(true);
-        }
-
-        let winner = users.find(u => u.id === winnerId);
-        let loser = users.find(u => u.id === loserId);
-
-        if (!winner || !loser) return callback(true);
-
-        // might not have a rating yet
-        if (winner.rating === null) winner.rating = Elo.initialRating();
-        if (loser.rating === null) loser.rating = Elo.initialRating();
-
-        let { newWinnerRating, newLoserRating } = Elo.updateRatings(winner.rating, loser.rating);
-        let ratingGained = newWinnerRating - winner.rating;
-        let ratingLost = loser.rating - newLoserRating;
-
-        let updateSql = `UPDATE user SET 
-                        rating = CASE 
-                        WHEN id = ? THEN ?
-                        WHEN id = ? THEN ?
-                        END,
-                        wins = CASE WHEN id = ? THEN wins + 1 ELSE wins END,
-                        losses = CASE WHEN id = ? THEN losses + 1 ELSE losses END
-                        WHERE id IN (?, ?);`;
-        database.run(updateSql, [winnerId, newWinnerRating, loserId, newLoserRating, winnerId, loserId, winnerId, loserId], (err) => {
-            if (err) console.log(err);
-            callback(Boolean(err), {
-                winnerRating: newWinnerRating,
-                loserRating: newLoserRating,
-                ratingGained: ratingGained,
-                ratingLost: ratingLost,
-                winnerCountry: winner.country,
-                loserCountry: loser.country,
-            });
+Users.queryIdByUsername = async function (username) {
+    try {
+        const user = await User.findOne({
+            where: { username: { [Op.like]: `%${username}%` } },
+            attributes: ['id']
         });
-    });
-};
-// Increment the wins of a user
-Users.incrementWins = function (id, callback) {
-
-    // SQL query
-    let sql = `UPDATE user
-               SET wins = wins + 1
-               WHERE id = ?;`;
-
-    // Execute the query
-    database.run(sql, id, (err) => {
-        if (err) console.log(err);
-        callback(Boolean(err));
-    });
-
+        return user ? user.id : null;
+    } catch (error) {
+        console.error('Error querying user ID by username:', error);
+        return null;
+    }
 };
 
-// Increment the losses of a user
-Users.incrementLosses = function (id, callback) {
+// Get the leaderboard
+Users.getLeaderboard = async function () {
+    try {
+        const users = await User.findAll({
+            where: { is_active: true, rating: { [Op.ne]: null } },
+            attributes: ['id', 'username', 'wins', 'losses', 'rating', 'is_active', 'country'],
+            order: [['rating', 'DESC']],
+            limit: 25
+        });
+        return users.map(user => user.get({ plain: true }));
+    } catch (error) {
+        console.error('Error getting leaderboard:', error);
+        return null;
+    }
+};
 
-    // SQL query
-    let sql = `UPDATE user
-               SET losses = losses + 1
-               WHERE id = ?;`;
+Users.updateRatingsAfterGame = async function (winnerId, loserId) {
+    try {
+        const [winner, loser] = await User.findAll({
+            where: { id: [winnerId, loserId] },
+            attributes: ['id', 'rating', 'wins', 'losses']
+        });
 
-    // Execute the query
-    database.run(sql, id, (err) => {
-        if (err) console.log(err);
-        callback(Boolean(err));
-    });
+        if (!winner || !loser) throw new Error('Winner or loser not found');
+
+        winner.rating = winner.rating || Elo.initialRating();
+        loser.rating = loser.rating || Elo.initialRating();
+
+        const { newWinnerRating, newLoserRating } = Elo.updateRatings(winner.rating, loser.rating);
+        const ratingGained = newWinnerRating - winner.rating;
+        const ratingLost = loser.rating - newLoserRating;
+
+        await User.update(
+            { rating: newWinnerRating, wins: (winner.wins || 0) + 1 },
+            { where: { id: winnerId } }
+        );
+        await User.update(
+            { rating: newLoserRating, losses: (loser.losses || 0) + 1 },
+            { where: { id: loserId } }
+        );
+
+        return {
+            winnerRating: newWinnerRating,
+            loserRating: newLoserRating,
+            ratingGained,
+            ratingLost,
+        };
+    } catch (error) {
+        console.error('Error updating ratings after game:', error);
+        return null;
+    }
 };
 
 export default Users;

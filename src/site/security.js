@@ -3,8 +3,7 @@ import helmet from 'helmet';
 import crypto from 'crypto';
 import cookieParser from 'cookie-parser';
 import rateLimit from 'express-rate-limit';
-import expressSession from 'express-session';
-import { sessionStore } from '../db/database.js';
+
 
 // csrf
 const Tokens = csrf;
@@ -87,21 +86,7 @@ const applyHelmet = (app) => {
     }));
 }
 
-export const configureSession = (app) => {
-    const session = expressSession({
-        store: sessionStore(expressSession),
-        secret: 'secret',
-        resave: false,
-        saveUninitialized: false,
-        cookie: {
-            maxAge: 7 * 24 * 60 * 60 * 1000, // 1 week
-            secure: 'auto',
-        },
-    });
 
-    app.use(session);
-    return session;
-};
 
 export const csrfValidation = (req, res, next) => {
     const token = req.body._csrf;

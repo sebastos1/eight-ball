@@ -1,144 +1,96 @@
-// Dependencies
 import express from 'express';
-
-// Imports
 import Users from '../db/Users.js';
 import Games from '../db/Games.js';
 
-// Initialise route handler
 const router = express.Router();
 
-/**
- * Index route
- */
-
 // GET '/' route
-router.get('/', (req, res, next) => {
-
-    // display a user friendly index page to new users, instead of straight sending them to login with no context lol
-    let loggedIn = req.authenticated;
+router.get('/', async (req, res) => {
+    const loggedIn = req.authenticated;
     if (!loggedIn) return res.render('dashboard', { loggedIn });
 
-    // Find the latest game played by the user from the database
-    Games.getLatestByUserId(req.user_id, (err, game) => {
-        if (err) return next('Database error.');
-
-        // Render the dashboard page and pass in game status and the latest game played
+    try {
+        const game = await Games.getLatestByUserId(req.user_id);
         return res.render('dashboard', { game, loggedIn });
-    });
+    } catch (error) {
+        console.error('Error fetching latest game:', error);
+        return res.status(500).render('error', { message: 'Database error' });
+    }
 });
 
-/**
- * Play route
- */
-
 // GET '/play' route
-router.get('/play', (req, res, _next) => {
+router.get('/play', (req, res) => {
     if (!req.authenticated) {
         req.flash('danger', 'Log in to play :)');
         return res.redirect('/login');
     }
-
-    // Render the play page
     return res.render('play');
 });
 
-/**
- * Profile route
- */
-
-// GET '/profile'
-router.get('/profile', (req, res, next) => {
-
+// GET '/profile' route
+router.get('/profile', async (req, res) => {
     if (!req.query.username) {
-
-        // If the request is not authenticated
         if (!req.authenticated) {
-            // Send an error flash message and redirect to the login route
             req.flash('danger', 'You are not logged in.');
             return res.redirect('/login');
         }
-
-        // Redirect to the profile for their own account
         return res.redirect(`/profile/${req.user_id}`);
     }
 
-
-    // Query the database for a user with a username similar to the query
-    Users.queryIdByUsername(req.query.username, (err, id) => {
-
-        if (err || !id) {
-            return next(err ? 'Database error.' : 'User not found.');
+    try {
+        const id = await Users.queryIdByUsername(req.query.username);
+        if (!id) {
+            return res.status(404).render('error', { message: 'User not found' });
         }
-
         return res.redirect(`/profile/${id}`);
-    });
+    } catch (error) {
+        console.error('Error querying user:', error);
+        return res.status(500).render('error', { message: 'Database error' });
+    }
 });
 
-// GET '/profile/id'
-router.get('/profile/:id', (req, res, next) => {
+// GET '/profile/:id' route
+router.get('/profile/:id', async (req, res) => {
+    try {
+        const profile = await Users.findUserById(req.params.id);
+        if (!profile) return res.status(404).render('error', { message: 'User not found' });
 
-    // Find a user in the database with the id specified in the url
-    Users.findUserById(req.params.id, (err, profile) => {
+        const selfProfile = req.params.id == req.user_id;
+        const gamesPlayed = profile.wins + profile.losses;
+        const winRate = gamesPlayed ? Math.round(profile.wins * 100 / gamesPlayed) + '%' : '-';
 
-        if (err || !profile) {
-            // Send a suitable message to the error handler
-            return next(err ? 'Database error.' : 'User not found.');
-        }
-
-        // Check if the profile being requested is the request's own profile
-        let selfProfile = req.params.id == req.user_id;
-        // Caluclate the user's winrate
-        let gamesPlayed = profile.wins + profile.losses;
-        let winRate = gamesPlayed ? Math.round(profile.wins * 100 / gamesPlayed) + '%' : '-';
-
-        // Find the games played by the user
-        Games.getGamesByUserId(profile.id, (err, games) => {
-
-            if (err) next('Database error.');
-
-            // Render the profile page and pass in the profile data, games played, whether its a self profile and the winrate
-            return res.render('profile', { profile, games, selfProfile, gamesPlayed, winRate });
-        });
-    });
+        const games = await Games.getGamesByUserId(profile.id);
+        return res.render('profile', { profile, games, selfProfile, gamesPlayed, winRate });
+    } catch (error) {
+        console.error('Error fetching profile:', error);
+        return res.status(500).render('error', { message: 'Database error' });
+    }
 });
-
-/**
- * Leaderboard route
- */
 
 // GET '/leaderboard' route
-router.get('/leaderboard', (req, res, next) => {
-
-    // Get all of the users from the database
-    Users.getLeaderboard((err, users) => {
-
-        if (err || !users) {
-            return next('Database error.');
+router.get('/leaderboard', async (req, res) => {
+    try {
+        const users = await Users.getLeaderboard();
+        if (!users) {
+            return res.status(500).render('error', { message: 'Database error' });
         }
 
-        // Position counter
-        let i = 0;
-        // Iterate through the users array
-        users.map((user) => {
-            // Position in leaderboard
-            user.position = ++i;
-            // Add a self boolean attribute
+        users.forEach((user, index) => {
+            user.position = index + 1;
             user.self = user.id == req.user_id;
-            // Calculate the game played
             user.gamesPlayed = user.wins + user.losses;
-            // Calcualte the win rate
             user.winRate = user.gamesPlayed ? Math.round(user.wins * 100 / user.gamesPlayed) + '%' : '-';
         });
 
-        // Render the leaderboard page and pass in the users array
         return res.render('leaderboard', { users });
-    });
+    } catch (error) {
+        console.error('Error fetching leaderboard:', error);
+        return res.status(500).render('error', { message: 'Database error' });
+    }
 });
 
 router.get('/about', (_req, res) => {
     return res.render('about');
 });
 
-// Export router
 export default router;

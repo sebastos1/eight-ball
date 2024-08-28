@@ -1,70 +1,72 @@
-// Imports
-import { database } from './database.js';
+// gameQueries.js
+import { User, Game } from './database.js';
+import { Op } from 'sequelize';
 
-// Declare Game object
 const Games = {};
 
 // Game create
-Games.create = function (winner, loser, ratingInfo, winReason, winnerCountry, loserCountry, callback) {
-
-    // SQL query
-    let sql = `INSERT INTO game (winnerId, loserId, winnerScore, loserScore, winnerNewRating, loserNewRating, ratingGained, ratingLost, winReason, winnerCountry, loserCountry)
-               VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);`;
-
-    let { winnerRating, loserRating, ratingGained, ratingLost } = ratingInfo;
-
-    console.log(winnerCountry);
-
-    // Query parameters
-    let params = [winner.id, loser.id, winner.score, loser.score, winnerRating, loserRating, ratingGained, ratingLost, winReason, winnerCountry, loserCountry];
-
-    // Execute the query
-    database.run(sql, params, function (err) {
-        if (err) console.log(err);
-        // If a new game was created, return the id
-        callback(Boolean(err), this.lastID ? this.lastID : null);
-    });
+Games.create = async function (winner, loser, ratingInfo, winReason, winnerCountry, loserCountry) {
+    const { winnerRating, loserRating, ratingGained, ratingLost } = ratingInfo;
+    try {
+        const newGame = await Game.create({
+            winnerId: winner.id,
+            loserId: loser.id,
+            winnerScore: winner.score,
+            loserScore: loser.score,
+            winnerNewRating: winnerRating,
+            loserNewRating: loserRating,
+            ratingGained,
+            ratingLost,
+            winReason,
+            winnerCountry,
+            loserCountry
+        });
+        return newGame.id;
+    } catch (error) {
+        console.error('Error creating game:', error);
+        return null;
+    }
 };
 
 // Get the games of a user from their id
-Games.getGamesByUserId = function (id, callback) {
-
-    // SQL query
-    let sql = `SELECT game.id, game.winnerId, game.loserId, game.winnerScore, game.loserScore, game.time, user1.username AS winnerUsername, user2.username AS loserUsername, winnerNewRating, loserNewRating, ratingGained, ratingLost, winReason, winnerCountry, loserCountry
-               FROM game
-               LEFT JOIN user AS user1 ON user1.id = game.winnerId
-               LEFT JOIN user AS user2 ON user2.id = game.loserId
-               WHERE game.winnerId = ? OR game.loserId = ?
-               ORDER BY game.time DESC
-               LIMIT 25;`;
-
-    // Execute the query
-    database.all(sql, [id, id], (err, games) => {
-        if (err) console.log(err);
-        // If games were found, return the games
-        callback(Boolean(err), games ? games : null);
-    });
-
+Games.getGamesByUserId = async function (id) {
+    try {
+        const games = await Game.findAll({
+            where: {
+                [Op.or]: [{ winnerId: id }, { loserId: id }]
+            },
+            include: [
+                { model: User, as: 'Winner', attributes: ['username', 'country'] },
+                { model: User, as: 'Loser', attributes: ['username', 'country'] }
+            ],
+            order: [['createdAt', 'DESC']],
+            limit: 25
+        });
+        return games.map(game => game.get({ plain: true }));
+    } catch (error) {
+        console.error('Error fetching games by user ID:', error);
+        return null;
+    }
 };
 
 // Get the latest game played by a user from their id
-Games.getLatestByUserId = function (id, callback) {
-
-    // SQL query
-    let sql = `SELECT game.id, game.winnerId, game.loserId, game.winnerScore, game.loserScore, game.time, user1.username AS winnerUsername, user2.username AS loserUsername, winnerNewRating, loserNewRating, ratingGained, ratingLost, winReason, winnerCountry, loserCountry
-               FROM game
-               LEFT JOIN user AS user1 ON user1.id = game.winnerId
-               LEFT JOIN user AS user2 ON user2.id = game.loserId
-               WHERE game.winnerId = ? OR game.loserId = ?
-               ORDER BY game.time DESC
-               LIMIT 1;`;
-
-    // Execute the query
-    database.get(sql, [id, id], (err, game) => {
-        if (err) console.log(err);
-        // If games were found, return the games
-        callback(Boolean(err), game ? game : null);
-    });
+Games.getLatestByUserId = async function (id) {
+    try {
+        const game = await Game.findOne({
+            where: {
+                [Op.or]: [{ winnerId: id }, { loserId: id }]
+            },
+            include: [
+                { model: User, as: 'Winner', attributes: ['username'] },
+                { model: User, as: 'Loser', attributes: ['username'] }
+            ],
+            order: [['createdAt', 'DESC']]
+        });
+        return game ? game.get({ plain: true }) : null;
+    } catch (error) {
+        console.error('Error fetching latest game by user ID:', error);
+        return null;
+    }
 };
 
 export default Games;

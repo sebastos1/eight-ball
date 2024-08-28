@@ -5,7 +5,7 @@ import chalk from 'chalk';
 import axios from 'axios';
 
 // imports
-import User from '../db/Users.js';
+import Users from '../db/Users.js';
 import authentication from '../site/authentication.js';
 import { csrfValidation } from '../site/security.js';
 
@@ -31,63 +31,62 @@ router.get('/login', (req, res) => {
 });
 
 // POST '/login' route
-router.post('/login', csrfValidation, (req, res) => {
+router.post('/login', csrfValidation, async (req, res) => {
+    try {
+        // Sanitisers
+        const { escape, trim } = validator;
 
-    // Sanitisers
-    const { escape, trim } = validator;
+        // Extract data from the request's body
+        let { username, password } = req.body;
 
-    // Extract data from the request's body
-    let { username, password } = req.body;
+        if (!username || !password) {
+            req.flash('danger', 'Username and password fields must be filled.');
+        }
 
-    if (!username || !password) {
-        req.flash('danger', 'Username and password fields must be filled.');
-    }
+        // Data sanitisation
+        username = escape((trim(username)));
 
-    // Data sanitisation
-    username = escape((trim(username)));
+        // Save the username to saved login data
+        req.session.login = { username };
 
-    // Save the username to saved login data
-    req.session.login = { username };
-
-    // Find a user in the database with the username entered
-    User.findIdAndStatusByUsername(username, (err, user_id, activity_status) => {
-
-        if (err || !user_id) {
-            req.flash('danger', err ? 'Database error.' : 'User not found.');
+        // Find a user in the database with the username entered
+        const user = await Users.findIdAndStatusByUsername(username);
+        if (!user) {
+            req.flash('danger', 'No user found for username');
             return res.redirect('/login');
         }
 
-        if (!activity_status) {
-            req.flash('danger', err ? 'Database error.' : 'User has been permanently deactivated.');
+        if (!user.is_active) {
+            req.flash('danger', 'User has been permanently deactivated.');
             return res.redirect('/login');
         }
 
         // Find the password for the user from the database
-        User.getPasswordFromId(user_id, (err, hash) => {
-            // If there was no error
-            if (err) {
-                req.flash('danger', 'Database error.');
-                return res.redirect('/login');
-            }
+        const hash = await Users.getPasswordFromId(user.id);
+        if (!hash) {
+            req.flash('danger', 'Database error.');
+            return res.redirect('/login');
+        }
 
-            // Compare the password entered to the hash from the database
-            authentication.comparePassword(password, hash, (match) => {
+        // Compare the password entered to the hash from the database
+        const match = await authentication.comparePassword(password, hash);
+        if (!match) {
+            req.flash('danger', 'Incorrect password.');
+            return res.redirect('/login');
+        }
 
-                if (!match) {
-                    // Send an error flash message and reload the login page
-                    req.flash('danger', 'Incorrect password.');
-                    return res.redirect('/login');
-                }
+        // Login the user
+        req.login(user.id);
+        log(`${username}#${user.id} has logged in`);
+        // Send a successful login flash message and redirect to the dashboard 
+        req.flash('success', 'You have logged in.');
+        return res.redirect('/');
 
-                // Login the user
-                req.login(user_id);
-                log(`${username}#${user_id} has logged in`);
-                // Send a successful login flash message and redirect to the dashboard 
-                req.flash('success', 'You have logged in.');
-                return res.redirect('/');
-            });
-        });
-    });
+    } catch (error) {
+        console.error('Login error:', error);
+        req.flash('danger', 'An unexpected error occurred. Please try again.');
+        return res.redirect('/login');
+    }
 });
 
 /**
@@ -129,52 +128,45 @@ router.get('/register', (req, res) => {
 
 // POST '/register' route
 router.post('/register', csrfValidation, async (req, res) => {
+    try {
+        // Validators and sanitisers
+        const { equals, isEmail, isEmpty, isLength } = validator;
+        const { escape, normalizeEmail, trim } = validator;
 
-    // Validators and sanitisers
-    const { equals, isEmail, isEmpty, isLength } = validator;
-    const { escape, normalizeEmail, trim } = validator;
+        // Extract and sanitize data from the request's body
+        let { username, email, password, passwordConfirm } = req.body;
+        username = escape(trim(username));
+        email = email ? escape(normalizeEmail(trim(email))) : '';
 
-    // Extract data from the request's body
-    let { username, email, password, passwordConfirm } = req.body;
+        // Save the sanitised data to saved registration data
+        req.session.register = { username, email };
 
-    // Data sanitisation
-    username = trim(username);  // Remove trim() from inside escape()
-    if (email != "") email = escape(normalizeEmail(trim(email)));
-
-    // Save the sanitised data to saved registration data
-    req.session.register = { username, email };
-
-    // Data validation
-    let errors = [];
-
-    if (isEmpty(username) || isEmpty(password) || isEmpty(passwordConfirm)) {
-        errors.push('Username and password fields must be filled.');
-    } else {
-        // username
-        // this allows an extended latin alphabet, numbers, and spaces
-        if (!/^[A-Za-zÀ-ÿ0-9 ]+$/.test(username)) {
-            errors.push('Username can only contain Latin letters, numbers, and spaces.');
+        // Data validation
+        let errors = [];
+        if (isEmpty(username) || isEmpty(password) || isEmpty(passwordConfirm)) {
+            errors.push('Username and password fields must be filled.');
+        } else {
+            // username
+            if (!/^[A-Za-zÀ-ÿ0-9 ]+$/.test(username)) {
+                errors.push('Username can only contain Latin letters, numbers, and spaces.');
+            }
+            if (!isLength(username, { min: 3, max: 30 })) {
+                errors.push('Usernames must be between 3 and 30 characters long.');
+            }
+            // password
+            if (!isLength(password, { min: 4, max: 32 })) errors.push('Passwords must be between 4 and 32 characters.');
+            if (!equals(password, passwordConfirm)) errors.push('Passwords must match.');
+            if (email) {
+                if (!isEmail(email)) errors.push('Emails must be valid.');
+                if (!isLength(email, { max: 64 })) errors.push('Emails cannot be longer than 64 characters.');
+                const emailUser = await Users.findIdByEmail(email);
+                if (emailUser) errors.push('Email already taken.');
+            }
         }
-        if (!isLength(username, { min: 3, max: 30 })) {
-            errors.push('Usernames must be between 3 and 30 characters long.');
-        }
 
-        // password
-        if (!isLength(password, { min: 4, max: 32 })) errors.push('Passwords must be between 4 and 32 characters.');
-        if (!equals(password, passwordConfirm)) errors.push('Passwords must match.');
-
-        if (email) {
-            if (!isEmail(email)) errors.push('Emails must be valid.');
-            if (!isLength(email, { max: 64 })) errors.push('Emails cannot be longer than 64 characters.');
-            User.findIdByEmail(email, (err, user_id) => {
-                if (!err && user_id) errors.push('Email already taken.');
-            });
-        }
-    }
-
-    // Check if the username has already been taken in the database
-    User.findIdByUsername(username, async (err, user_id) => {
-        if (!err && user_id) errors.push('Username already taken.');
+        // Check if the username has already been taken in the database
+        const existingUser = await Users.findIdByUsername(username);
+        if (existingUser) errors.push('Username already taken.');
 
         if (errors.length) {
             req.flash('danger', errors);
@@ -182,25 +174,25 @@ router.post('/register', csrfValidation, async (req, res) => {
         }
 
         const ip = req.headers["x-real-ip"] || req.headers["x-forwarded-for"];
-
         const country = await getLocationFromIp(ip);
         console.log(`IP: ${ip}, Country: ${country || 'Unknown'}`);
 
-        User.create({ username, email, password, country }, (err, user_id) => {
-            if (err) {
-                req.flash('danger', 'Database error.');
-                return res.redirect('/register');
-            }
+        const new_id = await Users.create({ username, email, password, country });
 
-            // Login the user and save the username to saved login data
-            req.login(user_id);
-            log(`${username}#${user_id} has registered${country ? ` from ${country}` : ''}`);
+        if (new_id) {
+            req.login(new_id);
+            log(`${username}#${new_id} has registered${country ? ` from ${country}` : ''}`);
             req.session.login = { username };
-
             req.flash('success', 'You have successfully registered.');
             return res.redirect('/');
-        });
-    });
+        } else {
+            throw new Error('Failed to create user');
+        }
+    } catch (error) {
+        console.error('Registration error:', error);
+        req.flash('danger', 'An error occurred during registration. Please try again.');
+        return res.redirect('/register');
+    }
 });
 
 async function getLocationFromIp(ip) {
@@ -222,44 +214,49 @@ async function getLocationFromIp(ip) {
  */
 
 //POST '/delete' route
-router.post('/delete', csrfValidation, (req, res) => {
+router.post('/delete', csrfValidation, async (req, res) => {
+    try {
+        // Extract password from the request's body
+        const { password } = req.body;
 
-    // Extract password from the request's body
-    let { password } = req.body;
-
-    // Find the password of the user from the database
-    User.getPasswordFromId(req.user_id, (err, hash) => {
-        if (err) {
-            req.flash('danger', 'Database error.');
-            res.redirect(`/profile/${req.user_id}`);
+        // Find the password of the user from the database
+        const hash = await Users.getPasswordFromId(req.user_id);
+        if (!hash) {
+            req.flash('danger', 'User not found.');
+            return res.redirect(`/profile/${req.user_id}`);
         }
 
         // Compare the password entered to the hash from the database
-        authentication.comparePassword(password, hash, (match) => {
+        const match = await authentication.comparePassword(password, hash);
+        if (!match) {
+            req.flash('danger', 'Incorrect password.');
+            return res.redirect(`/profile/${req.user_id}`);
+        }
 
-            if (!match) {
-                req.flash('danger', 'Incorrect password.');
-                res.redirect(`/profile/${req.user_id}`);
-            }
+        // Deactivate user
+        const deactivated = await Users.deactivate(req.user_id);
+        if (!deactivated) {
+            req.flash('danger', 'Failed to deactivate account. Please try again.');
+            return res.redirect(`/profile/${req.user_id}`);
+        }
 
-            // Delete user
-            User.deactivate(req.user_id, (err) => {
-
-                if (err) {
-                    // Send a error flash message and reload their profile page
-                    req.flash('danger', 'Database error.');
-                    res.redirect(`/profile/${req.user_id}`);
-                }
-
-                // Logout the user
-                req.logout();
+        // Logout the user
+        req.logout((err) => {
+            if (err) {
+                console.error('Logout error:', err);
+                req.flash('danger', 'An error occurred during logout. Your account has been deactivated.');
+            } else {
                 log(`${req.user.username}#${req.user_id} has deactivated their account`);
-                // Send a successful logout flash message and redirect to the index route
                 req.flash('success', 'Your account has been deactivated.');
-                res.redirect('/');
-            });
+            }
+            res.redirect('/');
         });
-    });
+
+    } catch (error) {
+        console.error('Account deactivation error:', error);
+        req.flash('danger', 'An unexpected error occurred. Please try again.');
+        res.redirect(`/profile/${req.user_id}`);
+    }
 });
 
 export default router;
