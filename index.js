@@ -1,18 +1,18 @@
 // Dependencies
-import express from 'express';
-import { engine } from 'express-handlebars';
-import flash from 'connect-flash';
+import http from 'http';
 import logger from 'morgan';
 import chalk from 'chalk';
+import express from 'express';
+import flash from 'connect-flash';
 import { Server } from 'socket.io';
-import http from 'http';
-
+import { engine } from 'express-handlebars';
 
 // imports
+import helpers from './src/site/helpers.js';
 import applySocketEvents from './src/serverSocket.js';
 import authentication from './src/site/authentication.js';
-import helpers from './src/site/helpers.js';
-import { applySecurityConfig, configureSession } from './src/site/security.js';
+import { applySecurityConfig } from './src/site/security.js';
+import { configureSessionStore, initializeDatabase } from './src/db/database.js';
 
 // Routers
 import indexRouter from './src/routes/index.js';
@@ -20,7 +20,10 @@ import usersRouter from './src/routes/users.js';
 
 // Init
 const app = express();
+const PORT = process.env.PORT || 8080;
 const server = http.createServer(app);
+
+await initializeDatabase();
 
 app.use(express.urlencoded({ extended: true }));
 
@@ -28,7 +31,7 @@ app.use(express.urlencoded({ extended: true }));
 applySecurityConfig(app);
 
 // Set port
-const PORT = process.env.PORT || 8080;
+
 app.set('port', PORT);
 
 // Set view engine
@@ -55,7 +58,7 @@ const io = new Server(server, {
     },
 });
 
-const session = configureSession(app);
+const session = configureSessionStore(app);
 
 // middelware wrapper to translate socket.io to express
 const wrap = middleware => (socket, next) => {

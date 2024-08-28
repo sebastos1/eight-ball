@@ -159,32 +159,32 @@ game.shoot = function (player, power, angle) {
 };
 
 // Game end method
-game.end = function (winner, winReason) {
+game.end = async function (winner, winReason) {
     if (this.ended) return;
-
     // No rank update if a player played against themselves
     if (this.player1.id === this.player2.id) {
         this.cleanUp();
         return;
     }
-
     // Get loser
     let loser = (winner == this.player1 ? this.player2 : this.player1);
 
-    // update player rating
-    Users.updateRatingsAfterGame(winner.id, loser.id, (err, ratingChanges) => {
-        if (err) console.log("Error updating ratings, logging anyway:", err);
+    try {
+        // update player rating
+        const ratingChanges = await Users.updateRatingsAfterGame(winner.id, loser.id);
+        if (!ratingChanges) {
+            console.log("Error updating ratings, logging anyway");
+        }
 
         // Create new game in the database
-        Games.create(winner, loser, ratingChanges, winReason, winner.country, loser.country, (err) => {
-            if (err) console.log("Error writing a completed game into db:", err);
-        });
-
+        await Games.create(winner, loser, ratingChanges, winReason, winner.country, loser.country);
+    } catch (error) {
+        console.error("Error ending game:", error);
+    } finally {
         this.cleanUp();
-    });
-
-    this.active = false;
-    this.ended = true;
+        this.active = false;
+        this.ended = true;
+    }
 };
 
 game.cleanUp = function () {

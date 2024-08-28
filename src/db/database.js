@@ -1,47 +1,130 @@
-import sqlite3 from 'sqlite3';
-import connectSqlite3 from 'connect-sqlite3';
-import chalk from 'chalk';
+import session from 'express-session';
+import expressSession from 'express-session';
+import { Sequelize, DataTypes } from 'sequelize';
+import SequelizeStoreFactory from 'connect-session-sequelize';
 
-const database = new sqlite3.Database('./database.db', (err) => {
-    if (err) return console.error(chalk.red('Error connecting to the database:', err.message));
-
-    console.log(chalk.green('Connected to the SQLite database.'));
-    initializeTables(database);
+export const database = new Sequelize({
+    dialect: 'sqlite',
+    storage: './database.db',
+    logging: false,
 });
 
-function initializeTables(db) {
-    db.run(`CREATE TABLE IF NOT EXISTS user (
-        id INTEGER PRIMARY KEY NOT NULL UNIQUE,
-        username TEXT NOT NULL UNIQUE,
-        email TEXT UNIQUE,
-        password TEXT NOT NULL,
-        wins INTEGER DEFAULT 0,
-        losses INTEGER DEFAULT 0,
-        rating INTEGER,
-        country TEXT,
-        is_active BOOL DEFAULT TRUE
-    )`);
+const SequelizeStore = SequelizeStoreFactory(session.Store);
+const sessionStore = new SequelizeStore({
+    db: database,
+});
 
-    db.run(`CREATE TABLE IF NOT EXISTS game (
-        id INTEGER PRIMARY KEY NOT NULL UNIQUE,
-        winnerId INTEGER NOT NULL,
-        loserId INTEGER NOT NULL,
-        winnerScore INTEGER DEFAULT 0,
-        loserScore INTEGER DEFAULT 0,
-        winnerNewRating INTEGER,
-        loserNewRating INTEGER,
-        ratingGained INTEGER,
-        ratingLost INTEGER,
-        winReason INTEGER,
-        winnerCountry TEXT,
-        loserCountry TEXT,
-        time TEXT DEFAULT CURRENT_TIMESTAMP
-    )`);
-}
+export const configureSessionStore = (app) => {
+    const sessionMiddleware = expressSession({
+        store: sessionStore,
+        secret: 'secret',
+        resave: false,
+        saveUninitialized: false,
+        cookie: {
+            maxAge: 7 * 24 * 60 * 60 * 1000, // 1 week
+            secure: 'auto',
+        },
+    });
 
-function sessionStore(session) {
-    const SQLiteStore = connectSqlite3(session);
-    return new SQLiteStore({ db: 'database.db' });
-}
+    app.use(sessionMiddleware);
+    return sessionMiddleware;
+};
 
-export { database, sessionStore };
+export const User = database.define('User', {
+    id: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        autoIncrement: true,
+        allowNull: false,
+        unique: true
+    },
+    username: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        unique: true
+    },
+    email: {
+        type: DataTypes.STRING,
+        unique: true
+    },
+    password: {
+        type: DataTypes.STRING,
+        allowNull: false
+    },
+    wins: {
+        type: DataTypes.INTEGER,
+        defaultValue: 0
+    },
+    losses: {
+        type: DataTypes.INTEGER,
+        defaultValue: 0
+    },
+    rating: {
+        type: DataTypes.INTEGER
+    },
+    country: {
+        type: DataTypes.STRING
+    },
+    is_active: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: true
+    }
+});
+
+export const Game = database.define('Game', {
+    id: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        autoIncrement: true,
+        allowNull: false,
+        unique: true
+    },
+    winnerId: {
+        type: DataTypes.INTEGER,
+        allowNull: false
+    },
+    loserId: {
+        type: DataTypes.INTEGER,
+        allowNull: false
+    },
+    winnerScore: {
+        type: DataTypes.INTEGER,
+        defaultValue: 0
+    },
+    loserScore: {
+        type: DataTypes.INTEGER,
+        defaultValue: 0
+    },
+    winnerNewRating: {
+        type: DataTypes.INTEGER
+    },
+    loserNewRating: {
+        type: DataTypes.INTEGER
+    },
+    ratingGained: {
+        type: DataTypes.INTEGER
+    },
+    ratingLost: {
+        type: DataTypes.INTEGER
+    },
+    winReason: {
+        type: DataTypes.INTEGER
+    },
+});
+
+// Define relationships
+User.hasMany(Game, { as: 'WonGames', foreignKey: 'winnerId' });
+User.hasMany(Game, { as: 'LostGames', foreignKey: 'loserId' });
+Game.belongsTo(User, { as: 'Winner', foreignKey: 'winnerId' });
+Game.belongsTo(User, { as: 'Loser', foreignKey: 'loserId' });
+
+export const initializeDatabase = async () => {
+    try {
+        await database.sync();
+        console.log('Database synced');
+    } catch (error) {
+        console.error('Failed syncing database:', error);
+    }
+};
+
+

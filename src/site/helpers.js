@@ -116,6 +116,7 @@ const user_colors = [
 ]
 
 export function userColor(username) {
+    if (!username) return;
     let n = (username.charCodeAt(0) + username.charCodeAt(username.length - 1)) % user_colors.length;
     return user_colors[n][1];
 }

@@ -5,9 +5,9 @@
             <div class="d-flex align-items-center">
                 <span style="font-size: 1.5em;">
                     {{#if (eq game.winnerId profile.id)}}
-                    {{userFlag game.winnerCountry}}
+                    {{userFlag game.Winner.country}}
                     {{else}}
-                    {{userFlag game.loserCountry}}
+                    {{userFlag game.Loser.country}}
                     {{/if}}
                 </span>
                 <h5 class="mb-0 ms-2">
@@ -57,19 +57,19 @@
             <div class="d-flex align-items-center">
                 <h5 class="mb-0 me-2">
                     <a href="/profile/{{#if (eq game.winnerId profile.id)}}{{game.loserId}}{{else}}{{game.winnerId}}{{/if}}"
-                        style="color: {{#if (eq game.winnerId profile.id)}}{{userColor game.loserUsername}}{{else}}{{userColor game.winnerUsername}}{{/if}};">
+                        style="color: {{#if (eq game.winnerId profile.id)}}{{userColor game.Loser.username}}{{else}}{{userColor game.Winner.username}}{{/if}};">
                         {{#if (eq game.winnerId profile.id)}}
-                        {{game.loserUsername}}
+                        {{game.Loser.username}}
                         {{else}}
-                        {{game.winnerUsername}}
+                        {{game.Winner.username}}
                         {{/if}}
                     </a>
                 </h5>
                 <span style="font-size: 1.5em;">
                     {{#if (eq game.winnerId profile.id)}}
-                    {{userFlag game.loserCountry}}
+                    {{userFlag game.Loser.country}}
                     {{else}}
-                    {{userFlag game.winnerCountry}}
+                    {{userFlag game.Winner.country}}
                     {{/if}}
                 </span>
             </div>
@@ -79,5 +79,5 @@
 <div
     class="list-group-item border {{#if (eq game.winnerId profile.id)}}list-group-item-success{{else}}list-group-item-danger{{/if}} d-flex justify-content-between align-items-center py-2 {{#if @last}}rounded-bottom{{/if}}{{#if single}}rounded-bottom{{/if}}">
     <small>{{translateWinReason game.winReason (eq game.winnerId profile.id)}}</small>
-    <small>{{timeAgo game.time}}</small>
+    <small>{{timeAgo game.createdAt}}</small>
 </div>
