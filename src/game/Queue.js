@@ -1,35 +1,32 @@
-// Queue class constructor
-const Queue = function () {
-    this._queue = [];
-};
-
-// Queue class properties
-Queue.prototype = {
-
-    // Size property
-    get size() {
-        return this._queue.length;
+class Queue {
+    constructor() {
+        this.users = [];
     }
 
-};
+    get size() {
+        return this.users.length;
+    }
 
-// Enqueue class method
-Queue.prototype.enqueue = function (player) {
-    this._queue.push(player);
-    player.inQueue = true;
-};
+    enqueue(player) {
+        this.users.push(player);
+        player.inQueue = true;
+    }
 
-// Dequeue class method
-Queue.prototype.dequeue = function () {
-    let player = this._queue.shift();
-    player.inQueue = false;
-    return player;
-};
+    dequeue() {
+        const player = this.users.shift();
+        if (player) {
+            player.inQueue = false;
+        }
+        return player;
+    }
 
-// Queue remove class method
-Queue.prototype.remove = function (player) {
-    this._queue.splice(this._queue.indexOf(player), 1);
-    player.inQueue = false;
-};
+    remove(player) {
+        const index = this.users.indexOf(player);
+        if (index !== -1) {
+            this.users.splice(index, 1);
+            player.inQueue = false;
+        }
+    }
+}
 
 export default Queue;

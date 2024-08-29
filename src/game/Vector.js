@@ -1,119 +1,102 @@
-// Vector class constructor
-const Vector = function (x = 0, y = 0) {
-    this.x = x;
-    this.y = y;
-};
+class Vector {
+    constructor(x = 0, y = 0) {
+        this.x = x;
+        this.y = y;
+    }
 
-// Vector class properties
-Vector.prototype = {
-
-    // Length property
     get length() {
-        return Math.sqrt(this.lengthSquared);
-    },
+        return Math.hypot(this.x, this.y);
+    }
 
-    // Length squared property
     get lengthSquared() {
         return this.x ** 2 + this.y ** 2;
-    },
+    }
 
-    // Angle property
     get angle() {
         return Math.atan2(this.y, this.x);
     }
 
-};
+    set(x, y) {
+        this.x = x;
+        this.y = y;
+        return this;
+    }
 
-// update
-Vector.prototype.set = function (x, y) {
-    this.x = x;
-    this.y = y;
-    return this;
-};
+    add(vector) {
+        this.x += vector.x;
+        this.y += vector.y;
+        return this;
+    }
 
-// Vector addition class method
-Vector.prototype.add = function (vector) {
-    this.x += vector.x;
-    this.y += vector.y;
-    return this;
-};
+    subtract(vector) {
+        this.x -= vector.x;
+        this.y -= vector.y;
+        return this;
+    }
 
-// Vector subtraction class method
-Vector.prototype.subtract = function (vector) {
-    this.x -= vector.x;
-    this.y -= vector.y;
-    return this;
-};
+    subtractFrom(vector) {
+        this.x = vector.x - this.x;
+        this.y = vector.y - this.y;
+        return this;
+    }
 
-// Vector subtraction from another vector class method
-Vector.prototype.subtractFrom = function (vector) {
-    this.x = vector.x - this.x;
-    this.y = vector.y - this.y;
-    return this;
-};
+    multiply(scalar) {
+        this.x *= scalar;
+        this.y *= scalar;
+        return this;
+    }
 
-// Vector multiplication class method
-Vector.prototype.multiply = function (scalar) {
-    this.x *= scalar;
-    this.y *= scalar;
-    return this;
-};
+    divide(scalar) {
+        this.x /= scalar;
+        this.y /= scalar;
+        return this;
+    }
 
-// Vector division class method
-Vector.prototype.divide = function (scalar) {
-    this.x /= scalar;
-    this.y /= scalar;
-    return this;
-};
+    rotate(angle) {
+        const cos = Math.cos(angle);
+        const sin = Math.sin(angle);
+        const { x, y } = this;
+        this.x = x * cos - y * sin;
+        this.y = x * sin + y * cos;
+        return this;
+    }
 
-// Vector rotate class method
-Vector.prototype.rotate = function (angle) {
-    this.x = this.x * Math.cos(angle) - this.y * Math.sin(angle);
-    this.y = this.x * Math.sin(angle) + this.y * Math.cos(angle);
-    return this;
-};
+    static add(v1, v2) {
+        return new Vector(v1.x + v2.x, v1.y + v2.y);
+    }
 
-// Vector addition static method
-Vector.add = function (vector1, vector2) {
-    return new Vector(vector1.x + vector2.x, vector1.y + vector2.y);
-};
+    static subtract(v1, v2) {
+        return new Vector(v1.x - v2.x, v1.y - v2.y);
+    }
 
-// Vector subtraction static method
-Vector.subtract = function (vector1, vector2) {
-    return new Vector(vector1.x - vector2.x, vector1.y - vector2.y);
-};
+    static multiply(v, scalar) {
+        return new Vector(v.x * scalar, v.y * scalar);
+    }
 
-// Vector multiplication static method
-Vector.multiply = function (vector, scalar) {
-    return new Vector(vector.x * scalar, vector.y * scalar);
-};
+    static divide(v, scalar) {
+        return new Vector(v.x / scalar, v.y / scalar);
+    }
 
-// Vector division static method
-Vector.divide = function (vector, scalar) {
-    return new Vector(vector.x / scalar, vector.y / scalar);
-};
+    static rotate(v, angle) {
+        const cos = Math.cos(angle);
+        const sin = Math.sin(angle);
+        return new Vector(
+            v.x * cos - v.y * sin,
+            v.x * sin + v.y * cos
+        );
+    }
 
-// Vector rotate static method
-Vector.rotate = function (vector, angle) {
-    return new Vector(
-        vector.x * Math.cos(angle) - vector.y * Math.sin(angle),
-        vector.x * Math.sin(angle) + vector.y * Math.cos(angle)
-    );
-};
+    static dot(v1, v2) {
+        return v1.x * v2.x + v1.y * v2.y;
+    }
 
-// Vector dot product static method
-Vector.dot = function (vector1, vector2) {
-    return (vector1.x * vector2.x) + (vector1.y * vector2.y);
-};
+    static distance(v1, v2) {
+        return Vector.subtract(v1, v2).length;
+    }
 
-// Vector distance static method
-Vector.distance = function (vector1, vector2) {
-    return Vector.subtract(vector1, vector2).length;
-};
-
-// Vector distance squared static method
-Vector.distanceSquared = function (vector1, vector2) {
-    return Vector.subtract(vector1, vector2).lengthSquared;
-};
+    static distanceSquared(v1, v2) {
+        return Vector.subtract(v1, v2).lengthSquared;
+    }
+}
 
 export default Vector;

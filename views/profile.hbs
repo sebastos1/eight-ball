@@ -78,16 +78,14 @@
     </div>
 
     {{#if selfProfile}}
-    <div class="modal fade" id="deleteProfile" tabindex="-1" role="dialog" aria-labelledby="deleteProfileLabel"
-        aria-hidden="true">
-        <div class="modal-dialog" role="document">
+    <div class="modal fade" id="deleteProfile" tabindex="-1" aria-labelledby="deleteProfileLabel" aria-hidden="true">
+        <div class="modal-dialog">
             <form action="/delete/" method="post">
                 <input type="hidden" name="_csrf" value="{{csrfToken}}">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="deleteProfileLabel">Delete Profile</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
-                                aria-hidden="true">&times;</span></button>
+                        <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
                         <p class="text-danger">Are you sure? This is a permanent action!</p>
