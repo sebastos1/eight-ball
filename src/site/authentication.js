@@ -4,6 +4,7 @@ import Users from '../db/Users.js';
 const authentication = async function (req, res, next) {
     req.login = (user_id) => req.session.user_id = user_id;
     req.logout = () => {
+        console.log('Logging out user:', req.session.user_id);
         delete req.session.user_id;
         delete req.session.authenticated;
         delete req.session.user;
@@ -17,9 +18,15 @@ const authentication = async function (req, res, next) {
     try {
         const user = await Users.findUserById(req.session.user_id);
 
+        // gg if you get here lol
         if (!user) {
             clearAuthData(req, res);
             return next('User not found.');
+        }
+
+        if (!user.is_active) {
+            clearAuthData(req, res);
+            return next();
         }
 
         req.user_id = req.session.user_id;

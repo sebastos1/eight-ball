@@ -241,16 +241,15 @@ router.post('/delete', csrfValidation, async (req, res) => {
         }
 
         // Logout the user
-        req.logout((err) => {
-            if (err) {
-                console.error('Logout error:', err);
-                req.flash('danger', 'An error occurred during logout. Your account has been deactivated.');
-            } else {
-                log(`${req.user.username}#${req.user_id} has deactivated their account`);
-                req.flash('success', 'Your account has been deactivated.');
-            }
-            res.redirect('/');
-        });
+        try {
+            req.logout();
+            log(`${req.user.username}#${req.user_id} has deactivated their account`);
+            req.flash('success', 'Your account has been deactivated.');
+        } catch (err) {
+            console.error('Logout error:', err);
+            req.flash('danger', 'An error occurred during logout. Your account has been deactivated.');
+        }
+        res.redirect('/');
 
     } catch (error) {
         console.error('Account deactivation error:', error);

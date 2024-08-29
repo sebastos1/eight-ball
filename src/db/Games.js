@@ -5,8 +5,8 @@ import { Op } from 'sequelize';
 const Games = {};
 
 // Game create
-Games.create = async function (winner, loser, ratingInfo, winReason, winnerCountry, loserCountry) {
-    const { winnerRating, loserRating, ratingGained, ratingLost } = ratingInfo;
+Games.create = async function (winner, loser, ratingChanges, winReason) {
+    const { winnerRating, loserRating, ratingGained, ratingLost } = ratingChanges;
     try {
         const newGame = await Game.create({
             winnerId: winner.id,
@@ -18,8 +18,6 @@ Games.create = async function (winner, loser, ratingInfo, winReason, winnerCount
             ratingGained,
             ratingLost,
             winReason,
-            winnerCountry,
-            loserCountry
         });
         return newGame.id;
     } catch (error) {
@@ -57,8 +55,8 @@ Games.getLatestByUserId = async function (id) {
                 [Op.or]: [{ winnerId: id }, { loserId: id }]
             },
             include: [
-                { model: User, as: 'Winner', attributes: ['username'] },
-                { model: User, as: 'Loser', attributes: ['username'] }
+                { model: User, as: 'Winner', attributes: ['username', 'country'] },
+                { model: User, as: 'Loser', attributes: ['username', 'country'] }
             ],
             order: [['createdAt', 'DESC']]
         });

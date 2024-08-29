@@ -31,7 +31,6 @@ app.use(express.urlencoded({ extended: true }));
 applySecurityConfig(app);
 
 // Set port
-
 app.set('port', PORT);
 
 // Set view engine

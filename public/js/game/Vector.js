@@ -1,35 +1,32 @@
-// Vector class constructor
-const Vector = function (x = 0, y = 0) {
-    this.x = x;
-    this.y = y;
-};
+class Vector {
+    constructor(x = 0, y = 0) {
+        this.x = x;
+        this.y = y;
+    }
 
-// Vector addition static method
-Vector.add = function (vector1, vector2) {
-    return new Vector(vector1.x + vector2.x, vector1.y + vector2.y);
-};
+    static add(v1, v2) {
+        return new Vector(v1.x + v2.x, v1.y + v2.y);
+    }
 
-// Vector subtraction static method
-Vector.subtract = function (vector1, vector2) {
-    return new Vector(vector1.x - vector2.x, vector1.y - vector2.y);
-};
+    static subtract(v1, v2) {
+        return new Vector(v1.x - v2.x, v1.y - v2.y);
+    }
 
-// Vector multiplication static method
-Vector.multiply = function (vector, scalar) {
-    return new Vector(vector.x * scalar, vector.y * scalar);
-};
+    static multiply(v, scalar) {
+        return new Vector(v.x * scalar, v.y * scalar);
+    }
 
-// Vector division static method
-Vector.divide = function (vector, scalar) {
-    return new Vector(vector.x / scalar, vector.y / scalar);
-};
+    static divide(v, scalar) {
+        return new Vector(v.x / scalar, v.y / scalar);
+    }
 
-Vector.prototype.length = function () {
-    return Math.sqrt(this.x * this.x + this.y * this.y);
-};
+    length() {
+        return Math.hypot(this.x, this.y);
+    }
 
-Vector.dot = function (vector1, vector2) {
-    return vector1.x * vector2.x + vector1.y * vector2.y;
-};
+    static dot(v1, v2) {
+        return v1.x * v2.x + v1.y * v2.y;
+    }
+}
 
 export default Vector;

@@ -1,74 +1,56 @@
-import Ball from './Ball.js';
+import Ball, { BALL_RADIUS } from './Ball.js';
 import Stick from './Stick.js';
 import canvas from './canvas.js';
 import Vector from './Vector.js';
-import { BALL_RADIUS } from './Ball.js';
 
-// Game class constructor
-const Game = function (data) {
+class Game {
+    constructor(data) {
+        this.player = data.player;
+        this.opponent = data.opponent;
+        this.active = data.active;
+        this.turn = data.turn;
+        this.updateBalls(data.balls);
+        this.stick = new Stick(this.cueBall.position);
+    }
 
-    // Player and opponent properties
-    this.player = data.player;
-    this.opponent = data.opponent;
-    // Game turn and active properties
-    this.active = data.active;
-    this.turn = data.turn;
+    updateBalls(ballsData) {
+        this.balls = ballsData.map(ball => new Ball(new Vector(ball.x, ball.y), BALL_RADIUS, ball.color));
+        this.cueBall = this.balls[0];
+    }
 
-    // Game balls array
-    this.balls = data.balls.map(ball => new Ball(new Vector(ball.x, ball.y), BALL_RADIUS, ball.color));
-    this.cueBall = this.balls[0];
+    update(data) {
+        this.active = data.active;
+        this.updateBalls(data.balls);
+        this.stick.position = this.cueBall.position;
+    }
 
-    // Game cue stick
-    this.stick = new Stick(this.cueBall.position);
-};
+    updateTurn(data) {
+        const { player, opponent, turn } = data;
+        Object.assign(this.player, player);
+        Object.assign(this.opponent, opponent);
+        this.turn = turn;
+    }
 
-// Game update method
-Game.prototype.update = function (data) {
+    draw() {
+        canvas.clear();
+        canvas.drawTable();
 
-    // Update active property
-    this.active = data.active;
+        const isPlayerTurn = !this.active && this.turn;
 
-    // Update balls array
-    this.balls = data.balls.map(ball => new Ball(new Vector(ball.x, ball.y), BALL_RADIUS, ball.color));
-    this.cueBall = this.balls[0];
+        if (isPlayerTurn) {
+            this.stick.drawGuide();
+        }
 
-    // Update cue stick position
-    this.stick.position = this.cueBall.position;
-};
+        canvas.drawBorders();
 
-// Game turn update method
-Game.prototype.updateTurn = function (data) {
+        for (const ball of this.balls) {
+            ball.draw();
+        }
 
-    // Update scores
-    this.player.score = data.player.score;
-    this.opponent.score = data.opponent.score;
-
-    // Update colors
-    this.player.color = data.player.color;
-    this.opponent.color = data.opponent.color;
-
-    // Update turn
-    this.turn = data.turn;
-};
-
-// Game draw method
-Game.prototype.draw = function () {
-
-    // Clear the canvas and draw an empty table
-    canvas.clear();
-    canvas.drawTable();
-
-    // If it's the player's turn and the balls are not moving, draw the guides
-    if (!this.active && this.turn) this.stick.drawGuide();
-
-    // Draw table borders
-    canvas.drawBorders();
-
-    // Draw each ball to the table
-    this.balls.forEach(ball => ball.draw());
-
-    // If it's the player's turn and the balls are not moving, draw the cue stick
-    if (!this.active && this.turn) this.stick.draw();
-};
+        if (isPlayerTurn) {
+            this.stick.draw();
+        }
+    }
+}
 
 export default Game;

@@ -29,7 +29,7 @@ function emitOnlineUpdate(io) {
 
 function emitQueueUpdate(io) {
     io.emit('queue-update', {
-        playersInQueue: queue._queue.map(player => ({
+        playersInQueue: queue.users.map(player => ({
             id: player.id,
             username: player.username,
             country: player.country
@@ -62,7 +62,7 @@ const applySocketEvents = function (io) {
             emitOnlineUpdate(io)
 
             // On socket disconnect
-            socket.on('disconnect', () => {
+            socket.on('disconnect', async () => {
 
                 console.log(player.username, "left the game");
 
@@ -73,7 +73,7 @@ const applySocketEvents = function (io) {
                     const game = player.game;
                     game.winner = (game.player1 === player ? game.player2 : game.player1);
                     game.winReason = 3; // player disconnect code
-                    game.end(game.winner, game.winReason);
+                    await game.end(game.winner, game.winReason);
                 }
 
                 // Remove the player from players
@@ -147,11 +147,9 @@ const gameLoop = setInterval(() => {
         // Send starting data to the two players
         player1.socket.emit('game-start', game.startData(player1));
         player2.socket.emit('game-start', game.startData(player2));
-
-        // todo: send queue update when someone joins a game. maybe track ongoing games after all.
     }
 
-    // Iterate throuh every game in games
+    // Iterate through every game in games
     games.forEach((game, game_id) => {
 
         // Check if the game is active
@@ -181,15 +179,12 @@ const gameLoop = setInterval(() => {
             // Remove the game from games
             games.delete(game_id);
             log(`game#${game_id} has ended - ${games.size} games(s) in progress`);
-
         }
-
     });
 
     // Tickrate of the game loop in ms
 }, 1000 / TICKRATE);
 
 export default applySocketEvents;
-// Export functions that return the online and queued player info
-export const playersInQueue = queue._queue;
+export const playersInQueue = queue.users;
 export const playersOnline = players;
