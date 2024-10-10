@@ -125,6 +125,7 @@ class Game {
 
     async end(winner, winReason) {
         if (this.ended) return;
+        this.ended = true;
 
         if (this.player1.id === this.player2.id) {
             this.cleanUp();
@@ -142,7 +143,6 @@ class Game {
             console.error("Error ending game:", error);
         }
 
-        this.ended = true;
         this.active = false;
         this.cleanUp();
     }
