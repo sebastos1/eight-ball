@@ -1,6 +1,7 @@
 import express from 'express';
 import Users from '../db/Users.js';
 import Games from '../db/Games.js';
+import { getLocationFromIp } from '../site/helpers.js';
 
 const router = express.Router();
 
@@ -19,12 +20,27 @@ router.get('/', async (req, res) => {
 });
 
 // GET '/play' route
-router.get('/play', (req, res) => {
-    if (!req.authenticated) {
+router.get('/play', async (req, res) => {
+    const isGuest = req.query.guest === 'true';
+    if (!req.authenticated && !isGuest) {
         req.flash('danger', 'Log in to play :)');
         return res.redirect('/login');
     }
-    return res.render('play');
+
+    if (isGuest && !req.session.guestId) {
+        req.session.guestId = 'Guest_' + Math.random().toString(36).substring(2, 8);
+        const ip = req.headers["x-real-ip"] || req.headers["x-forwarded-for"];
+        req.session.guestCountry = await getLocationFromIp(ip);
+    }
+
+    return res.render('play', {
+        isGuest: isGuest,
+        user: req.user || {
+            username: req.session.guestId || 'Guest',
+            country: req.session.guestCountry,
+            isGuest: true
+        }
+    });
 });
 
 // GET '/profile' route

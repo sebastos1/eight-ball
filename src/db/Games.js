@@ -6,11 +6,22 @@ const Games = {};
 
 // Game create
 Games.create = async function (winner, loser, ratingChanges, winReason) {
-    const { winnerRating, loserRating, ratingGained, ratingLost } = ratingChanges;
     try {
+        const isRated = ratingChanges !== null;
+        let winnerRating = null, loserRating = null;
+        let ratingGained = null, ratingLost = null;
+    
+        if (isRated) {
+            ({ winnerRating, loserRating, ratingGained, ratingLost } = ratingChanges);
+        }
+
         const newGame = await Game.create({
-            winnerId: winner.id,
-            loserId: loser.id,
+            winnerId: winner.isGuest ? null : winner.id,
+            loserId: loser.isGuest ? null : loser.id,
+            winnerUsername: winner.username,
+            loserUsername: loser.username,
+            winnerCountry: winner.country,
+            loserCountry: loser.country,
             winnerScore: winner.score,
             loserScore: loser.score,
             winnerNewRating: winnerRating,
@@ -18,6 +29,7 @@ Games.create = async function (winner, loser, ratingChanges, winReason) {
             ratingGained,
             ratingLost,
             winReason,
+            isRated
         });
         return newGame.id;
     } catch (error) {

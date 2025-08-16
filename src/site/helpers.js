@@ -1,8 +1,5 @@
+import axios from 'axios';
 import Handlebars from 'handlebars';
-
-export function eq(a, b) {
-    return (a === b);
-}
 
 export function timeAgo(dateString) {
     const now = new Date();
@@ -131,6 +128,8 @@ export function userFlag(country) {
     return new Handlebars.SafeString(`<img src="${flagUrl}" alt="${country}" class="twemoji-flag">`);
 }
 
+function eq(a, b) { return a === b; }
+
 export default {
     eq,
     timeAgo,
@@ -140,3 +139,17 @@ export default {
     userColor,
     userFlag
 };
+
+export async function getLocationFromIp(ip) {
+    // if (!ip || ip === '::1') {
+    //     ip = '72.229.28.185'; // example for testing
+    // }
+
+    try {
+        const response = await axios.get(`https://ipapi.co/${ip}/country/`, { timeout: 5000 });
+        return response.data !== 'Undefined' ? response.data : null;
+    } catch (error) {
+        console.error('Error in IP geolocation:', error);
+        return null; // Return null instead of throwing, to simplify error handling
+    }
+}

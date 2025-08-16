@@ -15,6 +15,69 @@ const router = express.Router();
 // Log function
 const log = (string) => console.log(`${chalk.bold.underline.cyan('USER')} ${chalk.yellow('»')} ${chalk.green(string)}`);
 
+/*
+    OAUTH INTEGRATION
+*/
+async function exchangeCodeForUserData(code) {
+    try {
+        const authHeader = 'Basic ' + Buffer.from(`${process.env.OAUTH2_CLIENT_ID}:${process.env.OAUTH2_CLIENT_SECRET}`).toString('base64');
+
+        const tokenResponse = await axios.post(`${process.env.OAUTH2_AUTH_SERVER}/token`, {
+            grant_type: 'authorization_code',
+            code: code,
+            redirect_uri: `${process.env.OAUTH2_AUTH_SERVER}/success`
+        }, {
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'Authorization': authHeader
+            }
+        });
+
+        const { access_token } = tokenResponse.data;
+
+        const userResponse = await axios.get(`${process.env.OAUTH2_AUTH_SERVER}/userinfo`, {
+            headers: {
+                'Authorization': `Bearer ${access_token}`
+            }
+        });
+
+        console.log("country", userResponse.data.country);
+
+        return {
+            id: userResponse.data.sub,
+            username: userResponse.data.username,
+            country: userResponse.data.country
+        };
+    } catch (error) {
+        console.error('Error exchanging code for user data:', error);
+        throw new Error('Failed to authenticate user');
+    }
+}
+
+// oauth callback swag
+router.post('/auth/callback', async (req, res) => {
+    try {
+        const { code } = req.body;
+
+        if (!code) {
+            return res.status(400).json({ error: 'No code provided' });
+        }
+
+        const oauthData = await exchangeCodeForUserData(code);
+        let user = await Users.findByOauthId(oauthData.id);
+        if (!user) {
+            user = await Users.createFromOAuth(oauthData);
+        }
+
+        req.login(user.id);
+        res.json({ success: true });
+    } catch (error) {
+        console.error('Auth callback error:', error);
+        res.status(500).json({ error: 'Authentication failed' });
+    }
+});
+
+
 /**
  * Login route
  */
@@ -125,89 +188,6 @@ router.get('/register', (req, res) => {
     return res.redirect('/');
 
 });
-
-// POST '/register' route
-router.post('/register', csrfValidation, async (req, res) => {
-    try {
-        // Validators and sanitisers
-        const { equals, isEmail, isEmpty, isLength } = validator;
-        const { escape, normalizeEmail, trim } = validator;
-
-        // Extract and sanitize data from the request's body
-        let { username, email, password, passwordConfirm } = req.body;
-        username = escape(trim(username));
-        email = email ? escape(normalizeEmail(trim(email))) : '';
-
-        // Save the sanitised data to saved registration data
-        req.session.register = { username, email };
-
-        // Data validation
-        let errors = [];
-        if (isEmpty(username) || isEmpty(password) || isEmpty(passwordConfirm)) {
-            errors.push('Username and password fields must be filled.');
-        } else {
-            // username
-            if (!/^[A-Za-zÀ-ÿ0-9 ]+$/.test(username)) {
-                errors.push('Username can only contain Latin letters, numbers, and spaces.');
-            }
-            if (!isLength(username, { min: 3, max: 30 })) {
-                errors.push('Usernames must be between 3 and 30 characters long.');
-            }
-            // password
-            if (!isLength(password, { min: 4, max: 32 })) errors.push('Passwords must be between 4 and 32 characters.');
-            if (!equals(password, passwordConfirm)) errors.push('Passwords must match.');
-            if (email) {
-                if (!isEmail(email)) errors.push('Emails must be valid.');
-                if (!isLength(email, { max: 64 })) errors.push('Emails cannot be longer than 64 characters.');
-                const emailUser = await Users.findIdByEmail(email);
-                if (emailUser) errors.push('Email already taken.');
-            }
-        }
-
-        // Check if the username has already been taken in the database
-        const existingUser = await Users.findIdByUsername(username);
-        if (existingUser) errors.push('Username already taken.');
-
-        if (errors.length) {
-            req.flash('danger', errors);
-            return res.redirect('/register');
-        }
-
-        const ip = req.headers["x-real-ip"] || req.headers["x-forwarded-for"];
-        const country = await getLocationFromIp(ip);
-        console.log(`IP: ${ip}, Country: ${country || 'Unknown'}`);
-
-        const new_id = await Users.create({ username, email, password, country });
-
-        if (new_id) {
-            req.login(new_id);
-            log(`${username}#${new_id} has registered${country ? ` from ${country}` : ''}`);
-            req.session.login = { username };
-            req.flash('success', 'You have successfully registered.');
-            return res.redirect('/');
-        } else {
-            throw new Error('Failed to create user');
-        }
-    } catch (error) {
-        console.error('Registration error:', error);
-        req.flash('danger', 'An error occurred during registration. Please try again.');
-        return res.redirect('/register');
-    }
-});
-
-async function getLocationFromIp(ip) {
-    if (!ip || ip === '::1') {
-        ip = '72.229.28.185'; // example for testing
-    }
-
-    try {
-        const response = await axios.get(`https://ipapi.co/${ip}/country/`, { timeout: 5000 });
-        return response.data !== 'Undefined' ? response.data : null;
-    } catch (error) {
-        console.error('Error in IP geolocation:', error);
-        return null; // Return null instead of throwing, to simplify error handling
-    }
-}
 
 /**
  * Delete route

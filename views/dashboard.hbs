@@ -41,19 +41,26 @@
                 <div class="sticky-top pt-4">
                     <!-- Play button -->
                     <div class="list-group mb-4">
-                        <a href="{{#if loggedIn}}/play{{else}}/login{{/if}}"
-                            class="list-group-item list-group-item-action list-group-item-success border fs-2 fw-bold py-3 text-center text-decoration-none">
-                            {{#if loggedIn}}PLAY{{else}}LOG IN TO PLAY{{/if}}
-                        </a>
                         {{#if loggedIn}}
-                        <div
-                            class="list-group-item list-group-item-secondary d-flex justify-content-center align-items-center">
+                        <a href="/play"
+                            class="list-group-item list-group-item-action list-group-item-success border fs-2 fw-bold py-3 text-center text-decoration-none">
+                            PLAY
+                        </a>
+                        <div class="list-group-item list-group-item-secondary d-flex justify-content-center align-items-center">
                             {{#if user.rating}}
-                            <span class="h5 mb-0 rank-text {{getRankColor user.rating}}">{{getRank user.rating}}
-                                ({{user.rating}})</span>
+                            <span class="h5 mb-0 rank-text {{getRankColor user.rating}}">{{getRank user.rating}} ({{user.rating}})</span>
                             {{else}}
-                            <span class="h5 mb-0 rank-text">Unranked</span>
+                            <span class="h5 mb-0 rank-text">Unrated</span>
                             {{/if}}
+                        </div>
+                        {{else}}
+                        <a href="/play?guest=true"
+                            class="list-group-item list-group-item-action list-group-item-success border fs-2 fw-bold py-3 text-center text-decoration-none">
+                            PLAY AS GUEST
+                        </a>
+                        <div class="list-group-item border py-3 text-center">
+                            <span class="text-muted me-2">or</span>
+                            {{> auth-button customText="Sign in for Rankings"}}
                         </div>
                         {{/if}}
                     </div>
@@ -101,9 +108,7 @@
                         <h5 class="mb-0">Get Started</h5>
                     </div>
                     <div class="list-group-item text-center py-4">
-                        <p class="mb-0">Login or create an account to start playing!</p>
-                        <a href="/login" class="btn btn-success mt-2 me-2">Login</a>
-                        <a href="/register" class="btn btn-success mt-2">Register</a>
+                        <p class="mb-0">No games yet.</p>
                     </div>
                 </div>
                 {{/if}}

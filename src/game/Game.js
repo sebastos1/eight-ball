@@ -135,8 +135,12 @@ class Game {
         const loser = winner === this.player1 ? this.player2 : this.player1;
 
         try {
-            const ratingChanges = await Users.updateRatingsAfterGame(winner.id, loser.id);
-            if (!ratingChanges) console.log("Error updating ratings, logging anyway");
+            let ratingChanges = null;
+
+            if (!winner.isGuest && !loser.isGuest) {
+                ratingChanges = await Users.updateRatingsAfterGame(winner.id, loser.id);
+                if (!ratingChanges) console.log("Error updating ratings, logging anyway");
+            }
 
             await Games.create(winner, loser, ratingChanges, winReason);
         } catch (error) {

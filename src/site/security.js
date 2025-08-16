@@ -4,6 +4,7 @@ import crypto from 'crypto';
 import cookieParser from 'cookie-parser';
 import rateLimit from 'express-rate-limit';
 
+const oauthServer = process.env.OAUTH2_AUTH_SERVER || 'http://localhost:3001';
 
 // csrf
 const Tokens = csrf;
@@ -15,7 +16,7 @@ const csrfSecret = crypto.randomBytes(32).toString('hex');
 const blockedIPs = new Set();
 
 export function applySecurityConfig(app) {
-    applyHelmet(app);
+    // applyHelmet(app);
     applySession(app);
     applyRateLimiting(app);
 }
@@ -55,36 +56,38 @@ const applySession = (app) => {
 }
 
 // secure headers
-const applyHelmet = (app) => {
-    app.use(helmet({
-        contentSecurityPolicy: {
-            directives: {
-                defaultSrc: ["'self'"],
-                scriptSrc: [
-                    "'self'",
-                    "https://code.jquery.com",
-                    "https://stackpath.bootstrapcdn.com",
-                    "https://cdn.jsdelivr.net",
-                    "https://cdn.socket.io",
-                ],
-                styleSrc: [
-                    "'self'",
-                    "'unsafe-inline'",
-                    "https://stackpath.bootstrapcdn.com",
-                    "https://fonts.googleapis.com",
-                    "https://cdn.jsdelivr.net",
-                ],
-                imgSrc: ["'self'", "data:", "https:"],
-                fontSrc: [
-                    "'self'",
-                    "https://fonts.gstatic.com",
-                ],
-                connectSrc: ["'self'", "wss:", "ws:", "http:", "https:"],
-                workerSrc: ["'self'", "blob:"],
-            },
-        },
-    }));
-}
+// const applyHelmet = (app) => {
+//     app.use(helmet({
+//         contentSecurityPolicy: {
+//             directives: {
+//                 defaultSrc: ["'self'"],
+//                 scriptSrc: [
+//                     "'self'",
+//                     "'unsafe-inline'",
+//                     "https://code.jquery.com",
+//                     "https://stackpath.bootstrapcdn.com",
+//                     "https://cdn.jsdelivr.net",
+//                     "https://cdn.socket.io",
+//                     oauthServer,
+//                 ],
+//                 styleSrc: [
+//                     "'self'",
+//                     "'unsafe-inline'",
+//                     "https://stackpath.bootstrapcdn.com",
+//                     "https://fonts.googleapis.com",
+//                     "https://cdn.jsdelivr.net",
+//                 ],
+//                 imgSrc: ["'self'", "data:", "https:"],
+//                 fontSrc: [
+//                     "'self'",
+//                     "https://fonts.gstatic.com",
+//                 ],
+//                 connectSrc: ["'self'", "wss:", "ws:", "http:", "https:"],
+//                 workerSrc: ["'self'", "blob:"],
+//             },
+//         },
+//     }));
+// }
 
 
 

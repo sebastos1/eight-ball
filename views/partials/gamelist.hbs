@@ -5,9 +5,9 @@
             <div class="d-flex align-items-center">
                 <span style="font-size: 1.5em;">
                     {{#if (eq game.winnerId profile.id)}}
-                    {{userFlag game.Winner.country}}
+                    {{userFlag game.winnerCountry}}
                     {{else}}
-                    {{userFlag game.Loser.country}}
+                    {{userFlag game.loserCountry}}
                     {{/if}}
                 </span>
                 <h5 class="mb-0 ms-2">
@@ -23,10 +23,12 @@
                     {{game.loserNewRating}}
                     {{/if}}
                 </span>
+                {{#if game.isRated}}
                 <span
                     class="text-{{#if (eq game.winnerId profile.id)}}success-emphasis{{else}}danger-emphasis{{/if}} small ms-1">
                     ({{#if (eq game.winnerId profile.id)}}+{{game.ratingGained}}{{else}}-{{game.ratingLost}}{{/if}})
                 </span>
+                {{/if}}
             </div>
         </div>
         <!-- Score -->
@@ -49,27 +51,29 @@
                     {{game.winnerNewRating}}
                     {{/if}}
                 </span>
+                {{#if game.isRated}}
                 <span
                     class="text-{{#if (eq game.winnerId profile.id)}}danger-emphasis{{else}}success-emphasis{{/if}} small ms-1">
                     ({{#if (eq game.winnerId profile.id)}}-{{game.ratingLost}}{{else}}+{{game.ratingGained}}{{/if}})
                 </span>
+                {{/if}}
             </div>
             <div class="d-flex align-items-center">
                 <h5 class="mb-0 me-2">
                     <a href="/profile/{{#if (eq game.winnerId profile.id)}}{{game.loserId}}{{else}}{{game.winnerId}}{{/if}}"
-                        style="color: {{#if (eq game.winnerId profile.id)}}{{userColor game.Loser.username}}{{else}}{{userColor game.Winner.username}}{{/if}};">
+                        style="color: {{#if (eq game.winnerId profile.id)}}{{userColor game.loserUsername}}{{else}}{{userColor game.winnerUsername}}{{/if}};">
                         {{#if (eq game.winnerId profile.id)}}
-                        {{game.Loser.username}}
+                        {{game.loserUsername}}
                         {{else}}
-                        {{game.Winner.username}}
+                        {{game.winnerUsername}}
                         {{/if}}
                     </a>
                 </h5>
                 <span style="font-size: 1.5em;">
                     {{#if (eq game.winnerId profile.id)}}
-                    {{userFlag game.Loser.country}}
+                    {{userFlag game.loserCountry}}
                     {{else}}
-                    {{userFlag game.Winner.country}}
+                    {{userFlag game.winnerCountry}}
                     {{/if}}
                 </span>
             </div>

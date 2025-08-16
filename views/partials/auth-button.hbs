@@ -1,0 +1,6 @@
+<script src="{{oauthConfig.authServer}}/sdk"></script>
+<script src="/js/auth.js"></script>
+
+<auth-button client-id="{{oauthConfig.clientId}}" scope="openid profile" {{#if theme}}theme="{{theme}}" {{/if}} {{#if
+    type}}type="{{type}}" {{/if}}>
+</auth-button>

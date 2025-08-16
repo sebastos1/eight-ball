@@ -38,18 +38,15 @@ export const User = database.define('User', {
         allowNull: false,
         unique: true
     },
-    username: {
+    oauthId: {
         type: DataTypes.STRING,
         allowNull: false,
         unique: true
     },
-    email: {
+    username: {
         type: DataTypes.STRING,
+        allowNull: false,
         unique: true
-    },
-    password: {
-        type: DataTypes.STRING,
-        allowNull: false
     },
     wins: {
         type: DataTypes.INTEGER,
@@ -81,11 +78,25 @@ export const Game = database.define('Game', {
     },
     winnerId: {
         type: DataTypes.INTEGER,
-        allowNull: false
     },
     loserId: {
         type: DataTypes.INTEGER,
-        allowNull: false
+    },
+    winnerUsername: {
+        type: DataTypes.STRING,
+    },
+    loserUsername: {
+        type: DataTypes.STRING,
+    },
+    winnerCountry: {
+        type: DataTypes.STRING,
+    },
+    loserCountry: {
+        type: DataTypes.STRING,
+    },
+    isRated: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: true // guest games are unrated
     },
     winnerScore: {
         type: DataTypes.INTEGER,

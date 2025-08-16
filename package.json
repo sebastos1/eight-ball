@@ -11,17 +11,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/sebastos1/eight-ball.git"
+    "url": "https://gitlab.com/sjallabong/eight-ball"
   },
   "author": "Aakash Kc",
   "contributors": [
-    "sebastos1"
+    "sebastos1",
+    "sjallabong"
   ],
   "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/sebastos1/eight-ball/issues"
-  },
-  "homepage": "https://github.com/sebastos1/eight-ball#readme",
   "dependencies": {
     "axios": "^1.7.5",
     "bcryptjs": "^2.4.3",
@@ -30,6 +27,7 @@
     "connect-sqlite3": "^0.9.11",
     "cookie-parser": "^1.4.6",
     "csrf": "^3.1.0",
+    "dotenv": "^17.2.1",
     "express": "^4.17.1",
     "express-handlebars": "^8.0.1",
     "express-rate-limit": "^7.4.0",

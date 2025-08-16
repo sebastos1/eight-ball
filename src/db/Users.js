@@ -12,13 +12,41 @@ Users.create = async function (user) {
         const hash = await bcrypt.hash(user.password, 10);
         const newUser = await User.create({
             username: user.username,
-            email: user.email || null,
             password: hash,
             country: user.country
         });
         return newUser.id;
     } catch (error) {
         console.error('Error creating user:', error);
+        return null;
+    }
+};
+
+// oauth integration
+Users.findByOauthId = async function (oauthId) {
+    try {
+        const user = await User.findOne({
+            where: { oauthId },
+            attributes: ['id', 'oauthId', 'username', 'wins', 'losses', 'rating', 'country', 'is_active']
+        });
+        return user ? user.get({ plain: true }) : null;
+    } catch (error) {
+        console.error('Error finding user by OAuth ID:', error);
+        return null;
+    }
+};
+
+Users.createFromOAuth = async function (oauthData) {
+    try {
+        const newUser = await User.create({
+            oauthId: oauthData.id,
+            username: oauthData.username,
+            country: oauthData.country || null,
+            // rest should use defaults
+        });
+        return newUser.get({ plain: true });
+    } catch (error) {
+        console.error('Error creating user from OAuth:', error);
         return null;
     }
 };
@@ -49,22 +77,11 @@ Users.delete = async function (id) {
 Users.findUserById = async function (id) {
     try {
         const user = await User.findByPk(id, {
-            attributes: ['id', 'username', 'email', 'wins', 'losses', 'rating', 'is_active', 'country']
+            attributes: ['id', 'username', 'wins', 'losses', 'rating', 'is_active', 'country']
         });
         return user ? user.get({ plain: true }) : null;
     } catch (error) {
         console.error('Error finding user by ID:', error);
-        return null;
-    }
-};
-
-// Find a user id by username
-Users.findIdByUsername = async function (username) {
-    try {
-        const user = await User.findOne({ where: { username }, attributes: ['id'] });
-        return user ? user.id : null;
-    } catch (error) {
-        console.error('Error finding user ID by username:', error);
         return null;
     }
 };
@@ -79,28 +96,6 @@ Users.findIdAndStatusByUsername = async function (username) {
         return user ? { id: user.id, is_active: user.is_active } : null;
     } catch (error) {
         console.error('Error finding user ID and status by username:', error);
-        return null;
-    }
-};
-
-// Find a user id by email
-Users.findIdByEmail = async function (email) {
-    try {
-        const user = await User.findOne({ where: { email }, attributes: ['id'] });
-        return user ? user.id : null;
-    } catch (error) {
-        console.error('Error finding user ID by email:', error);
-        return null;
-    }
-};
-
-// Get the password from a user id
-Users.getPasswordFromId = async function (id) {
-    try {
-        const user = await User.findByPk(id, { attributes: ['password'] });
-        return user ? user.password : null;
-    } catch (error) {
-        console.error('Error getting password from user ID:', error);
         return null;
     }
 };

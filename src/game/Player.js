@@ -1,14 +1,19 @@
 // Player class constructor
-const Player = function (socket) {
-
-    // Socket
+const Player = function (socket, guestId = null) {
     this.socket = socket;
     socket.player = this;
 
-    // Properties
-    this.id = socket.request.session.user_id;
-    this.username = socket.request.session.user.username;
-    this.country = socket.request.session.user.country;
+    if (guestId) {
+        this.id = guestId;
+        this.username = guestId;
+        this.country = socket.request.session.guestCountry;
+        this.isGuest = true;
+    } else {
+        this.id = socket.request.session.user_id;
+        this.username = socket.request.session.user.username;
+        this.country = socket.request.session.user.country;
+        this.isGuest = false;
+    }
 
     this.inQueue = false;
     this.inGame = false;

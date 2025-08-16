@@ -41,14 +41,12 @@ function emitQueueUpdate(io) {
 const applySocketEvents = function (io) {
 
     // On socket connection
-    io.on('connection', (socket) => {
+    io.on('connection', async (socket) => {
+        let player;
 
         // check if authenticated
         if (socket.request.session.authenticated) {
-            // Create new player or check if it already exists
-            let player;
             const userId = socket.request.session.user.id;
-
             if (players.has(userId)) {
                 player = players.get(userId);
                 player.socket = socket;
@@ -56,9 +54,19 @@ const applySocketEvents = function (io) {
                 player = new Player(socket);
                 players.set(player.id, player);
             }
-            log(`${player.username}#${player.id} has connected - ${players.size} player(s) online`);
+        } else if (socket.request.session.guestId) {
+            const guestId = socket.request.session.guestId;
+            if (players.has(guestId)) {
+                player = players.get(guestId);
+                player.socket = socket;
+            } else {
+                player = new Player(socket, guestId);
+                players.set(guestId, player);
+            }
+        }
 
-            // Broadcast online update
+        if (player) {
+            log(`${player.username}#${player.id} has connected - ${players.size} player(s) online`);
             emitOnlineUpdate(io)
 
             // On socket disconnect

@@ -6,6 +6,7 @@ import express from 'express';
 import flash from 'connect-flash';
 import { Server } from 'socket.io';
 import { engine } from 'express-handlebars';
+import dotenv from 'dotenv';
 
 // imports
 import helpers from './src/site/helpers.js';
@@ -19,9 +20,13 @@ import indexRouter from './src/routes/index.js';
 import usersRouter from './src/routes/users.js';
 
 // Init
+dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 8080;
 const server = http.createServer(app);
+
+const oauthServer = process.env.OAUTH2_AUTH_SERVER || 'http://localhost:3002';
+const oauthClientId = process.env.OAUTH2_CLIENT_ID || 'pool-client';
 
 await initializeDatabase();
 
@@ -40,6 +45,11 @@ app.engine('hbs', engine({
     helpers: helpers,
 }));
 app.set('view engine', 'hbs');
+
+app.locals.oauthConfig = {
+    clientId: oauthClientId,
+    authServer: oauthServer,
+}
 
 // Set static path to /public
 app.use(express.static('public'));
