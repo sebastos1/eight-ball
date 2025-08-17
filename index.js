@@ -42,7 +42,7 @@ app.set('port', PORT);
 // Set view engine
 app.engine('hbs', engine({
     extname: '.hbs',
-    defaultLayout: false,
+    defaultLayout: "main",
     helpers: helpers,
 }));
 app.set('view engine', 'hbs');

@@ -142,10 +142,15 @@ Users.getLeaderboard = async function () {
 
 Users.updateRatingsAfterGame = async function (winnerId, loserId) {
     try {
-        const [winner, loser] = await User.findAll({
+        const users = await User.findAll({
             where: { id: [winnerId, loserId] },
             attributes: ['id', 'rating', 'wins', 'losses']
         });
+
+        if (!users || users.length !== 2) throw new Error('Winner or loser not found');
+
+        const winner = users.find(u => u.id === winnerId);
+        const loser = users.find(u => u.id === loserId);
 
         if (!winner || !loser) throw new Error('Winner or loser not found');
 

@@ -1,59 +1,47 @@
-<!DOCTYPE html>
-<html lang="en" data-bs-theme="dark">
-
-<head>
-    {{> meta}}
-    <title>Leaderboard | Eight Ball</title>
-    {{> css}}
-</head>
-
-<body>
-    {{> navbar active_leaderboard=true}}
-    <div class="container">
-        {{> flash}}
-        <h1 class="display-4 text-truncate mb-4">Leaderboard</h1>
-        <div class="list-group">
-            <div class="list-group-item list-group-item-secondary">
-                <div class="lbd-grid font-weight-bold">
-                    <div>#</div>
-                    <div></div>
-                    <div>Rank</div>
-                    <div>Rating</div>
-                    <div>Wins</div>
-                    <div>Games</div>
-                    <div>Win Rate</div>
-                </div>
-            </div>
-            {{#each users}}
-            <a class="list-group-item list-group-item-action 
-            {{#if this.self}}
-            bg-dark-subtle
-            {{/if}}
-            {{#if (eq this.position 1)}}
-            gold
-            {{else if (eq this.position 2)}}
-            silver
-            {{else if (eq this.position 3)}}
-            bronze
-            {{/if}}" href='/profile/{{this.id}}' cursor:pointer>
-                <div class="lbd-grid">
-                    <div>{{this.position}}</div>
-                    <div style="color:{{userColor this.username}}">{{userFlag
-                        this.country}} {{this.username}}
-                    </div>
-                    <div class="{{getRankColor this.rating}}">{{getRank this.rating}}</div>
-                    <div class="shimmer">{{this.rating}}</div>
-                    <div>{{this.wins}}</div>
-                    <div>{{this.gamesPlayed}}</div>
-                    <div>{{this.winRate}}</div>
-                </div>
-            </a>
-            {{else}}
-            <div class="d-flex justify-content-center mt-3">Nothing here yet!</div>
-            {{/each}}
+<h1 class="display-4 text-truncate mb-4">Leaderboard</h1>
+<div class="list-group">
+    <div class="list-group-item list-group-item-secondary">
+        <div class="lbd-grid font-weight-bold">
+            <div>#</div>
+            <div></div>
+            <div>Rank</div>
+            <div>Rating</div>
+            <div>Wins</div>
+            <div>Games</div>
+            <div>Win Rate</div>
         </div>
     </div>
-    {{> js}}
-</body>
+    {{#each users}}
+    <a class="list-group-item list-group-item-action 
+    {{#if this.self}}
+    bg-dark-subtle
+    {{/if}}
+    {{#if (eq this.position 1)}}
+    gold
+    {{else if (eq this.position 2)}}
+    silver
+    {{else if (eq this.position 3)}}
+    bronze
+    {{/if}}" href='/profile/{{this.id}}' cursor:pointer>
+        <div class="lbd-grid">
+            <div>{{this.position}}</div>
+            <div style="color:{{userColor this.username}}">{{userFlag
+                this.country}} {{this.username}}
+            </div>
+            <div class="{{getRankColor this.rating}}">{{getRank this.rating}}</div>
+            <div class="shimmer">{{this.rating}}</div>
+            <div>{{this.wins}}</div>
+            <div>{{this.gamesPlayed}}</div>
+            <div>{{this.winRate}}</div>
+        </div>
+    </a>
+    {{else}}
+    <div class="d-flex justify-content-center mt-3">Nothing here yet!</div>
+    {{/each}}
+</div>
 
-</html>
+<div class="text-center mt-3">
+    <a href="/leaderboard/legend" class="btn btn-outline-info btn-sm">
+        Rank Legend
+    </a>
+</div>

@@ -1,89 +1,71 @@
-<!DOCTYPE html>
-<html lang="en" data-bs-theme="dark">
-
-<head>
-    {{> meta}}
-    <title>About | Eight Ball</title>
-    {{> css}}
-</head>
-
-<body>
-    {{> navbar}}
-    <div class="container">
-        {{> flash}}
-        <div class="jumbotron mb-0 d-flex flex-column">
-            <h1 class="display-1">About</h1>
+<div class="jumbotron mb-0 d-flex flex-column">
+    <h1 class="display-1">About</h1>
+</div>
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="list-group mb-4">
+            <div class="list-group-item list-group-item-secondary">
+                <h2 class="mb-0">Ruleset</h2>
+            </div>
+            <div class="list-group-item">
+                <ul class="mb-0">
+                    <li class="mb-2">The white ball initially starts in a random spot at the left of the board.
+                    </li>
+                    <li class="mb-2">The color of the first colored ball pocketed in a game is assigned by the
+                        player during that turn.</li>
+                    <li class="mb-2">When a colored ball is pocketed, the player with that color gets a point.
+                    </li>
+                    <li class="mb-2">If a player shoots down the black ball while they still have colored balls
+                        left, they lose.</li>
+                    <li class="mb-2">When a player shoots down the black ball and they have no colored balls
+                        left, they win.</li>
+                    <li class="mb-2">If a player shoots down the white ball, it is put on the center of the left
+                        side of the board.</li>
+                    <li class="mb-2">If a player shoots down a white or opposite colored ball, they get a foul
+                        and their turn ends.</li>
+                    <li>If a player shoots down one or more of their own balls, their turn
+                        continues.</li>
+                </ul>
+            </div>
         </div>
-        <div class="row mt-4">
-            <div class="col-12">
-                <div class="list-group mb-4">
-                    <div class="list-group-item list-group-item-secondary">
-                        <h2 class="mb-0">Ruleset</h2>
-                    </div>
-                    <div class="list-group-item">
-                        <ul class="mb-0">
-                            <li class="mb-2">The white ball initially starts in a random spot at the left of the board.
-                            </li>
-                            <li class="mb-2">The color of the first colored ball pocketed in a game is assigned by the
-                                player during that turn.</li>
-                            <li class="mb-2">When a colored ball is pocketed, the player with that color gets a point.
-                            </li>
-                            <li class="mb-2">If a player shoots down the black ball while they still have colored balls
-                                left, they lose.</li>
-                            <li class="mb-2">When a player shoots down the black ball and they have no colored balls
-                                left, they win.</li>
-                            <li class="mb-2">If a player shoots down the white ball, it is put on the center of the left
-                                side of the board.</li>
-                            <li class="mb-2">If a player shoots down a white or opposite colored ball, they get a foul
-                                and their turn ends.</li>
-                            <li>If a player shoots down one or more of their own balls, their turn
-                                continues.</li>
-                        </ul>
-                    </div>
-                </div>
 
-                <div class="list-group mb-4">
-                    <div class="list-group-item list-group-item-secondary">
-                        <h2 class="mb-0">How to play</h2>
-                    </div>
-                    <div class="list-group-item">
-                        <ol class="mb-0">
-                            <li class="mb-2">Aim the ball using the mouse.</li>
-                            <li class="mb-2">Click the mouse and drag away from the cue ball to charge up the shot.</li>
-                            <li class="mb-2">If you need to readjust, drag the mouse back to cancel the shot.</li>
-                            <li>Let go of the mouse to shoot.</li>
-                        </ol>
-                    </div>
-                </div>
+        <div class="list-group mb-4">
+            <div class="list-group-item list-group-item-secondary">
+                <h2 class="mb-0">How to play</h2>
+            </div>
+            <div class="list-group-item">
+                <ol class="mb-0">
+                    <li class="mb-2">Aim the ball using the mouse.</li>
+                    <li class="mb-2">Click the mouse and drag away from the cue ball to charge up the shot.</li>
+                    <li class="mb-2">If you need to readjust, drag the mouse back to cancel the shot.</li>
+                    <li>Let go of the mouse to shoot.</li>
+                </ol>
+            </div>
+        </div>
 
-                <div class="list-group mb-4">
-                    <div class="list-group-item list-group-item-secondary">
-                        <h2 class="mb-0">Devs</h2>
-                    </div>
-                    <div class="list-group-item">
-                        <p class="mb-0">This is a fork of
-                            <a href="https://github.com/aakashkcx/eight-ball">Eight-Ball</a>, originally by
-                            <a href="https://github.com/aakashkcx">Aakash Kc</a>
-                        </p>
-                    </div>
-                </div>
+        <div class="list-group mb-4">
+            <div class="list-group-item list-group-item-secondary">
+                <h2 class="mb-0">Devs</h2>
+            </div>
+            <div class="list-group-item">
+                <p class="mb-0">This is a fork of
+                    <a href="https://github.com/aakashkcx/eight-ball">Eight-Ball</a>, originally by
+                    <a href="https://github.com/aakashkcx">Aakash Kc</a>
+                </p>
+            </div>
+        </div>
 
-                <div class="list-group mb-4">
-                    <div class="list-group-item list-group-item-secondary">
-                        <h2 class="mb-0">Attributions</h2>
-                    </div>
-                    <div class="list-group-item">
-                        <p class="mb-0">
-                            Flag emojis provided by <a href="https://github.com/twitter/twemoji"
-                                target="_blank">Twemoji</a>, licensed under <a
-                                href="https://creativecommons.org/licenses/by/4.0/" target="_blank">CC-BY 4.0</a>.
-                        </p>
-                    </div>
-                </div>
+        <div class="list-group mb-4">
+            <div class="list-group-item list-group-item-secondary">
+                <h2 class="mb-0">Attributions</h2>
+            </div>
+            <div class="list-group-item">
+                <p class="mb-0">
+                    Flag emojis provided by <a href="https://github.com/twitter/twemoji"
+                        target="_blank">Twemoji</a>, licensed under <a
+                        href="https://creativecommons.org/licenses/by/4.0/" target="_blank">CC-BY 4.0</a>.
+                </p>
             </div>
         </div>
     </div>
-    {{> js}}
-</body>
-
-</html>
+</div>

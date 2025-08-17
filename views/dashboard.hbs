@@ -1,145 +1,127 @@
-<!DOCTYPE html>
-<html lang="en" data-bs-theme="dark">
-
-<head>
-    {{> meta}}
-    <title>Dashboard | Eight Ball</title>
-    {{> css}}
-</head>
-
 <!-- Socket.IO JS -->
 <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"
     integrity="sha384-2huaZvOR9iDzHqslqwpR87isEmrfxqyWOF7hr7BY6KG0+hVKLoEXMPUJw3ynWuhO"
     crossorigin="anonymous"></script>
 
-{{> js}}
 <script type="module" src="/js/site/indexSocket.js"></script>
 
-<body>
-    {{> navbar}}
-    <div class="container">
-        {{> flash}}
-        <div class="jumbotron mb-0 d-flex flex-lg-row flex-column justify-content-between align-items-center">
-            {{#if loggedIn}}
-            <h1 class="display-1 text-truncate mw-100">
-                Hello, <span style="color:{{userColor user.username}}">{{user.username}}</span>!
-            </h1>
-            {{else}}
-            <h1 class="display-1 text-truncate mw-100">
-                Welcome to Eight Ball!
-            </h1>
-            {{/if}}
-            <div class="d-flex align-items-center">
-                <img src="/img/eight-ball.svg" width="60" height="60" class="d-inline-block align-top me-2"
-                    alt="Eight Ball Logo">
-                <span class="fs-2 fw-bold">Eight Ball</span>
-            </div>
-        </div>
+<div class="jumbotron mb-0 d-flex flex-lg-row flex-column justify-content-between align-items-center">
+    {{#if loggedIn}}
+    <h1 class="display-1 text-truncate mw-100">
+        Hello, <span style="color:{{userColor user.username}}">{{user.username}}</span>!
+    </h1>
+    {{else}}
+    <h1 class="display-1 text-truncate mw-100">
+        Welcome to Eight Ball!
+    </h1>
+    {{/if}}
+    <div class="d-flex align-items-center">
+        <img src="/img/eight-ball.svg" width="60" height="60" class="d-inline-block align-top me-2"
+            alt="Eight Ball Logo">
+        <span class="fs-2 fw-bold">Eight Ball</span>
+    </div>
+</div>
 
-        <div class="row mt-0">
-            <div class="col-md-5 col-lg-4">
-                <div class="sticky-top pt-4">
-                    <!-- Play button -->
-                    <div class="list-group mb-4">
-                        {{#if loggedIn}}
-                        <a href="/play"
-                            class="list-group-item list-group-item-action list-group-item-success border fs-2 fw-bold py-3 text-center text-decoration-none">
-                            PLAY
-                        </a>
-                        <div class="list-group-item list-group-item-secondary d-flex justify-content-center align-items-center">
-                            {{#if user.rating}}
-                            <span class="h5 mb-0 rank-text {{getRankColor user.rating}}">{{getRank user.rating}} ({{user.rating}})</span>
-                            {{else}}
-                            <span class="h5 mb-0 rank-text">Unrated</span>
-                            {{/if}}
-                        </div>
-                        {{else}}
-                        <a href="/play?guest=true"
-                            class="list-group-item list-group-item-action list-group-item-success border fs-2 fw-bold py-3 text-center text-decoration-none">
-                            PLAY AS GUEST
-                        </a>
-                        <div class="list-group-item border py-3 text-center">
-                            <span class="text-muted me-2">or</span>
-                            {{> auth-button customText="Sign in for Rankings"}}
-                        </div>
-                        {{/if}}
-                    </div>
-
-                    <!-- Online part -->
-                    <div class="list-group">
-                        <div class="list-group-item list-group-item-secondary">
-                            <h5 class="mb-0">Online Players</h5>
-                        </div>
-                        <div class="list-group-item bg-dark text-light">
-                            <h6>Online</h6>
-                            <div id="playersOnline" class="player-list"></div>
-                        </div>
-                        <div class="list-group-item bg-dark text-light">
-                            <h6>In Queue</h6>
-                            <div id="playersInQueue" class="player-list"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-md-7 col-lg-8">
+<div class="row mt-0">
+    <div class="col-md-5 col-lg-4">
+        <div class="sticky-top pt-4">
+            <!-- Play button -->
+            <div class="list-group mb-4">
                 {{#if loggedIn}}
-                {{#if game}}
-                <div class="list-group mt-4">
-                    <div class="list-group-item list-group-item-secondary">
-                        <h5 class="mb-0">Last game</h5>
-                    </div>
-                    {{> gamelist game=game profile=user single=true}}
+                <a href="/play"
+                    class="list-group-item list-group-item-action list-group-item-success border fs-2 fw-bold py-3 text-center text-decoration-none">
+                    PLAY
+                </a>
+                <div class="list-group-item list-group-item-secondary d-flex justify-content-center align-items-center">
+                    {{#if user.rating}}
+                    <span class="h5 mb-0 rank-text {{getRankColor user.rating}}">{{getRank user.rating}} ({{user.rating}})</span>
+                    {{else}}
+                    <span class="h5 mb-0 rank-text">Unrated</span>
+                    {{/if}}
                 </div>
                 {{else}}
-                <div class="list-group mt-4">
-                    <div class="list-group-item list-group-item-secondary">
-                        <h5 class="mb-0">Last game</h5>
-                    </div>
-                    <div class="list-group-item text-center py-4">
-                        <p class="mb-0">You have not played any games yet!</p>
-                        <a href="/play" class="btn btn-success mt-2">Play a game now</a>
-                    </div>
+                <a href="/play"
+                    class="list-group-item list-group-item-action list-group-item-success border fs-2 fw-bold py-3 text-center text-decoration-none">
+                    PLAY AS GUEST
+                </a>
+                <div class="list-group-item border py-3 text-center">
+                    <span class="text-muted me-2">or</span>
+                    {{> auth-button customText="Sign in for Rankings"}}
                 </div>
                 {{/if}}
-                {{else}}
-                <div class="list-group mt-4">
-                    <div class="list-group-item list-group-item-secondary">
-                        <h5 class="mb-0">Get Started</h5>
-                    </div>
-                    <div class="list-group-item text-center py-4">
-                        <p class="mb-0">No games yet.</p>
-                    </div>
+            </div>
+
+            <!-- Online part -->
+            <div class="list-group">
+                <div class="list-group-item list-group-item-secondary">
+                    <h5 class="mb-0">Online Players</h5>
                 </div>
-                {{/if}}
-                <div class="list-group mt-4">
-                    <div class="list-group-item list-group-item-secondary">
-                        <h5 class="mb-0">What's new?</h5>
-                    </div>
-                    <div class="list-group-item">
-                        <h4 class="mb-2">New about page and nationality flags</h4>
-                        <p class="mb-1">Check out the new <a href='/about'>about</a> page!</p>
-                        <small class="text-muted">Posted today!</small>
-                    </div>
-                    <div class="list-group-item">
-                        <h4 class="mb-2">Patch notes august</h4>
-                        <p class="mb-1">New gameplay changes! Adjustable power!!!!!!</p>
-                        <small class="text-muted">Posted today!</small>
-                    </div>
-                    <div class="list-group-item">
-                        <h4 class="mb-2">Where is profile?</h4>
-                        <p class="mb-1">Click the top right, with your brand-new, state-of-the-art profile picture!</p>
-                        <small class="text-muted">Posted 5 days ago</small>
-                    </div>
-                    <div class="list-group-item">
-                        <h4 class="mb-2">This is an example post</h4>
-                        <p class="mb-1">And this could be some text to describe your post!</p>
-                        <small class="text-muted">Posted 25289 years ago</small>
-                    </div>
+                <div class="list-group-item bg-dark text-light">
+                    <h6>Online</h6>
+                    <div id="playersOnline" class="player-list"></div>
+                </div>
+                <div class="list-group-item bg-dark text-light">
+                    <h6>In Queue</h6>
+                    <div id="playersInQueue" class="player-list"></div>
                 </div>
             </div>
         </div>
     </div>
-</body>
 
-</html>
+    <div class="col-md-7 col-lg-8">
+        {{#if loggedIn}}
+        {{#if game}}
+        <div class="list-group mt-4">
+            <div class="list-group-item list-group-item-secondary">
+                <h5 class="mb-0">Last game</h5>
+            </div>
+            {{> gamelist game=game profile=user single=true}}
+        </div>
+        {{else}}
+        <div class="list-group mt-4">
+            <div class="list-group-item list-group-item-secondary">
+                <h5 class="mb-0">Last game</h5>
+            </div>
+            <div class="list-group-item text-center py-4">
+                <p class="mb-0">You have not played any games yet!</p>
+                <a href="/play" class="btn btn-success mt-2">Play a game now</a>
+            </div>
+        </div>
+        {{/if}}
+        {{else}}
+        <div class="list-group mt-4">
+            <div class="list-group-item list-group-item-secondary">
+                <h5 class="mb-0">Get Started</h5>
+            </div>
+            <div class="list-group-item text-center py-4">
+                <p class="mb-0">No games yet.</p>
+            </div>
+        </div>
+        {{/if}}
+        <div class="list-group mt-4">
+            <div class="list-group-item list-group-item-secondary">
+                <h5 class="mb-0">What's new?</h5>
+            </div>
+            <div class="list-group-item">
+                <h4 class="mb-2">New about page and nationality flags</h4>
+                <p class="mb-1">Check out the new <a href='/about'>about</a> page!</p>
+                <small class="text-muted">Posted today!</small>
+            </div>
+            <div class="list-group-item">
+                <h4 class="mb-2">Patch notes august</h4>
+                <p class="mb-1">New gameplay changes! Adjustable power!!!!!!</p>
+                <small class="text-muted">Posted today!</small>
+            </div>
+            <div class="list-group-item">
+                <h4 class="mb-2">Where is profile?</h4>
+                <p class="mb-1">Click the top right, with your brand-new, state-of-the-art profile picture!</p>
+                <small class="text-muted">Posted 5 days ago</small>
+            </div>
+            <div class="list-group-item">
+                <h4 class="mb-2">This is an example post</h4>
+                <p class="mb-1">And this could be some text to describe your post!</p>
+                <small class="text-muted">Posted 25289 years ago</small>
+            </div>
+        </div>
+    </div>
+</div>

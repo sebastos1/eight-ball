@@ -1,118 +1,99 @@
-<!DOCTYPE html>
-<html lang="en" data-bs-theme="dark">
-
-<head>
-    {{> meta}}
-    <title>{{profile.username}} | Eight Ball</title>
-    {{> css}}
-</head>
-
-<body>
-    {{> navbar active_profile=true}}
-    <div class="container">
-        {{> flash}}
-
-        {{#if profile.is_active}}
-        <div class="jumbotron mb-0 d-flex flex-lg-row flex-column justify-content-sm-between align-items-center">
-            <h1 class="display-1 text-truncate mw-100" style="color:{{userColor profile.username}}">
-                {{profile.username}} {{userFlag profile.country}}</h1>
-            <h1 class="display-3 text-muted">
-                <span class="badge badge-secondary">
-                    <span style="color: rgb(117, 255, 117);">{{profile.wins}}W</span> -
-                    <span style="color: rgb(255, 105, 105);">{{profile.losses}}L</span>
-                </span>
-            </h1>
-        </div>
-
-        <div class="row mt-0">
-            <div class="col-md-5 col-lg-4">
-                <div class="sticky-top pt-4">
-                    <div class="list-group">
-                        <div
-                            class="list-group-item list-group-item-secondary d-flex justify-content-between align-items-center">
-                            {{#if profile.rating}}
-                            <span class="h5 mb-0 rank-text {{getRankColor profile.rating}}">{{getRank
-                                profile.rating}}</span>
-                            {{else}}
-                            <span class="h5 mb-0 rank-text">Unrated</span>
-                            {{/if}}
-                        </div>
-                        <div class="list-group-item">Rating: {{#if profile.rating}}
-                            {{profile.rating}}
-                            {{else}}
-                            -
-                            {{/if}}
-                        </div>
-                        <div class="list-group-item">Games Played: {{gamesPlayed}}<br>Winrate: {{winRate}}</div>
-                        {{#if selfProfile}}
-                        <a href="/logout"
-                            class="list-group-item list-group-item-action list-group-item-warning border border-top-0">Logout</a>
-                        <button type="button" data-toggle="modal" data-target="#deleteProfile"
-                            class="list-group-item list-group-item-action list-group-item-danger border border-top-0">Delete
-                            Profile</button>
-                        {{/if}}
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-md-7 col-lg-8">
-                <div class="list-group mt-4">
-                    <div class="list-group-item list-group-item-secondary">
-                        <h5 class="mb-0">Recent games</h5>
-                    </div>
-                    {{#each games}}
-                    {{> gamelist game=this profile=../profile}}
-                    {{else}}
-                    <div class="list-group-item text-center py-4">
-                        {{#if selfProfile}}
-                        <p class="mb-0">You have not played any games yet.</p>
-                        <a href="/play" class="btn btn-success mt-2">Play a game now</a>
-                        {{else}}
-                        <p class="mb-0">{{profile.username}} has not played any games yet.</p>
-                        {{/if}}
-                    </div>
-                    {{/each}}
-                </div>
-            </div>
-        </div>
-    </div>
-
-    {{#if selfProfile}}
-    <div class="modal fade" id="deleteProfile" tabindex="-1" aria-labelledby="deleteProfileLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <form action="/delete/" method="post">
-                <input type="hidden" name="_csrf" value="{{csrfToken}}">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="deleteProfileLabel">Delete Profile</h5>
-                        <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <p class="text-danger">Are you sure? This is a permanent action!</p>
-                        <input type="password" name="password" placeholder="Password" class="form-control" required>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-danger">Delete Profile</button>
-                    </div>
-                </div>
-            </form>
-        </div>
-    </div>
-    {{/if}}
-
-    {{!-- this is if the user is not active, from the top --}}
-    {{else}}
+<div>
+    {{#if profile.is_active}}
     <div class="jumbotron mb-0 d-flex flex-lg-row flex-column justify-content-sm-between align-items-center">
-        <h1 class="display-1 text-truncate mw-100 deactivated">{{profile.username}}</h1>
+        <h1 class="display-1 text-truncate mw-100" style="color:{{userColor profile.username}}">
+            {{profile.username}} {{userFlag profile.country}}</h1>
+        <h1 class="display-3 text-muted">
+            <span class="badge badge-secondary">
+                <span style="color: rgb(117, 255, 117);">{{profile.wins}}W</span> -
+                <span style="color: rgb(255, 105, 105);">{{profile.losses}}L</span>
+            </span>
+        </h1>
     </div>
 
-    <div>This user has been deactivated.</div>
+    <div class="row mt-0">
+        <div class="col-md-5 col-lg-4">
+            <div class="sticky-top pt-4">
+                <div class="list-group">
+                    <div
+                        class="list-group-item list-group-item-secondary d-flex justify-content-between align-items-center">
+                        {{#if profile.rating}}
+                        <span class="h5 mb-0 rank-text {{getRankColor profile.rating}}">{{getRank
+                            profile.rating}}</span>
+                        {{else}}
+                        <span class="h5 mb-0 rank-text">Unrated</span>
+                        {{/if}}
+                    </div>
+                    <div class="list-group-item">Rating: {{#if profile.rating}}
+                        {{profile.rating}}
+                        {{else}}
+                        -
+                        {{/if}}
+                    </div>
+                    <div class="list-group-item">Games Played: {{gamesPlayed}}<br>Winrate: {{winRate}}</div>
+                    {{#if selfProfile}}
+                    <a href="/logout"
+                        class="list-group-item list-group-item-action list-group-item-warning border border-top-0">Logout</a>
+                    <button type="button" data-toggle="modal" data-target="#deleteProfile"
+                        class="list-group-item list-group-item-action list-group-item-danger border border-top-0">Delete
+                        Profile</button>
+                    {{/if}}
+                </div>
+            </div>
+        </div>
 
-    {{/if}}
+        <div class="col-md-7 col-lg-8">
+            <div class="list-group mt-4">
+                <div class="list-group-item list-group-item-secondary">
+                    <h5 class="mb-0">Recent games</h5>
+                </div>
+                {{#each games}}
+                {{> gamelist game=this profile=../profile}}
+                {{else}}
+                <div class="list-group-item text-center py-4">
+                    {{#if selfProfile}}
+                    <p class="mb-0">You have not played any games yet.</p>
+                    <a href="/play" class="btn btn-success mt-2">Play a game now</a>
+                    {{else}}
+                    <p class="mb-0">{{profile.username}} has not played any games yet.</p>
+                    {{/if}}
+                </div>
+                {{/each}}
+            </div>
+        </div>
+    </div>
+</div>
 
-    {{> js}}
+{{#if selfProfile}}
+<div class="modal fade" id="deleteProfile" tabindex="-1" aria-labelledby="deleteProfileLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <form action="/delete/" method="post">
+            <input type="hidden" name="_csrf" value="{{csrfToken}}">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteProfileLabel">Delete Profile</h5>
+                    <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="text-danger">Are you sure? This is a permanent action!</p>
+                    <input type="password" name="password" placeholder="Password" class="form-control" required>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-danger">Delete Profile</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+{{/if}}
 
-</body>
+{{!-- this is if the user is not active, from the top --}}
+{{else}}
+<div class="jumbotron mb-0 d-flex flex-lg-row flex-column justify-content-sm-between align-items-center">
+    <h1 class="display-1 text-truncate mw-100 deactivated">{{profile.username}}</h1>
+</div>
 
-</html>
+<div>This user has been deactivated.</div>
+
+{{/if}}

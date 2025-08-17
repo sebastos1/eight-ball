@@ -21,23 +21,23 @@ export function applySecurityConfig(app) {
 }
 
 const applyRateLimiting = (app) => {
-    app.use(rateLimit({
-        windowMs: 15 * 60 * 1000, // 15 minutes
-        max: 1000,
-        standardHeaders: 'draft-7',
-        legacyHeaders: false,
-        handler: (req, res, _options) => {
-            blockedIPs.add(req.ip);
-            res.status(429).send("Slow down buddy");
-        },
-    }));
+    // app.use(rateLimit({
+    //     windowMs: 15 * 60 * 1000, // 15 minutes
+    //     max: 1000,
+    //     standardHeaders: 'draft-7',
+    //     legacyHeaders: false,
+    //     handler: (req, res, _options) => {
+    //         blockedIPs.add(req.ip);
+    //         res.status(429).send("Slow down buddy");
+    //     },
+    // }));
 
-    app.use((req, res, next) => {
-        if (blockedIPs.has(req.ip)) {
-            res.status(429).send("Slow down buddy");
-        }
-        next();
-    });
+    // app.use((req, res, next) => {
+    //     if (blockedIPs.has(req.ip)) {
+    //         res.status(429).send("Slow down buddy");
+    //     }
+    //     next();
+    // });
 }
 
 const applySession = (app) => {
