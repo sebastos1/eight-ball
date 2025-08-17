@@ -1,15 +1,15 @@
-import Vector from './Vector.js';
-import { BALL_RADIUS } from './Ball.js';
-import { shoot } from './clientSocket.js';
-import canvas from './canvas.js';
+import Vector from "./Vector.js";
+import { BALL_RADIUS } from "./Ball.js";
+import { shoot } from "./clientSocket.js";
+import canvas from "./canvas.js";
 import { TABLE } from "./graphics.js";
 
 const MAX_POWER = 50;
 const MAX_DRAG_DISTANCE = 200;
 const STICK_WIDTH = 20;
 const STICK_HEIGHT = 750;
-const STICK_COL = '#C66F35';
-const GUIDE_COL = 'rgba(0, 0, 0, 0.25)';
+const STICK_COL = "#C66F35";
+const GUIDE_COL = "rgba(0, 0, 0, 0.25)";
 const SHAKE_AMPLITUDE = 2;
 
 class Stick {
@@ -103,7 +103,7 @@ class Stick {
         const baseIndicatorPos = Vector.add(this.position, new Vector(-indicatorWidth / 2, -BALL_RADIUS - indicatorHeight - padding));
         const indicatorPos = Vector.add(baseIndicatorPos, this.shakeOffset);
 
-        canvas.drawRect(new Vector(0, 0), Vector.add(indicatorPos, TABLE), new Vector(indicatorWidth, indicatorHeight), 'rgba(0, 0, 0, 0.5)');
+        canvas.drawRect(new Vector(0, 0), Vector.add(indicatorPos, TABLE), new Vector(indicatorWidth, indicatorHeight), "rgba(0, 0, 0, 0.5)");
 
         const powerPercentage = this.power / MAX_POWER;
         const red = Math.round(255 * powerPercentage);
@@ -120,12 +120,12 @@ class Stick {
             canvas.drawLine(
                 Vector.add(tickStart, TABLE),
                 Vector.add(tickEnd, TABLE),
-                'rgba(255, 255, 255, 0.7)',
+                "rgba(255, 255, 255, 0.7)",
                 2
             );
         }
 
-        canvas.strokeRect(new Vector(0, 0), Vector.add(indicatorPos, TABLE), new Vector(indicatorWidth, indicatorHeight), 'rgba(255, 255, 255, 0.7)', 2);
+        canvas.strokeRect(new Vector(0, 0), Vector.add(indicatorPos, TABLE), new Vector(indicatorWidth, indicatorHeight), "rgba(255, 255, 255, 0.7)", 2);
     }
 
     drawZeroPowerIndicator() {
@@ -140,13 +140,13 @@ class Stick {
         canvas.drawLine(
             Vector.add(Vector.add(xPos, new Vector(-xSize / 2, -xSize / 2)), TABLE),
             Vector.add(Vector.add(xPos, new Vector(xSize / 2, xSize / 2)), TABLE),
-            'rgba(255, 0, 0, 0.8)',
+            "rgba(255, 0, 0, 0.8)",
             2.5
         );
         canvas.drawLine(
             Vector.add(Vector.add(xPos, new Vector(-xSize / 2, xSize / 2)), TABLE),
             Vector.add(Vector.add(xPos, new Vector(xSize / 2, -xSize / 2)), TABLE),
-            'rgba(255, 0, 0, 0.8)',
+            "rgba(255, 0, 0, 0.8)",
             2.5
         );
     }

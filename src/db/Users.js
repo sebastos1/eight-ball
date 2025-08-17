@@ -1,8 +1,8 @@
 // userQueries.js
-import { User } from './database.js';
-import bcrypt from 'bcryptjs';
-import Elo from '../game/Elo.js';
-import { Op } from 'sequelize';
+import { User } from "./database.js";
+import bcrypt from "bcryptjs";
+import Elo from "../game/Elo.js";
+import { Op } from "sequelize";
 
 const Users = {};
 
@@ -17,7 +17,7 @@ Users.create = async function (user) {
         });
         return newUser.id;
     } catch (error) {
-        console.error('Error creating user:', error);
+        console.error("Error creating user:", error);
         return null;
     }
 };
@@ -27,11 +27,11 @@ Users.findByOauthId = async function (oauthId) {
     try {
         const user = await User.findOne({
             where: { oauthId },
-            attributes: ['id', 'oauthId', 'username', 'wins', 'losses', 'rating', 'country', 'is_active']
+            attributes: ["id", "oauthId", "username", "wins", "losses", "rating", "country", "is_active"]
         });
         return user ? user.get({ plain: true }) : null;
     } catch (error) {
-        console.error('Error finding user by OAuth ID:', error);
+        console.error("Error finding user by OAuth ID:", error);
         return null;
     }
 };
@@ -46,7 +46,7 @@ Users.createFromOAuth = async function (oauthData) {
         });
         return newUser.get({ plain: true });
     } catch (error) {
-        console.error('Error creating user from OAuth:', error);
+        console.error("Error creating user from OAuth:", error);
         return null;
     }
 };
@@ -57,7 +57,7 @@ Users.deactivate = async function (id) {
         await User.update({ is_active: false }, { where: { id } });
         return true;
     } catch (error) {
-        console.error('Error deactivating user:', error);
+        console.error("Error deactivating user:", error);
         return false;
     }
 };
@@ -68,7 +68,7 @@ Users.delete = async function (id) {
         await User.destroy({ where: { id } });
         return true;
     } catch (error) {
-        console.error('Error deleting user:', error);
+        console.error("Error deleting user:", error);
         return false;
     }
 };
@@ -77,11 +77,11 @@ Users.delete = async function (id) {
 Users.findUserById = async function (id) {
     try {
         const user = await User.findByPk(id, {
-            attributes: ['id', 'username', 'wins', 'losses', 'rating', 'is_active', 'country']
+            attributes: ["id", "username", "wins", "losses", "rating", "is_active", "country"]
         });
         return user ? user.get({ plain: true }) : null;
     } catch (error) {
-        console.error('Error finding user by ID:', error);
+        console.error("Error finding user by ID:", error);
         return null;
     }
 };
@@ -91,21 +91,21 @@ Users.findIdAndStatusByUsername = async function (username) {
     try {
         const user = await User.findOne({
             where: { username },
-            attributes: ['id', 'is_active']
+            attributes: ["id", "is_active"]
         });
         return user ? { id: user.id, is_active: user.is_active } : null;
     } catch (error) {
-        console.error('Error finding user ID and status by username:', error);
+        console.error("Error finding user ID and status by username:", error);
         return null;
     }
 };
 
 Users.getRatingFromId = async function (id) {
     try {
-        const user = await User.findByPk(id, { attributes: ['rating'] });
+        const user = await User.findByPk(id, { attributes: ["rating"] });
         return user ? user.rating : null;
     } catch (error) {
-        console.error('Error getting rating from user ID:', error);
+        console.error("Error getting rating from user ID:", error);
         return null;
     }
 };
@@ -115,11 +115,11 @@ Users.queryIdByUsername = async function (username) {
     try {
         const user = await User.findOne({
             where: { username: { [Op.like]: `%${username}%` } },
-            attributes: ['id']
+            attributes: ["id"]
         });
         return user ? user.id : null;
     } catch (error) {
-        console.error('Error querying user ID by username:', error);
+        console.error("Error querying user ID by username:", error);
         return null;
     }
 };
@@ -129,13 +129,13 @@ Users.getLeaderboard = async function () {
     try {
         const users = await User.findAll({
             where: { is_active: true, rating: { [Op.ne]: null } },
-            attributes: ['id', 'username', 'wins', 'losses', 'rating', 'is_active', 'country'],
-            order: [['rating', 'DESC']],
+            attributes: ["id", "username", "wins", "losses", "rating", "is_active", "country"],
+            order: [["rating", "DESC"]],
             limit: 25
         });
         return users.map(user => user.get({ plain: true }));
     } catch (error) {
-        console.error('Error getting leaderboard:', error);
+        console.error("Error getting leaderboard:", error);
         return null;
     }
 };
@@ -144,15 +144,15 @@ Users.updateRatingsAfterGame = async function (winnerId, loserId) {
     try {
         const users = await User.findAll({
             where: { id: [winnerId, loserId] },
-            attributes: ['id', 'rating', 'wins', 'losses']
+            attributes: ["id", "rating", "wins", "losses"]
         });
 
-        if (!users || users.length !== 2) throw new Error('Winner or loser not found');
+        if (!users || users.length !== 2) throw new Error("Winner or loser not found");
 
         const winner = users.find(u => u.id === winnerId);
         const loser = users.find(u => u.id === loserId);
 
-        if (!winner || !loser) throw new Error('Winner or loser not found');
+        if (!winner || !loser) throw new Error("Winner or loser not found");
 
         winner.rating = winner.rating || Elo.initialRating();
         loser.rating = loser.rating || Elo.initialRating();
@@ -177,7 +177,7 @@ Users.updateRatingsAfterGame = async function (winnerId, loserId) {
             ratingLost,
         };
     } catch (error) {
-        console.error('Error updating ratings after game:', error);
+        console.error("Error updating ratings after game:", error);
         return null;
     }
 };

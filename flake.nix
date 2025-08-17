@@ -15,9 +15,9 @@
 	          python3
             sqlite
           ];
-          shellHook = ''
+          shellHook = ""
             npm install
-          '';
+          "";
         };
       });
 }

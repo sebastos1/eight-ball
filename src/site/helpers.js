@@ -1,6 +1,6 @@
-import axios from 'axios';
-import Handlebars from 'handlebars';
-import { oauthServer } from '../../index.js';
+import axios from "axios";
+import Handlebars from "handlebars";
+import { oauthServer } from "../../index.js";
 
 export function timeAgo(dateString) {
     const now = new Date();
@@ -8,12 +8,12 @@ export function timeAgo(dateString) {
     const diffInSeconds = Math.floor((now - past) / 1000);
 
     const intervals = [
-        { label: 'year', seconds: 31536000 },
-        { label: 'month', seconds: 2592000 },
-        { label: 'day', seconds: 86400 },
-        { label: 'hour', seconds: 3600 },
-        { label: 'minute', seconds: 60 },
-        { label: 'second', seconds: 1 }
+        { label: "year", seconds: 31536000 },
+        { label: "month", seconds: 2592000 },
+        { label: "day", seconds: 86400 },
+        { label: "hour", seconds: 3600 },
+        { label: "minute", seconds: 60 },
+        { label: "second", seconds: 1 }
     ];
 
     for (let i = 0; i < intervals.length; i++) {
@@ -21,19 +21,19 @@ export function timeAgo(dateString) {
         const count = Math.floor(diffInSeconds / interval.seconds);
 
         if (count >= 1) {
-            if (interval.label === 'day' && count === 1) {
-                return 'yesterday';
-            } else if (interval.label === 'month' && count === 1) {
-                return 'last month';
-            } else if (interval.label === 'year' && count === 1) {
-                return 'last year';
+            if (interval.label === "day" && count === 1) {
+                return "yesterday";
+            } else if (interval.label === "month" && count === 1) {
+                return "last month";
+            } else if (interval.label === "year" && count === 1) {
+                return "last year";
             } else {
-                return `${count} ${interval.label}${count !== 1 ? 's' : ''} ago`;
+                return `${count} ${interval.label}${count !== 1 ? "s" : ""} ago`;
             }
         }
     }
 
-    return 'just now';
+    return "just now";
 }
 
 export function getRank(rating) {
@@ -121,7 +121,7 @@ export function userColor(username) {
 
 export function userFlag(country) {
     if (!country) return;
-    const codePoints = country.split('').map(char => (char.codePointAt(0) + 127397).toString(16)).join('-');
+    const codePoints = country.split("").map(char => (char.codePointAt(0) + 127397).toString(16)).join("-");
     const flagUrl = `https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/${codePoints}.svg`;
     return new Handlebars.SafeString(`<img src="${flagUrl}" alt="${country}" class="twemoji-flag">`);
 }
@@ -139,8 +139,8 @@ export default {
 };
 
 export async function getLocationFromIp(ip) {
-    if (!ip || ip === '::1') {
-        ip = '72.229.28.185'; // example for testing
+    if (!ip || ip === "::1") {
+        ip = "72.229.28.185"; // example for testing
     }
 
     console.log("Geolocating IP:", ip);
@@ -149,7 +149,7 @@ export async function getLocationFromIp(ip) {
         const response = await axios.get(`${oauthServer}/geolocate?ip=${ip}`, { timeout: 5000 });
         return response.data;
     } catch (error) {
-        console.error('Error in IP geolocation:', error);
+        console.error("Error in IP geolocation:", error);
         return null;
     }
 }

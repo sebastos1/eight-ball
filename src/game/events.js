@@ -2,15 +2,15 @@ const events = {
     ballPotted(game, ball) {
 
         switch (ball.color) {
-            case 'red':
-            case 'yellow':
+            case "red":
+            case "yellow":
                 // this.handleBlackBall(game); // for testing
                 this.handleColoredBall(game, ball);
                 break;
-            case 'white':
+            case "white":
                 this.handleWhiteBall(game, ball);
                 break;
-            case 'black':
+            case "black":
                 this.handleBlackBall(game);
                 break;
         }
@@ -18,7 +18,7 @@ const events = {
         // update the score immediately
         [game.turn, game.nextTurn].forEach((player, i, array) => {
             let opponent = array[1 - i];
-            player.socket.emit('game-scoreUpdate', {
+            player.socket.emit("game-scoreUpdate", {
                 player: player.score,
                 opponent: opponent.score,
                 playercolor: player.color,
@@ -33,7 +33,7 @@ const events = {
         // give a color if no ball gone
         if (game.turn.color === undefined) {
             game.turn.color = ball.color;
-            game.nextTurn.color = ball.color === 'red' ? 'yellow' : 'red'; // opponent color
+            game.nextTurn.color = ball.color === "red" ? "yellow" : "red"; // opponent color
         }
 
         // add if colors is same, or give a foul and give to opponent

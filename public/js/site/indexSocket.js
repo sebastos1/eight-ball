@@ -1,9 +1,9 @@
-import { initOnlineTracking, initQueueTracking } from './online.js';
+import { initOnlineTracking, initQueueTracking } from "./online.js";
 
 // Connect
 const socket = io();
 
 initOnlineTracking(socket);
-initQueueTracking(socket, 'playersInQueue');
+initQueueTracking(socket, "playersInQueue");
 
-socket.emit('requestOnlineUpdate');
+socket.emit("requestOnlineUpdate");

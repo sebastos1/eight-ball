@@ -1,9 +1,9 @@
-import Ball from './Ball.js';
-import Vector from './Vector.js';
-import physics from './physics.js';
-import events from './events.js';
-import Games from '../db/Games.js';
-import Users from '../db/Users.js';
+import Ball from "./Ball.js";
+import Vector from "./Vector.js";
+import physics from "./physics.js";
+import events from "./events.js";
+import Games from "../db/Games.js";
+import Users from "../db/Users.js";
 
 const WIDTH = 1280;
 const HEIGHT = 720;
@@ -52,8 +52,8 @@ class Game {
         const whiteY = 360 + (Math.random() * 2 - 1) * deviation;
 
         const ballSetup = [
-            { pos: [whiteX, whiteY], color: 'white' },
-            { pos: [1030, 360], color: 'black' },
+            { pos: [whiteX, whiteY], color: "white" },
+            { pos: [1030, 360], color: "black" },
             { pos: [960, 360] }, { pos: [995, 340] },
             { pos: [995, 380] }, { pos: [1030, 320] },
             { pos: [1030, 400] }, { pos: [1065, 300] },
@@ -63,7 +63,7 @@ class Game {
             { pos: [1100, 400] }, { pos: [1100, 440] }
         ];
 
-        const colors = [...Array(7).fill('red'), ...Array(7).fill('yellow')];
+        const colors = [...Array(7).fill("red"), ...Array(7).fill("yellow")];
         for (let i = 2; i < ballSetup.length; i++) {
             const randomIndex = Math.floor(Math.random() * colors.length);
             ballSetup[i].color = colors.splice(randomIndex, 1)[0];

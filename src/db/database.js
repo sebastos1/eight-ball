@@ -1,11 +1,11 @@
-import session from 'express-session';
-import expressSession from 'express-session';
-import { Sequelize, DataTypes } from 'sequelize';
-import SequelizeStoreFactory from 'connect-session-sequelize';
+import session from "express-session";
+import expressSession from "express-session";
+import { Sequelize, DataTypes } from "sequelize";
+import SequelizeStoreFactory from "connect-session-sequelize";
 
 export const database = new Sequelize({
-    dialect: 'sqlite',
-    storage: './database.db',
+    dialect: "sqlite",
+    storage: "./database.db",
     logging: false,
 });
 
@@ -17,12 +17,12 @@ const sessionStore = new SequelizeStore({
 export const configureSessionStore = (app) => {
     const sessionMiddleware = expressSession({
         store: sessionStore,
-        secret: 'secret',
+        secret: "secret",
         resave: false,
         saveUninitialized: false,
         cookie: {
             maxAge: 7 * 24 * 60 * 60 * 1000, // 1 week
-            secure: 'auto',
+            secure: "auto",
         },
     });
 
@@ -30,7 +30,7 @@ export const configureSessionStore = (app) => {
     return sessionMiddleware;
 };
 
-export const User = database.define('User', {
+export const User = database.define("User", {
     id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
@@ -68,7 +68,7 @@ export const User = database.define('User', {
     }
 });
 
-export const Game = database.define('Game', {
+export const Game = database.define("Game", {
     id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
@@ -124,17 +124,17 @@ export const Game = database.define('Game', {
 });
 
 // Define relationships
-User.hasMany(Game, { as: 'WonGames', foreignKey: 'winnerId' });
-User.hasMany(Game, { as: 'LostGames', foreignKey: 'loserId' });
-Game.belongsTo(User, { as: 'Winner', foreignKey: 'winnerId' });
-Game.belongsTo(User, { as: 'Loser', foreignKey: 'loserId' });
+User.hasMany(Game, { as: "WonGames", foreignKey: "winnerId" });
+User.hasMany(Game, { as: "LostGames", foreignKey: "loserId" });
+Game.belongsTo(User, { as: "Winner", foreignKey: "winnerId" });
+Game.belongsTo(User, { as: "Loser", foreignKey: "loserId" });
 
 export const initializeDatabase = async () => {
     try {
         await database.sync();
-        console.log('Database synced');
+        console.log("Database synced");
     } catch (error) {
-        console.error('Failed syncing database:', error);
+        console.error("Failed syncing database:", error);
     }
 };
 

@@ -1,10 +1,10 @@
 // Dependencies
-import chalk from 'chalk';
+import chalk from "chalk";
 
 // Imports
-import Game from './game/Game.js';
-import Queue from './game/Queue.js';
-import Player from './game/Player.js';
+import Game from "./game/Game.js";
+import Queue from "./game/Queue.js";
+import Player from "./game/Player.js";
 
 // Constants
 const TICKRATE = 60;
@@ -15,10 +15,10 @@ const players = new Map();
 const queue = new Queue();
 
 // Log function
-const log = (string) => console.log(`${chalk.bold.underline.red(`GAME [${players.size}][${queue.size}][${games.size}]`)} ${chalk.yellow('»')} ${chalk.yellow(string)}`);
+const log = (string) => console.log(`${chalk.bold.underline.red(`GAME [${players.size}][${queue.size}][${games.size}]`)} ${chalk.yellow("»")} ${chalk.yellow(string)}`);
 
 function emitOnlineUpdate(io) {
-    io.emit('online-update', {
+    io.emit("online-update", {
         playersOnline: Array.from(players.values()).map(player => ({
             id: player.id,
             username: player.username,
@@ -28,7 +28,7 @@ function emitOnlineUpdate(io) {
 }
 
 function emitQueueUpdate(io) {
-    io.emit('queue-update', {
+    io.emit("queue-update", {
         playersInQueue: queue.users.map(player => ({
             id: player.id,
             username: player.username,
@@ -41,7 +41,7 @@ function emitQueueUpdate(io) {
 const applySocketEvents = function (io) {
 
     // On socket connection
-    io.on('connection', async (socket) => {
+    io.on("connection", async (socket) => {
         let player;
 
         // check if authenticated
@@ -70,7 +70,7 @@ const applySocketEvents = function (io) {
             emitOnlineUpdate(io)
 
             // On socket disconnect
-            socket.on('disconnect', async () => {
+            socket.on("disconnect", async () => {
 
                 console.log(player.username, "left the game");
 
@@ -93,7 +93,7 @@ const applySocketEvents = function (io) {
             });
 
             // On socket joining the queue
-            socket.on('queue-join', (callback) => {
+            socket.on("queue-join", (callback) => {
                 if (player.inGame) {
                     callback({
                         success: false,
@@ -112,7 +112,7 @@ const applySocketEvents = function (io) {
             });
 
             // On socket leaving the queue
-            socket.on('queue-leave', () => {
+            socket.on("queue-leave", () => {
                 if (!player.inQueue) return;
 
                 queue.remove(player);
@@ -122,7 +122,7 @@ const applySocketEvents = function (io) {
             });
 
             // On socket shooting the cue ball
-            socket.on('shoot', (data) => {
+            socket.on("shoot", (data) => {
 
                 // Check that the player is in game and then call the shoot method on their game
                 if (player.inGame) player.game.shoot(player, data.power, data.angle);
@@ -130,7 +130,7 @@ const applySocketEvents = function (io) {
         };
 
         // keeping this here lets non-logged in users see the online players, very nice
-        socket.on('requestOnlineUpdate', () => {
+        socket.on("requestOnlineUpdate", () => {
             emitOnlineUpdate(io);
             emitQueueUpdate(io);
         });
@@ -153,8 +153,8 @@ const gameLoop = setInterval(() => {
         log(`game#${game.id} has started - ${games.size} games(s) in progress`);
 
         // Send starting data to the two players
-        player1.socket.emit('game-start', game.startData(player1));
-        player2.socket.emit('game-start', game.startData(player2));
+        player1.socket.emit("game-start", game.startData(player1));
+        player2.socket.emit("game-start", game.startData(player2));
     }
 
     // Iterate through every game in games
@@ -167,13 +167,13 @@ const gameLoop = setInterval(() => {
             let turn = game.update();
 
             // Send update data to the players
-            game.player1.socket.emit('game-update', game.updateData());
-            game.player2.socket.emit('game-update', game.updateData());
+            game.player1.socket.emit("game-update", game.updateData());
+            game.player2.socket.emit("game-update", game.updateData());
 
             // If the turn has changed, send turn data to the players
             if (turn) {
-                game.player1.socket.emit('game-updateTurn', game.turnData(game.player1));
-                game.player2.socket.emit('game-updateTurn', game.turnData(game.player2));
+                game.player1.socket.emit("game-updateTurn", game.turnData(game.player1));
+                game.player2.socket.emit("game-updateTurn", game.turnData(game.player2));
             }
         }
 
@@ -181,8 +181,8 @@ const gameLoop = setInterval(() => {
         if (game.ended) {
 
             // Send ending data to the players
-            game.player1.socket.emit('game-end', game.endData(game.player1, game.winReason));
-            game.player2.socket.emit('game-end', game.endData(game.player2, game.winReason));
+            game.player1.socket.emit("game-end", game.endData(game.player1, game.winReason));
+            game.player2.socket.emit("game-end", game.endData(game.player2, game.winReason));
 
             // Remove the game from games
             games.delete(game_id);

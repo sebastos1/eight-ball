@@ -1,7 +1,7 @@
-import Ball, { BALL_RADIUS } from './Ball.js';
-import Stick from './Stick.js';
-import canvas from './canvas.js';
-import Vector from './Vector.js';
+import Ball, { BALL_RADIUS } from "./Ball.js";
+import Stick from "./Stick.js";
+import canvas from "./canvas.js";
+import Vector from "./Vector.js";
 
 class Game {
     constructor(data) {

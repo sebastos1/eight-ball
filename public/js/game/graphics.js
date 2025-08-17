@@ -1,9 +1,9 @@
-import Vector from './Vector.js';
-import { BALL_RADIUS } from './Ball.js';
+import Vector from "./Vector.js";
+import { BALL_RADIUS } from "./Ball.js";
 
-const HOLE_COL = '#1E211A';
-const EDGE_COL = '#563220';
-const PLAYFIELD_COL = '#2C5B2B';
+const HOLE_COL = "#1E211A";
+const EDGE_COL = "#563220";
+const PLAYFIELD_COL = "#2C5B2B";
 
 export const WIDTH = 1280;
 export const HEIGHT = 720;
@@ -106,10 +106,10 @@ export const setupGraphics = (canvas) => {
     };
 
     const createTableTexture = (width, height) => {
-        const textureCanvas = document.createElement('canvas');
+        const textureCanvas = document.createElement("canvas");
         textureCanvas.width = width;
         textureCanvas.height = height;
-        const ctx = textureCanvas.getContext('2d');
+        const ctx = textureCanvas.getContext("2d");
 
         // vignette
         const gradient = ctx.createRadialGradient(
@@ -117,7 +117,7 @@ export const setupGraphics = (canvas) => {
             textureCanvas.width / 2, textureCanvas.height / 2, Math.max(textureCanvas.width, textureCanvas.height) / 1.5
         );
         gradient.addColorStop(0, PLAYFIELD_COL);
-        gradient.addColorStop(1, '#1A3A19');
+        gradient.addColorStop(1, "#1A3A19");
 
         ctx.fillStyle = gradient;
         ctx.fillRect(0, 0, textureCanvas.width, textureCanvas.height);

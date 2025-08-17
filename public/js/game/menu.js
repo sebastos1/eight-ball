@@ -2,22 +2,22 @@
 export const showMenu = function () {
 
     // Show the menu element and hide the others
-    $('#gameContainer').show();
-    $('#menu').show();
-    $('#queue').hide();
-    $('#game').hide();
-    $('#gameEnd').hide();
+    $("#gameContainer").show();
+    $("#menu").show();
+    $("#queue").hide();
+    $("#game").hide();
+    $("#gameEnd").hide();
 };
 
 // Show queue method
 export const showQueue = function () {
 
     // Show the queue element and hide the others
-    $('#gameContainer').show();
-    $('#menu').hide();
-    $('#queue').show();
-    $('#game').hide();
-    $('#gameEnd').hide();
+    $("#gameContainer").show();
+    $("#menu").hide();
+    $("#queue").show();
+    $("#game").hide();
+    $("#gameEnd").hide();
 
 };
 
@@ -25,11 +25,11 @@ export const showQueue = function () {
 export const showGame = function () {
 
     // Show the game element and hide the others
-    $('#gameContainer').hide();
-    $('#menu').hide();
-    $('#queue').hide();
-    $('#game').show();
-    $('#gameEnd').hide();
+    $("#gameContainer").hide();
+    $("#menu").hide();
+    $("#queue").hide();
+    $("#game").show();
+    $("#gameEnd").hide();
 
 };
 
@@ -37,11 +37,11 @@ export const showGame = function () {
 export const showGameEnd = function () {
 
     // Show the game end element and hide the others
-    $('#gameContainer').show();
-    $('#menu').hide();
-    $('#queue').hide();
-    $('#game').hide();
-    $('#gameEnd').show();
+    $("#gameContainer").show();
+    $("#menu").hide();
+    $("#queue").hide();
+    $("#game").hide();
+    $("#gameEnd").show();
 
 };
 

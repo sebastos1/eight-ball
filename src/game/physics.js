@@ -1,5 +1,5 @@
 // Imports
-import Vector from './Vector.js';
+import Vector from "./Vector.js";
 
 // Constants
 const FRICTION = 0.01;

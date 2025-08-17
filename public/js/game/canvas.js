@@ -1,21 +1,21 @@
-import Vector from './Vector.js';
-import { setupGraphics, BORDER, WIDTH, HEIGHT, } from './graphics.js';
+import Vector from "./Vector.js";
+import { setupGraphics, BORDER, WIDTH, HEIGHT, } from "./graphics.js";
 
 // Initialise canvas object
 const canvas = {};
 
 // Get the canvas element and its context
-canvas._DOM = document.getElementById('canvas');
-canvas._context = canvas._DOM.getContext('2d');
+canvas._DOM = document.getElementById("canvas");
+canvas._context = canvas._DOM.getContext("2d");
 
 // Set the canvas width and height
 canvas._DOM.width = canvas.width = WIDTH + 2 * BORDER;
 canvas._DOM.height = canvas.height = HEIGHT + 2 * BORDER;
 
 // Make the canvas more gamey
-canvas._DOM.style.userSelect = 'none';
-canvas._DOM.style.msUserSelect = 'none';
-canvas._DOM.style.mozUserSelect = 'none';
+canvas._DOM.style.userSelect = "none";
+canvas._DOM.style.msUserSelect = "none";
+canvas._DOM.style.mozUserSelect = "none";
 canvas._DOM.ondragstart = function () { return false; };
 
 // Initialise canvas mouse object

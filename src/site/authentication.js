@@ -1,10 +1,10 @@
-import bcrypt from 'bcryptjs';
-import Users from '../db/Users.js';
+import bcrypt from "bcryptjs";
+import Users from "../db/Users.js";
 
 const authentication = async function (req, res, next) {
     req.login = (user_id) => req.session.user_id = user_id;
     req.logout = () => {
-        console.log('Logging out user:', req.session.user_id);
+        console.log("Logging out user:", req.session.user_id);
         delete req.session.user_id;
         delete req.session.authenticated;
         delete req.session.user;
@@ -21,7 +21,7 @@ const authentication = async function (req, res, next) {
         // gg if you get here lol
         if (!user) {
             clearAuthData(req, res);
-            return next('User not found.');
+            return next("User not found.");
         }
 
         if (!user.is_active) {
@@ -40,9 +40,9 @@ const authentication = async function (req, res, next) {
         req.session.user = user;
         next();
     } catch (error) {
-        console.error('Authentication error:', error);
+        console.error("Authentication error:", error);
         clearAuthData(req, res);
-        next('Database error.');
+        next("Database error.");
     }
 };
 
