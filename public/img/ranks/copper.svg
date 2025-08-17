@@ -1,0 +1,10 @@
+<svg width="128" height="128" viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg">
+  <!-- Copper Rank Icon -->
+  <!-- Base Layer for crisp edges -->
+  <polygon points="64.00,109.00 12.04,19.00 115.96,19.00" fill="#B87333"/>
+
+  <!-- Colored facets on top -->
+  <polygon points="64.00,49.00 64.00,109.00 12.04,19.00" fill="hsl(33.9, 49.1%, 56.1%)"/>
+  <polygon points="64.00,49.00 12.04,19.00 115.96,19.00" fill="hsl(28.9, 56.6%, 46.1%)"/>
+  <polygon points="64.00,49.00 115.96,19.00 64.00,109.00" fill="hsl(23.9, 64.1%, 36.1%)"/>
+</svg>

@@ -1,6 +1,6 @@
 import Game from "./Game.js";
-import { userColor } from "../site/helpers.js";
-import { showMenu, showQueue, showGame, showGameEnd } from "./menu.js";
+import { userColor, getRankBadge } from "../site/helpers.js";
+import { showMenu, showQueue, showGame, showGameEnd, showRoomWaiting } from "./menu.js";
 import { launchConfetti } from "./confetti.js";
 import { initQueueTracking } from "../site/online.js";
 import { YELLOW_COL, RED_COL } from "./Ball.js";
@@ -62,13 +62,22 @@ export const shoot = function (power, angle) {
 
 // Game start event listener
 socket.on("game-start", (data) => {
-
     // Create a new game with the data
     game = new Game(data);
 
+    // Reset the rematch button
+    rematchState = 'idle';
+    $("#btn-rematch").text("Rematch").removeClass("btn-success").addClass("btn-primary").prop('disabled', false);
+    $("#rematchStatus").hide();
+    $("#rematchMessage").text("");
+
+    // rating badge
+    const playerRankBadge = game.player.rating ? `<img src="${getRankBadge(game.player.rating)}" style="width: 24px; height: 24px;">` : '';
+    const opponentRankBadge = game.opponent.rating ? `<img src="${getRankBadge(game.opponent.rating)}" style="width: 24px; height: 24px;">` : '';
+
     // Display player and opponent names
-    $("#playerUsername").text(game.player.username);
-    $("#opponentUsername").text(game.opponent.username);
+    $("#playerUsername").html(`${game.player.username}${playerRankBadge}`);
+    $("#opponentUsername").html(`${opponentRankBadge}${game.opponent.username}`);
 
     // Add links to the player and opponent"s profiles
     $("#playerUsername").attr("href", `/profile/${game.player.id}`);
@@ -154,7 +163,6 @@ socket.on("game-updateTurn", (data) => {
 
 // Game end event listener
 socket.on("game-end", (data) => {
-
     let string;
 
     // If player has won, display win text
@@ -186,9 +194,17 @@ socket.on("game-end", (data) => {
 
     $("#winReason").text(string).css("color", color);
 
-    game = null;
+    const roomId = new URLSearchParams(window.location.search).get('room');
+    if (roomId) {
+        $("#roomEndButtons").show();
+        $("#normalEndButtons").hide();
+        $("#btn-rematch").text("Rematch").prop('disabled', false);
+    } else {
+        $("#roomEndButtons").hide();
+        $("#normalEndButtons").show();
+    }
 
-    // Show game ending
+    game = null;
     showGameEnd();
 });
 
@@ -199,4 +215,95 @@ socket.on("online-update", (data) => {
 
 socket.on("queue-update", (data) => {
     $("#playersInQueue").text(data.playersInQueue);
+});
+
+// rooms
+$("#btn-createRoom").click(() => {
+    socket.emit("room-create", (response) => {
+        if (response.success) {
+            window.location.href = `/play?room=${response.roomId}`;
+        }
+    });
+});
+
+$("#btn-joinRoom").click(() => {
+    const roomId = $("#roomIdInput").val().trim().toUpperCase();
+    if (roomId) {
+        window.location.href = `/play?room=${roomId}`;
+    }
+});
+
+$(document).ready(() => {
+    const roomId = new URLSearchParams(window.location.search).get('room');
+
+    if (roomId) {
+        socket.emit("room-join", roomId.toUpperCase(), (response) => {
+            if (response.success) {
+                $("#currentRoomId").text(roomId.toUpperCase());
+                $("#roomLink").val(window.location.href);
+
+                if (response.playersInRoom === 1) {
+                    showRoomWaiting();
+                }
+            } else {
+                alert(response.message);
+                window.location.href = '/play';
+            }
+        });
+    }
+});
+
+$("#btn-leaveRoom").click(() => {
+    window.location.href = '/play';
+});
+
+// whatever class didnt work
+$("#btn-leaveRoom2").click(() => {
+    window.location.href = '/play';
+});
+
+// rematching
+let rematchState = 'idle';
+
+$("#btn-rematch").click(() => {
+    if (rematchState === 'accepting') {
+        socket.emit("rematch-response", true, (response) => {
+            console.log(response.message);
+        });
+        rematchState = 'idle';
+    } else if (rematchState === 'idle') {
+        socket.emit("rematch-request", (response) => {
+            if (response.success) {
+                rematchState = 'requested';
+                $("#btn-rematch").text("Waiting for opponent...").prop('disabled', true);
+                $("#rematchStatus").show();
+                $("#rematchMessage").text("Rematch requested. Waiting for opponent to accept.");
+            } else {
+                alert(response.message);
+            }
+        });
+    }
+});
+
+socket.on("rematch-requested", (data) => {
+    rematchState = 'accepting';
+    $("#btn-rematch").text("Accept Rematch").removeClass("btn-primary").addClass("btn-success").prop('disabled', false);
+    $("#rematchStatus").show();
+    $("#rematchMessage").text(`${data.from} wants a rematch!`);
+});
+
+socket.on("rematch-accepted", (data) => {
+    rematchState = 'idle';
+    $("#rematchStatus").show();
+    $("#rematchMessage").text("Opponent accepted! Starting rematch...");
+});
+
+socket.on("rematch-declined", (data) => {
+    rematchState = 'idle';
+    $("#btn-rematch").text("Rematch").removeClass("btn-success").addClass("btn-primary").prop('disabled', false);
+    $("#rematchStatus").show();
+    $("#rematchMessage").text("Opponent declined the rematch.");
+    setTimeout(() => {
+        $("#rematchStatus").hide();
+    }, 3000);
 });

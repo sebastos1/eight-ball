@@ -24,8 +24,30 @@ export function userColor(username) {
 
 export function getUserFlag(country) {
     if (!country) return;
-    console.log("Country for flag:", country);
     const codePoints = country.split("").map(char => (char.codePointAt(0) + 127397).toString(16)).join("-");
     const flagUrl = `https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/${codePoints}.svg`;
     return `<img src="${flagUrl}" alt="${country}" class="twemoji-flag">`;
+}
+
+export function getRankBadge(rating) {
+    const RANKS = [
+        { badge: "/img/ranks/wood.svg", minRating: 0 },
+        { badge: "/img/ranks/copper.svg", minRating: 100 },
+        { badge: "/img/ranks/bronze.svg", minRating: 200 },
+        { badge: "/img/ranks/silver.svg", minRating: 300 },
+        { badge: "/img/ranks/gold.svg", minRating: 400 },
+        { badge: "/img/ranks/plat.svg", minRating: 500 },
+        { badge: "/img/ranks/diamond.svg", minRating: 600 },
+        { badge: "/img/ranks/master.svg", minRating: 700 },
+        { badge: "/img/ranks/gm.svg", minRating: 800 },
+        { badge: "/img/ranks/champ.svg", minRating: 900 }
+    ];
+
+    for (let i = RANKS.length - 1; i >= 0; i--) {
+        if (rating >= RANKS[i].minRating) {
+            return RANKS[i].badge;
+        }
+    }
+
+    return null;
 }

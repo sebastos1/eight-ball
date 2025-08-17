@@ -81,6 +81,29 @@ export function getRankColor(rating) {
     return RANKS[0].name;
 }
 
+export function getRankBadge(rating) {
+    const RANKS = [
+        { badge: "/img/ranks/wood.svg", minRating: 0 },
+        { badge: "/img/ranks/copper.svg", minRating: 100 },
+        { badge: "/img/ranks/bronze.svg", minRating: 200 },
+        { badge: "/img/ranks/silver.svg", minRating: 300 },
+        { badge: "/img/ranks/gold.svg", minRating: 400 },
+        { badge: "/img/ranks/plat.svg", minRating: 500 },
+        { badge: "/img/ranks/diamond.svg", minRating: 600 },
+        { badge: "/img/ranks/master.svg", minRating: 700 },
+        { badge: "/img/ranks/gm.svg", minRating: 800 },
+        { badge: "/img/ranks/champ.svg", minRating: 900 }
+    ];
+
+    for (let i = RANKS.length - 1; i >= 0; i--) {
+        if (rating >= RANKS[i].minRating) {
+            return RANKS[i].badge;
+        }
+    }
+
+    return RANKS[0].badge;
+}
+
 export function translateWinReason(reason, didUserWin) {
     let string = didUserWin ? "Won by " : "Lost by ";
     switch (parseInt(reason)) {
@@ -133,6 +156,7 @@ export default {
     timeAgo,
     getRank,
     getRankColor,
+    getRankBadge,
     translateWinReason,
     userColor,
     userFlag

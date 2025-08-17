@@ -1,0 +1,12 @@
+<svg width="128" height="128" viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg">
+  <!-- Bronze Rank Icon -->
+  <g transform="translate(0, -6.4)">
+  <!-- Base Layer for crisp edges -->
+    <polygon points="64.00,19.00 115.96,109.00 12.04,109.00" fill="#CD7F32"/>
+
+    <!-- Colored facets on top -->
+    <polygon points="64.00,79.00 64.00,19.00 115.96,109.00" fill="hsl(24.8, 68.3%, 35.0%)"/>
+    <polygon points="64.00,79.00 115.96,109.00 12.04,109.00" fill="hsl(29.8, 60.8%, 50.0%)"/>
+    <polygon points="64.00,79.00 12.04,109.00 64.00,19.00" fill="hsl(34.8, 53.3%, 65.0%)"/>
+  </g>
+</svg>

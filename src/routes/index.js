@@ -104,16 +104,16 @@ router.get("/leaderboard", async (req, res) => {
 
 router.get("/leaderboard/legend", (_req, res) => {
     const ranks = [
-        { name: "Wood", minRating: 0, maxRating: 99, cssClass: "wood-text", color: "#8B4513", shortName: "WD", description: "Starting rank for new players" },
-        { name: "Copper", minRating: 100, maxRating: 199, cssClass: "copper-text", color: "#B87333", shortName: "CP", description: "Learning the basics" },
-        { name: "Bronze", minRating: 200, maxRating: 299, cssClass: "bronze-text", color: "#CD7F32", shortName: "BR", description: "Solid fundamentals" },
-        { name: "Silver", minRating: 300, maxRating: 399, cssClass: "silver-text", color: "#C0C0C0", shortName: "SV", description: "Consistent player" },
-        { name: "Gold", minRating: 400, maxRating: 499, cssClass: "gold-text", color: "#FFD700", shortName: "GD", description: "Above average skill" },
-        { name: "Platinum", minRating: 500, maxRating: 599, cssClass: "plat-text", color: "#E5E4E2", shortName: "PT", description: "High-level gameplay" },
-        { name: "Diamond", minRating: 600, maxRating: 699, cssClass: "dia-text", color: "#0070FF", shortName: "DM", description: "Expert-level player" },
-        { name: "Master", minRating: 700, maxRating: 799, cssClass: "master-text", color: "#FF4500", shortName: "MS", description: "Elite competition" },
-        { name: "Grandmaster", minRating: 800, maxRating: 899, cssClass: "gm-text", color: "#8A2BE2", shortName: "GM", description: "Exceptional mastery" },
-        { name: "Champion", minRating: 900, maxRating: null, cssClass: "champ-text", color: "#FF4500", shortName: "CH", description: "The absolute best" }
+        { name: "Wood", minRating: 0, maxRating: 99, cssClass: "wood-text", imgPath: "wood.svg" },
+        { name: "Copper", minRating: 100, maxRating: 199, cssClass: "copper-text", imgPath: "copper.svg" },
+        { name: "Bronze", minRating: 200, maxRating: 299, cssClass: "bronze-text", imgPath: "bronze.svg" },
+        { name: "Silver", minRating: 300, maxRating: 399, cssClass: "silver-text", imgPath: "silver.svg" },
+        { name: "Gold", minRating: 400, maxRating: 499, cssClass: "gold-text", imgPath: "gold.svg" },
+        { name: "Platinum", minRating: 500, maxRating: 599, cssClass: "plat-text", imgPath: "plat.svg" },
+        { name: "Diamond", minRating: 600, maxRating: 699, cssClass: "dia-text", imgPath: "diamond.svg" },
+        { name: "Master", minRating: 700, maxRating: 799, cssClass: "master-text", imgPath: "master.svg" },
+        { name: "Grandmaster", minRating: 800, maxRating: 899, cssClass: "gm-text", imgPath: "gm.svg" },
+        { name: "Champion", minRating: 900, maxRating: null, cssClass: "champ-text", imgPath: "champ.svg" }
     ];
 
     return res.render("legend", { ranks, title: "Rank Legend"});

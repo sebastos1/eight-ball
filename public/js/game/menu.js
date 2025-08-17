@@ -1,48 +1,50 @@
-// Show menu method
+// Show the menu element and hide the others
 export const showMenu = function () {
-
-    // Show the menu element and hide the others
     $("#gameContainer").show();
     $("#menu").show();
     $("#queue").hide();
     $("#game").hide();
     $("#gameEnd").hide();
+    $("#roomWaiting").hide();
 };
 
-// Show queue method
+// Show the queue element and hide the others
 export const showQueue = function () {
-
-    // Show the queue element and hide the others
     $("#gameContainer").show();
     $("#menu").hide();
     $("#queue").show();
     $("#game").hide();
     $("#gameEnd").hide();
-
+    $("#roomWaiting").hide();
 };
 
-// Show game method
-export const showGame = function () {
+// Show the game element and hide the others
 
-    // Show the game element and hide the others
+export const showGame = function () {
     $("#gameContainer").hide();
     $("#menu").hide();
     $("#queue").hide();
     $("#game").show();
     $("#gameEnd").hide();
-
+    $("#roomWaiting").hide();
 };
 
-// Show game end method
+// Show the game end element and hide the others
 export const showGameEnd = function () {
-
-    // Show the game end element and hide the others
     $("#gameContainer").show();
     $("#menu").hide();
     $("#queue").hide();
     $("#game").hide();
+    $("#roomWaiting").hide();
     $("#gameEnd").show();
+};
 
+export const showRoomWaiting = function () {
+    $("#menu").hide();
+    $("#queue").hide();
+    $("#game").hide();
+    $("#gameEnd").hide();
+    $("#roomWaiting").show();
 };
 
 // By default, show the menu

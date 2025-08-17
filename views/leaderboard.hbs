@@ -4,7 +4,6 @@
         <div class="lbd-grid font-weight-bold">
             <div>#</div>
             <div></div>
-            <div>Rank</div>
             <div>Rating</div>
             <div>Wins</div>
             <div>Games</div>
@@ -25,10 +24,10 @@
     {{/if}}" href="/profile/{{this.id}}" cursor:pointer>
         <div class="lbd-grid">
             <div>{{this.position}}</div>
-            <div style="color:{{userColor this.username}}">{{userFlag
-                this.country}} {{this.username}}
+            <div style="color:{{userColor this.username}}">
+                <img src="{{getRankBadge this.rating}}" style="width: 24px; height: 24px;">
+                {{userFlag this.country}} {{this.username}}
             </div>
-            <div class="{{getRankColor this.rating}}">{{getRank this.rating}}</div>
             <div class="shimmer">{{this.rating}}</div>
             <div>{{this.wins}}</div>
             <div>{{this.gamesPlayed}}</div>

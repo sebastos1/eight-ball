@@ -18,8 +18,9 @@
                     <div
                         class="list-group-item list-group-item-secondary d-flex justify-content-between align-items-center">
                         {{#if profile.rating}}
-                        <span class="h5 mb-0 rank-text {{getRankColor profile.rating}}">{{getRank
-                            profile.rating}}</span>
+                        <span class="h5 mb-0 rank-text {{getRankColor profile.rating}}">
+                            <img src="{{getRankBadge profile.rating}}" style="width: 32px; height: 32px;">
+                            {{getRank profile.rating}}</span>
                         {{else}}
                         <span class="h5 mb-0 rank-text">Unrated</span>
                         {{/if}}

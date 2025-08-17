@@ -1,0 +1,11 @@
+<svg width="128" height="128" viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg">
+  <!-- Silver Rank Icon -->
+  <!-- Base Layer for crisp edges -->
+  <polygon points="64.00,4.00 109.00,64.00 64.00,124.00 19.00,64.00" fill="#C0C0C0"/>
+
+  <!-- Colored facets on top -->
+  <polygon points="64.00,64.00 64.00,4.00 109.00,64.00" fill="hsl(0.0, 0.0%, 72.8%)"/>
+  <polygon points="64.00,64.00 109.00,64.00 64.00,124.00" fill="hsl(0.0, 0.0%, 67.8%)"/>
+  <polygon points="64.00,64.00 64.00,124.00 19.00,64.00" fill="hsl(0.0, 5.0%, 82.8%)"/>
+  <polygon points="64.00,64.00 19.00,64.00 64.00,4.00" fill="hsl(0.0, 1.7%, 77.8%)"/>
+</svg>

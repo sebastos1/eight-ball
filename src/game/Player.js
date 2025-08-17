@@ -13,6 +13,7 @@ const Player = function (socket, guestId = null) {
         this.username = socket.request.session.user.username;
         this.country = socket.request.session.user.country;
         this.isGuest = false;
+        this.rating = socket.request.session.user.rating;
     }
 
     this.inQueue = false;

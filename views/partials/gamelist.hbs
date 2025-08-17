@@ -5,9 +5,15 @@
             <div class="d-flex align-items-center">
                 <span style="font-size: 1.5em;">
                     {{#if (eq game.winnerId profile.id)}}
-                    {{userFlag game.winnerCountry}}
+                        {{#if game.isRated}}
+                        <img src="{{getRankBadge game.winnerNewRating}}" alt="Winner rank" style="width: 32px; height: 32px;">
+                        {{/if}}
+                        {{userFlag game.winnerCountry}}
                     {{else}}
-                    {{userFlag game.loserCountry}}
+                        {{#if game.isRated}}
+                        <img src="{{getRankBadge game.loserNewRating}}" alt="Loser rank" style="width: 32px; height: 32px;">
+                        {{/if}}
+                        {{userFlag game.loserCountry}}
                     {{/if}}
                 </span>
                 <h5 class="mb-0 ms-2">
@@ -71,9 +77,15 @@
                 </h5>
                 <span style="font-size: 1.5em;">
                     {{#if (eq game.winnerId profile.id)}}
-                    {{userFlag game.loserCountry}}
+                        {{userFlag game.loserCountry}}
+                        {{#if game.isRated}}
+                        <img src="{{getRankBadge game.loserNewRating}}" alt="Loser rank" style="width: 32px; height: 32px;">
+                        {{/if}}
                     {{else}}
-                    {{userFlag game.winnerCountry}}
+                        {{userFlag game.winnerCountry}}
+                        {{#if game.isRated}}
+                        <img src="{{getRankBadge game.winnerNewRating}}" alt="Loser rank" style="width: 32px; height: 32px;">
+                        {{/if}}
                     {{/if}}
                 </span>
             </div>

@@ -199,7 +199,8 @@ class Game {
             id: player.id,
             username: player.username,
             score: player.score,
-            color: player.color
+            color: player.color,
+            rating: player.rating
         };
     }
 

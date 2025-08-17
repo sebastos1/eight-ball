@@ -1,4 +1,4 @@
-const ELO_START_RATING = 500;
+const ELO_START_RATING = 300;
 const ELO_K_FACTOR = 60; // very volatile
 const ELO_MAX = 1000;
 const ELO_MIN = 0;
