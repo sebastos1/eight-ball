@@ -15,14 +15,6 @@
                     <a class="nav-link {{#if active_play}}active{{/if}}" href="/play">Play</a>
                 </li>
                 {{/if}}
-                {{#unless authenticated}}
-                <li class="nav-item me-3">
-                    <a class="nav-link {{#if active_login}}active{{/if}}" href="/login">Login</a>
-                </li>
-                <li class="nav-item me-3">
-                    <a class="nav-link {{#if active_register}}active{{/if}}" href="/register">Register</a>
-                </li>
-                {{/unless}}
             </ul>
             <div class="d-flex align-items-center">
                 <form class="d-flex me-3" action="/profile/" method="GET">

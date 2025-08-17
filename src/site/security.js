@@ -3,8 +3,7 @@ import helmet from 'helmet';
 import crypto from 'crypto';
 import cookieParser from 'cookie-parser';
 import rateLimit from 'express-rate-limit';
-
-const oauthServer = process.env.OAUTH2_AUTH_SERVER || 'http://localhost:3001';
+import { oauthServer } from '../../index.js';
 
 // csrf
 const Tokens = csrf;

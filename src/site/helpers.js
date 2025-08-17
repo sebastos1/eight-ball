@@ -1,5 +1,6 @@
 import axios from 'axios';
 import Handlebars from 'handlebars';
+import { oauthServer } from '../../index.js';
 
 export function timeAgo(dateString) {
     const now = new Date();
@@ -120,11 +121,8 @@ export function userColor(username) {
 
 export function userFlag(country) {
     if (!country) return;
-
     const codePoints = country.split('').map(char => (char.codePointAt(0) + 127397).toString(16)).join('-');
-
     const flagUrl = `https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/${codePoints}.svg`;
-
     return new Handlebars.SafeString(`<img src="${flagUrl}" alt="${country}" class="twemoji-flag">`);
 }
 
@@ -141,15 +139,17 @@ export default {
 };
 
 export async function getLocationFromIp(ip) {
-    // if (!ip || ip === '::1') {
-    //     ip = '72.229.28.185'; // example for testing
-    // }
+    if (!ip || ip === '::1') {
+        ip = '72.229.28.185'; // example for testing
+    }
+
+    console.log("Geolocating IP:", ip);
 
     try {
-        const response = await axios.get(`https://ipapi.co/${ip}/country/`, { timeout: 5000 });
-        return response.data !== 'Undefined' ? response.data : null;
+        const response = await axios.get(`${oauthServer}/geolocate?ip=${ip}`, { timeout: 5000 });
+        return response.data;
     } catch (error) {
         console.error('Error in IP geolocation:', error);
-        return null; // Return null instead of throwing, to simplify error handling
+        return null;
     }
 }

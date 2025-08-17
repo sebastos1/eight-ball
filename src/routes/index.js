@@ -24,7 +24,7 @@ router.get('/play', async (req, res) => {
     const isGuest = req.query.guest === 'true';
     if (!req.authenticated && !isGuest) {
         req.flash('danger', 'Log in to play :)');
-        return res.redirect('/login');
+        return res.redirect('/');
     }
 
     if (isGuest && !req.session.guestId) {
@@ -48,7 +48,7 @@ router.get('/profile', async (req, res) => {
     if (!req.query.username) {
         if (!req.authenticated) {
             req.flash('danger', 'You are not logged in.');
-            return res.redirect('/login');
+            return res.redirect('/');
         }
         return res.redirect(`/profile/${req.user_id}`);
     }

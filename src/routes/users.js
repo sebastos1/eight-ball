@@ -1,6 +1,5 @@
 // Dependencies
 import express from 'express';
-import validator from 'validator';
 import chalk from 'chalk';
 import axios from 'axios';
 
@@ -8,6 +7,7 @@ import axios from 'axios';
 import Users from '../db/Users.js';
 import authentication from '../site/authentication.js';
 import { csrfValidation } from '../site/security.js';
+import { oauthServer, oauthClientId, oauthClientSecret } from '../../index.js';
 
 // Initialise route handler
 const router = express.Router();
@@ -20,12 +20,12 @@ const log = (string) => console.log(`${chalk.bold.underline.cyan('USER')} ${chal
 */
 async function exchangeCodeForUserData(code) {
     try {
-        const authHeader = 'Basic ' + Buffer.from(`${process.env.OAUTH2_CLIENT_ID}:${process.env.OAUTH2_CLIENT_SECRET}`).toString('base64');
+        const authHeader = 'Basic ' + Buffer.from(`${oauthClientId}:${oauthClientSecret}`).toString('base64');
 
-        const tokenResponse = await axios.post(`${process.env.OAUTH2_AUTH_SERVER}/token`, {
+        const tokenResponse = await axios.post(`${oauthServer}/token`, {
             grant_type: 'authorization_code',
             code: code,
-            redirect_uri: `${process.env.OAUTH2_AUTH_SERVER}/success`
+            redirect_uri: `${oauthServer}/success`
         }, {
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
@@ -35,7 +35,7 @@ async function exchangeCodeForUserData(code) {
 
         const { access_token } = tokenResponse.data;
 
-        const userResponse = await axios.get(`${process.env.OAUTH2_AUTH_SERVER}/userinfo`, {
+        const userResponse = await axios.get(`${oauthServer}/userinfo`, {
             headers: {
                 'Authorization': `Bearer ${access_token}`
             }
@@ -77,81 +77,6 @@ router.post('/auth/callback', async (req, res) => {
     }
 });
 
-
-/**
- * Login route
- */
-
-// GET '/login' route
-router.get('/login', (req, res) => {
-
-    if (req.authenticated) {
-        req.flash('danger', 'You are already logged in.');
-        return res.redirect('/');
-    }
-
-    return res.render('login', { login: req.session.login });
-});
-
-// POST '/login' route
-router.post('/login', csrfValidation, async (req, res) => {
-    try {
-        // Sanitisers
-        const { escape, trim } = validator;
-
-        // Extract data from the request's body
-        let { username, password } = req.body;
-
-        if (!username || !password) {
-            req.flash('danger', 'Username and password fields must be filled.');
-        }
-
-        // Data sanitisation
-        username = escape((trim(username)));
-
-        // Save the username to saved login data
-        req.session.login = { username };
-
-        // Find a user in the database with the username entered
-        const user = await Users.findIdAndStatusByUsername(username);
-        if (!user) {
-            req.flash('danger', 'No user found for username');
-            return res.redirect('/login');
-        }
-
-        if (!user.is_active) {
-            req.flash('danger', 'User has been permanently deactivated.');
-            return res.redirect('/login');
-        }
-
-        // Find the password for the user from the database
-        const hash = await Users.getPasswordFromId(user.id);
-        if (!hash) {
-            req.flash('danger', 'Database error.');
-            return res.redirect('/login');
-        }
-
-        // Compare the password entered to the hash from the database
-        const match = await authentication.comparePassword(password, hash);
-        if (!match) {
-            req.flash('danger', 'Incorrect password.');
-            return res.redirect('/login');
-        }
-
-        // Login the user
-        req.login(user.id);
-        log(`${username}#${user.id} has logged in`);
-        // Send a successful login flash message and redirect to the dashboard 
-        req.flash('success', 'You have logged in.');
-        return res.redirect('/');
-
-    } catch (error) {
-        console.error('Login error:', error);
-        req.flash('danger', 'An unexpected error occurred. Please try again.');
-        return res.redirect('/login');
-    }
-});
-
 /**
  * Logout route
  */
@@ -161,7 +86,7 @@ router.get('/logout', (req, res) => {
 
     if (!req.authenticated) {
         req.flash('danger', 'You are not logged in.');
-        return res.redirect('/login');
+        return res.redirect('/');
     }
 
     // Logout the user
