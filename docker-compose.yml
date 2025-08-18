@@ -8,3 +8,5 @@ services:
       - OAUTH2_CLIENT_ID=sjallabong-pool
     expose:
       - "8080"
+    ports:
+      - "8080:8080"

@@ -12,12 +12,12 @@
         devShell = pkgs.mkShell {
           buildInputs = with pkgs; [
             nodejs_20
-	          python3
+	    python3
             sqlite
           ];
-          shellHook = ""
+          shellHook = ''
             npm install
-          "";
+          '';
         };
       });
 }
