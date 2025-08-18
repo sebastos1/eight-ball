@@ -1,4 +1,3 @@
-// Dependencies
 import http from "http";
 import logger from "morgan";
 import chalk from "chalk";

@@ -23,7 +23,6 @@ const gameloop = function () {
 };
 window.requestAnimationFrame(gameloop);
 
-
 // Join queue button click event
 $("#btn-joinQueue").click(() => {
     joinQueue();
@@ -58,7 +57,6 @@ export const shoot = function (power, angle) {
     // Send shoot event to server
     socket.emit("shoot", { power, angle });
 };
-
 
 // Game start event listener
 socket.on("game-start", (data) => {

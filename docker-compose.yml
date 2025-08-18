@@ -1,0 +1,10 @@
+services:
+  pool-app:
+    build: .
+    environment:
+      - NODE_ENV=production
+      - OAUTH2_CLIENT_SECRET=sjallabong-secret-pool-2024 # todo
+      - OAUTH2_AUTH_SERVER=https://auth.sjallabong.eu
+      - OAUTH2_CLIENT_ID=sjallabong-pool
+    expose:
+      - "8080"
