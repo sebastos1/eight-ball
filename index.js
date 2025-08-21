@@ -24,9 +24,8 @@ const app = express();
 const PORT = process.env.PORT || 8080;
 const server = http.createServer(app);
 
-export const oauthServer = process.env.OAUTH2_AUTH_SERVER || "http://localhost:3002";
+export const oauthServer = process.env.OAUTH2_AUTH_SERVER || "http://localhost:3001";
 export const oauthClientId = process.env.OAUTH2_CLIENT_ID || "pool-client";
-export const oauthClientSecret = process.env.OAUTH2_CLIENT_SECRET;
 
 await initializeDatabase();
 

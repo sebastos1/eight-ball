@@ -7,7 +7,7 @@ import axios from "axios";
 import Users from "../db/Users.js";
 import authentication from "../site/authentication.js";
 import { csrfValidation } from "../site/security.js";
-import { oauthServer, oauthClientId, oauthClientSecret } from "../../index.js";
+import { oauthServer, oauthClientId } from "../../index.js";
 
 // Initialise route handler
 const router = express.Router();
@@ -18,61 +18,33 @@ const log = (string) => console.log(`${chalk.bold.underline.cyan("USER")} ${chal
 /*
     OAUTH INTEGRATION
 */
-async function exchangeCodeForUserData(code) {
+router.post("/auth/login", async (req, res) => {
     try {
-        const authHeader = "Basic " + Buffer.from(`${oauthClientId}:${oauthClientSecret}`).toString("base64");
+        const authHeader = req.headers.authorization;
+        if (!authHeader || !authHeader.startsWith('Bearer ')) {
+            return res.status(401).json({ error: "No token provided" });
+        }
 
-        const tokenResponse = await axios.post(`${oauthServer}/token`, {
-            grant_type: "authorization_code",
-            code: code,
-            redirect_uri: `${oauthServer}/success`
-        }, {
-            headers: {
-                "Content-Type": "application/x-www-form-urlencoded",
-                "Authorization": authHeader
-            }
-        });
-
-        const { access_token } = tokenResponse.data;
-
+        const accessToken = authHeader.substring(7);
         const userResponse = await axios.get(`${oauthServer}/userinfo`, {
-            headers: {
-                "Authorization": `Bearer ${access_token}`
-            }
+            headers: { "Authorization": `Bearer ${accessToken}` }
         });
 
-        console.log("country", userResponse.data.country);
-
-        return {
+        const userData = {
             id: userResponse.data.sub,
             username: userResponse.data.username,
             country: userResponse.data.country
         };
-    } catch (error) {
-        console.error("Error exchanging code for user data:", error);
-        throw new Error("Failed to authenticate user");
-    }
-}
 
-// oauth callback swag
-router.post("/auth/callback", async (req, res) => {
-    try {
-        const { code } = req.body;
-
-        if (!code) {
-            return res.status(400).json({ error: "No code provided" });
-        }
-
-        const oauthData = await exchangeCodeForUserData(code);
-        let user = await Users.findByOauthId(oauthData.id);
+        let user = await Users.findByOauthId(userData.id);
         if (!user) {
-            user = await Users.createFromOAuth(oauthData);
+            user = await Users.createFromOAuth(userData);
         }
 
         req.login(user.id);
         res.json({ success: true });
     } catch (error) {
-        console.error("Auth callback error:", error);
+        console.error("Auth login error:", error);
         res.status(500).json({ error: "Authentication failed" });
     }
 });

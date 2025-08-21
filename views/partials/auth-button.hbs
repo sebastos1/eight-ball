@@ -1,7 +1,37 @@
-<script src="{{oauthConfig.authServer}}/sdk"></script>
-<link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@400;700&display=swap" rel="stylesheet">
-<script src="/js/auth.js"></script>
+<div id="loginBtn"></div>
 
-<auth-button client-id="{{oauthConfig.clientId}}" scope="openid profile" {{#if theme}}theme="{{theme}}" {{/if}} {{#if
-    type}}type="{{type}}" {{/if}}>
-</auth-button>
+<script src="{{oauthConfig.authServer}}/sdk"></script>
+<script>
+    Oauth2Client.initialize({
+        clientId: '{{oauthConfig.clientId}}',
+        authServer: '{{oauthConfig.authServer}}',
+        scope: 'openid profile'
+    });
+
+    Oauth2Client.renderButton("loginBtn", {
+        onSuccess: async (tokens) => {
+            const response = await fetch('/auth/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${tokens.access_token}`
+                }
+            });
+
+            if (response.ok) {
+                window.location.reload();
+            } else {
+                console.error('Login failed');
+            }
+        },
+        onError: (error) => {
+            console.error('Login failed:', error);
+        }
+    });
+</script>
+
+<style>
+    #loginBtn button {
+        background-color: red;
+    }
+</style>
