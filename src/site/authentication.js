@@ -1,5 +1,6 @@
 import OAuth2Server from "sjallabong-auth";
 import Users from "../db/Users.js";
+import { appBaseUrl, oauthServer } from "../../index.js";
 
 
 export let oauth;
@@ -7,8 +8,8 @@ export let oauth;
 export function initOAuth(sessionStore) {
     oauth = new OAuth2Server({
         clientId: "sjallabong-pool",
-        authServer: "http://localhost:3001",
-        redirectUri: "http://localhost:8080/auth/callback",
+        authServer: oauthServer,
+        redirectUri: `${appBaseUrl}/auth/callback`,
         debug: true,
         scope: "openid profile pool"
     }, sessionStore);

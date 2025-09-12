@@ -5,6 +5,7 @@ services:
       - NODE_ENV=production
       - OAUTH2_AUTH_SERVER=https://auth.sjallabong.eu
       - OAUTH2_CLIENT_ID=sjallabong-pool
+      - APP_BASE_URL=https://pool.sjallabong.eu
     expose:
       - "8080"
     ports:
