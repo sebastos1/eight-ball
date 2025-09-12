@@ -11,7 +11,7 @@ router.get("/", async (req, res) => {
     if (!loggedIn) return res.render("dashboard", { loggedIn });
 
     try {
-        const game = await Games.getLatestByUserId(req.user_id);
+        const game = await Games.getLatestByUserId(req.user.id);
         return res.render("dashboard", { game, loggedIn });
     } catch (error) {
         console.error("Error fetching latest game:", error);
@@ -47,7 +47,7 @@ router.get("/profile", async (req, res) => {
             req.flash("danger", "You are not logged in.");
             return res.redirect("/");
         }
-        return res.redirect(`/profile/${req.user_id}`);
+        return res.redirect(`/profile/${req.user.id}`);
     }
 
     try {
@@ -68,7 +68,7 @@ router.get("/profile/:id", async (req, res) => {
         const profile = await Users.findUserById(req.params.id);
         if (!profile) return res.status(404).render("error", { message: "User not found" });
 
-        const selfProfile = req.params.id == req.user_id;
+        const selfProfile = req.params.id == req.user.id;
         const gamesPlayed = profile.wins + profile.losses;
         const winRate = gamesPlayed ? Math.round(profile.wins * 100 / gamesPlayed) + "%" : "-";
 
@@ -90,7 +90,7 @@ router.get("/leaderboard", async (req, res) => {
 
         users.forEach((user, index) => {
             user.position = index + 1;
-            user.self = user.id == req.user_id;
+            user.self = user.id == req.user.id;
             user.gamesPlayed = user.wins + user.losses;
             user.winRate = user.gamesPlayed ? Math.round(user.wins * 100 / user.gamesPlayed) + "%" : "-";
         });

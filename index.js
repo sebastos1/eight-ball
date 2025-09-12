@@ -12,7 +12,9 @@ import helpers from "./src/site/helpers.js";
 import applySocketEvents from "./src/serverSocket.js";
 import authentication from "./src/site/authentication.js";
 import { applySecurityConfig } from "./src/site/security.js";
-import { configureSessionStore, initializeDatabase } from "./src/db/database.js";
+import { configureSessionStore, initializeDatabase, sessionStore } from "./src/db/database.js";
+import { initOAuth } from "./src/site/authentication.js";
+import { ExpressStoreAdapter } from "./src/db/adapter.js";
 
 // Routers
 import indexRouter from "./src/routes/index.js";
@@ -25,7 +27,6 @@ const PORT = process.env.PORT || 8080;
 const server = http.createServer(app);
 
 export const oauthServer = process.env.OAUTH2_AUTH_SERVER || "http://localhost:3001";
-export const oauthClientId = process.env.OAUTH2_CLIENT_ID || "pool-client";
 
 await initializeDatabase();
 
@@ -45,11 +46,6 @@ app.engine("hbs", engine({
 }));
 app.set("view engine", "hbs");
 
-app.locals.oauthConfig = {
-    clientId: oauthClientId,
-    authServer: oauthServer,
-}
-
 // Set static path to /public
 app.use(express.static("public"));
 
@@ -67,6 +63,8 @@ const io = new Server(server, {
 });
 
 const session = configureSessionStore(app);
+const storeAdapter = new ExpressStoreAdapter(sessionStore);
+initOAuth(storeAdapter);
 
 // middelware wrapper to translate socket.io to express
 const wrap = middleware => (socket, next) => {

@@ -33,8 +33,10 @@
                     </div>
                     <div class="list-group-item">Games Played: {{gamesPlayed}}<br>Winrate: {{winRate}}</div>
                     {{#if selfProfile}}
-                    <a href="/logout"
-                        class="list-group-item list-group-item-action list-group-item-warning border border-top-0">Logout</a>
+                    <a href="#" onclick="logout(); return false;"
+                        class="list-group-item list-group-item-action list-group-item-warning border border-top-0">
+                        Logout
+                    </a>
                     <button type="button" data-toggle="modal" data-target="#deleteProfile"
                         class="list-group-item list-group-item-action list-group-item-danger border border-top-0">Delete
                         Profile</button>
@@ -98,3 +100,22 @@
 <div>This user has been deactivated.</div>
 
 {{/if}}
+
+<script>
+    async function logout() {
+        try {
+            const response = await fetch('/auth/logout', {
+                method: 'POST',
+                headers: { 'X-CSRF-Token': '1' }
+            });
+
+            if (response.ok) {
+                window.location.href = '/';
+            } else {
+                console.error('Logout failed');
+            }
+        } catch (error) {
+            console.error('Logout error:', error);
+        }
+    }
+</script>

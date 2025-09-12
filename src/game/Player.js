@@ -9,7 +9,7 @@ const Player = function (socket, guestId = null) {
         this.country = socket.request.session.guestCountry;
         this.isGuest = true;
     } else {
-        this.id = socket.request.session.user_id;
+        this.id = socket.request.session.user.id;
         this.username = socket.request.session.user.username;
         this.country = socket.request.session.user.country;
         this.isGuest = false;

@@ -1,68 +1,94 @@
-import bcrypt from "bcryptjs";
+import OAuth2Server from "sjallabong-auth";
 import Users from "../db/Users.js";
 
-const authentication = async function (req, res, next) {
-    req.login = (user_id) => req.session.user_id = user_id;
-    req.logout = () => {
-        console.log("Logging out user:", req.session.user_id);
-        delete req.session.user_id;
-        delete req.session.authenticated;
-        delete req.session.user;
-    };
 
-    if (!req.session.user_id) {
-        clearAuthData(req, res);
-        return next();
-    }
+export let oauth;
 
-    try {
-        const user = await Users.findUserById(req.session.user_id);
+export function initOAuth(sessionStore) {
+    oauth = new OAuth2Server({
+        clientId: "sjallabong-pool",
+        authServer: "http://localhost:3001",
+        redirectUri: "http://localhost:8080/auth/callback",
+        debug: true,
+        scope: "openid profile pool"
+    }, sessionStore);
 
-        // gg if you get here lol
-        if (!user) {
-            clearAuthData(req, res);
-            return next("User not found.");
-        }
-
-        if (!user.is_active) {
-            clearAuthData(req, res);
-            return next();
-        }
-
-        req.user_id = req.session.user_id;
-        req.authenticated = true;
-        req.user = user;
-        req.country = user.country;
-        res.locals.user_id = req.session.user_id;
-        res.locals.authenticated = true;
-        res.locals.user = user;
-        req.session.authenticated = true;
-        req.session.user = user;
-        next();
-    } catch (error) {
-        console.error("Authentication error:", error);
-        clearAuthData(req, res);
-        next("Database error.");
-    }
-};
-
-function clearAuthData(req, res) {
-    req.authenticated = false;
-    res.locals.authenticated = false;
-    req.session.authenticated = false;
-    delete req.session.user;
+    return oauth;
 }
 
-authentication.comparePassword = function (password, hash) {
-    return new Promise((resolve, reject) => {
-        bcrypt.compare(password, hash, (err, result) => {
-            if (err) {
-                reject(err);
-            } else {
-                resolve(result);
-            }
-        });
+// sjallabong-auth uses web api so convert
+export function expressToWebRequest(req) {
+    const headers = new Headers();
+    Object.entries(req.headers).forEach(([key, value]) => {
+        if (Array.isArray(value)) {
+            value = value.join(', ');
+        }
+        headers.set(key, String(value));
     });
+
+    const protocol = req.protocol || 'http';
+    const host = req.get('host') || 'localhost:8080';
+    const fullUrl = `${protocol}://${host}${req.originalUrl}`;
+
+    return {
+        url: fullUrl,
+        method: req.method,
+        headers,
+        body: req.body ? JSON.stringify(req.body) : null
+    };
+}
+
+const authentication = async function (req, res, next) {
+    try {
+        const response = await oauth.checkSession(expressToWebRequest(req));
+        const sessionData = await response.json();
+
+        if (sessionData.authenticated && sessionData.userInfo) {
+            const oauthId = sessionData.userInfo.sub;
+
+            let localUser = await Users.findByOauthId(oauthId);
+
+            // create new user if there is none
+            if (!localUser) {
+                const oauthData = {
+                    id: oauthId,
+                    username: sessionData.userInfo.username || sessionData.userInfo.name,
+                    country: sessionData.userInfo.country || null
+                };
+                localUser = await Users.createFromOAuth(oauthData);
+            }
+
+            if (localUser && localUser.is_active) {
+                // pool data
+                req.authenticated = true;
+                req.user = localUser;
+                req.country = localUser.country;
+                req.session.user = localUser;
+                req.session.authenticated = true; 
+
+                res.locals.loggedIn = true;
+                res.locals.authenticated = true;
+                res.locals.user = localUser;
+                res.locals.user.id = localUser.id;
+            } else {
+                req.authenticated = false;
+                res.locals.loggedIn = false;
+                res.locals.authenticated = false;
+            }
+        } else {
+            req.authenticated = false;
+            res.locals.loggedIn = false;
+            res.locals.authenticated = false;
+        }
+
+        next();
+    } catch (error) {
+        console.error("Authentication middleware error:", error);
+        req.authenticated = false;
+        res.locals.loggedIn = false;
+        res.locals.authenticated = false;
+        next();
+    }
 };
 
 export default authentication;

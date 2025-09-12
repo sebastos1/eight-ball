@@ -23,7 +23,7 @@ export function userColor(username) {
 }
 
 export function getUserFlag(country) {
-    if (!country) return;
+    if (!country) return "";
     const codePoints = country.split("").map(char => (char.codePointAt(0) + 127397).toString(16)).join("-");
     const flagUrl = `https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/${codePoints}.svg`;
     return `<img src="${flagUrl}" alt="${country}" class="twemoji-flag">`;

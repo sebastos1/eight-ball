@@ -2,6 +2,7 @@
 @import url("leaderboard.css");
 @import url("ranks.css");
 @import url("loader.css");
+@import "sjallabong-css";
 
 body {
     font-family: "Lato", sans-serif;

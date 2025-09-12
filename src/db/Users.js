@@ -1,6 +1,5 @@
 // userQueries.js
 import { User } from "./database.js";
-import bcrypt from "bcryptjs";
 import Elo from "../game/Elo.js";
 import { Op } from "sequelize";
 
@@ -9,10 +8,8 @@ const Users = {};
 // User create
 Users.create = async function (user) {
     try {
-        const hash = await bcrypt.hash(user.password, 10);
         const newUser = await User.create({
             username: user.username,
-            password: hash,
             country: user.country
         });
         return newUser.id;

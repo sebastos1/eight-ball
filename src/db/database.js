@@ -10,7 +10,7 @@ export const database = new Sequelize({
 });
 
 const SequelizeStore = SequelizeStoreFactory(session.Store);
-const sessionStore = new SequelizeStore({
+export const sessionStore = new SequelizeStore({
     db: database,
 });
 
