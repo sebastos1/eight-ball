@@ -59,6 +59,8 @@ const applySocketEvents = function (io) {
             }
         } else if (socket.request.session.guestId) {
             const guestId = socket.request.session.guestId;
+
+            console.log("gid:", guestId);
             if (players.has(guestId)) {
                 player = players.get(guestId);
                 player.socket = socket;
@@ -74,12 +76,6 @@ const applySocketEvents = function (io) {
 
             // On socket disconnect
             socket.on("disconnect", async () => {
-                console.log(player.username, "left the game");
-                console.log("player", player.socket);
-                console.log(socket);
-                if (player.socket === socket) {
-                    console.log("This is a game socket");
-                }
                 // If player in queue, remove them from the queue
                 if (player.inQueue) queue.remove(player);
                 // If player in game, end the game with the opponent as the winner

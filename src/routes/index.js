@@ -23,8 +23,8 @@ router.get("/", async (req, res) => {
 router.get("/play", async (req, res) => {
     const isGuest = !req.session.authenticated;
 
-    if (isGuest && !req.guestId) {
-        req.guestId = "Guest_" + Math.random().toString(36).substring(2, 8);
+    if (isGuest && !req.session.guestId) {
+        req.session.guestId = "Guest_" + Math.random().toString(36).substring(2, 8);
         const ip = req.headers["x-real-ip"] || req.headers["x-forwarded-for"];
         req.guestCountry = await getLocationFromIp(ip);
     }
@@ -33,7 +33,7 @@ router.get("/play", async (req, res) => {
         isGuest: isGuest,
         title: "Play",
         user: req.session.user || {
-            username: req.guestId || "Guest",
+            username: req.session.guestId || "Guest",
             country: req.guestCountry,
             isGuest: true
         }
