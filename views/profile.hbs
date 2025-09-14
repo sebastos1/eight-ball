@@ -15,23 +15,25 @@
         <div class="col-md-5 col-lg-4">
             <div class="sticky-top pt-4">
                 <div class="list-group">
-                    <div
-                        class="list-group-item list-group-item-secondary d-flex justify-content-between align-items-center">
+                    <div class="list-group-item list-group-item-secondary d-flex justify-content-between align-items-center">
                         {{#if profile.rating}}
-                        <span class="h5 mb-0 rank-text {{getRankColor profile.rating}}">
-                            <img src="{{getRankBadge profile.rating}}" style="width: 32px; height: 32px;">
-                            {{getRank profile.rating}}</span>
+                        <span class="h5 mb-0 rank-text {{getRankColor profile.rating}} d-flex align-items-center">
+                            <img src="{{getRankBadge profile.rating}}" style="width: 32px; height: 32px;" class="me-1">
+                            {{getRank profile.rating}}
+                        </span>
                         {{else}}
                         <span class="h5 mb-0 rank-text">Unrated</span>
                         {{/if}}
                     </div>
-                    <div class="list-group-item">Rating: {{#if profile.rating}}
+                    <div class="list-group-item">
+                        {{> rating-chart ratingHistory=ratingHistory}}
+                        {{!-- Rating: {{#if profile.rating}}
                         {{profile.rating}}
                         {{else}}
                         -
-                        {{/if}}
+                        {{/if}} --}}
+                        Games Played: {{gamesPlayed}}<br>Winrate: {{winRate}}
                     </div>
-                    <div class="list-group-item">Games Played: {{gamesPlayed}}<br>Winrate: {{winRate}}</div>
                     {{#if selfProfile}}
                     <a href="#" onclick="logout(); return false;"
                         class="list-group-item list-group-item-action list-group-item-warning border border-top-0">

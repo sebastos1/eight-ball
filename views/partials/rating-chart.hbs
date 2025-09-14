@@ -1,0 +1,129 @@
+{{#if (gt ratingHistory.length 1)}}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<div><canvas id="rating-chart" height="200"></canvas></div>
+
+<script type="module">
+    import { getRankBadge, userColor } from '/js/site/helpers.js';
+    const ratingHistory = {{{ json ratingHistory }}};
+    const ctx = document.getElementById('rating-chart').getContext('2d');
+    const minRating = Math.min(...ratingHistory.map(p => p.rating));
+    const maxRating = Math.max(...ratingHistory.map(p => p.rating));
+    const rankBoundaries = [0, 100, 200, 300, 400, 500, 600, 700, 800, 900]
+        .filter(rating => rating >= minRating - 50 && rating <= maxRating + 50);
+
+    // only show first instance of games against another player
+    /* const processedLabels = ratingHistory.map((point, index) => {
+        const currentOpponent = point.opponent;
+        const previousOpponent = index > 0 ? ratingHistory[index - 1].opponent : null;
+        return currentOpponent !== previousOpponent ? currentOpponent : '';
+    }); */
+
+    const segmentColor = (ctx) => {
+        const index = ctx.p0DataIndex;
+        const opponent = ratingHistory[index].opponent;
+        return userColor(opponent);
+    };
+
+    const rankIconPlugin = {
+        id: 'rankIcons',
+        afterDraw: function (chart) {
+            const xAxis = chart.scales.x;
+            const yAxis = chart.scales.y;
+            const chartArea = chart.chartArea;
+            const ctx = chart.ctx;
+
+            rankBoundaries.forEach(rating => {
+                const y = yAxis.getPixelForValue(rating);
+                if (y >= chartArea.top && y <= chartArea.bottom) {
+                    const img = new Image();
+                    img.onload = () => ctx.drawImage(img, 0, y - 12, 24, 24);
+                    img.src = getRankBadge(rating);
+                }
+            });
+
+            const lastRating = ratingHistory[ratingHistory.length - 1].rating;
+            const lastX = chartArea.right;
+            const lastY = yAxis.getPixelForValue(lastRating);
+
+            ctx.fillStyle = '#ccc';
+            ctx.font = 'bold 14px sans-serif';
+            ctx.textAlign = 'left';
+            ctx.fillText(lastRating, lastX + 4, lastY + 5);
+        }
+    };
+
+    const data = ratingHistory.length === 1 ? [ratingHistory[0], ratingHistory[0]] : ratingHistory.map(point => point.rating);
+    
+    new Chart(ctx, {
+        type: 'line',
+        plugins: [rankIconPlugin],
+        data: {
+            labels: ratingHistory.map(() => ''),
+            datasets: [{
+                data: data,
+                borderColor: '#ccc',
+                backgroundColor: 'transparent',
+                borderWidth: 3,
+                fill: false,
+                tension: 0.1,
+                pointRadius: 0,
+                segment: {
+                    borderColor: segmentColor
+                }
+            }]
+        },
+        options: {
+            animation: false,
+            responsive: true,
+            maintainAspectRatio: false,
+            layout: {
+                padding: {
+                    left: 12,
+                    right: 35
+                }
+            },
+            plugins: { 
+                legend: { display: false },
+            },
+            scales: {
+                y: {
+                    beginAtZero: false,
+                    grace: "20%",
+                    border: { display: false },
+                    grid: {
+                        color: function (context) {
+                            return rankBoundaries.includes(context.tick.value)
+                                ? 'rgba(255, 255, 255, 0.3)'
+                                : 'transparent';
+                        },
+                        drawOnChartArea: true,
+                        drawTicks: false
+                    },
+                    ticks: { callback: () => '', color: 'transparent' }
+                },
+                x: {
+                    grace: "5%",
+                    border: { display: false },
+                    grid: {
+                        display: false,
+                        /* color: 'rgba(255, 255, 255, 0.1)',
+                        drawOnChartArea: true,
+                        drawTicks: false */
+                    },
+                    // border: { dash: [3, 3] },
+                    ticks: {
+                        display: false,
+                        /* maxRotation: 45,
+                        minRotation: 45,
+                        color: (context) => {
+                            const label = context.tick.label;
+                            return label ? userColor(label) : 'transparent';
+                        } */
+                    }
+                }
+            },
+        }
+    });
+</script>
+{{/if}}

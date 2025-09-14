@@ -151,15 +151,22 @@ export function userFlag(country) {
 
 function eq(a, b) { return a === b; }
 
+function gt(a, b) { return a > b; }
+
+function json(content) {
+    return JSON.stringify(content)
+}
+
 export default {
-    eq,
+    eq, gt,
     timeAgo,
     getRank,
     getRankColor,
     getRankBadge,
     translateWinReason,
     userColor,
-    userFlag
+    userFlag,
+    json
 };
 
 export async function getLocationFromIp(ip) {

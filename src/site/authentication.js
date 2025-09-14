@@ -1,7 +1,6 @@
 import OAuth2Server from "sjallabong-auth";
-import Users from "../db/Users.js";
+import { users } from "../db/users.js";
 import { appBaseUrl, oauthServer } from "../../index.js";
-
 
 export let oauth;
 
@@ -39,7 +38,7 @@ export function expressToWebRequest(req) {
     };
 }
 
-const authentication = async function (req, res, next) {
+export const authentication = async function (req, res, next) {
     try {
         const response = await oauth.checkSession(expressToWebRequest(req));
         const sessionData = await response.json();
@@ -47,7 +46,7 @@ const authentication = async function (req, res, next) {
         if (sessionData.authenticated && sessionData.userInfo) {
             const oauthId = sessionData.userInfo.sub;
 
-            let localUser = await Users.findByOauthId(oauthId);
+            let localUser = await users.findByOauthId(oauthId);
 
             // create new user if there is none
             if (!localUser) {
@@ -56,40 +55,34 @@ const authentication = async function (req, res, next) {
                     username: sessionData.userInfo.username || sessionData.userInfo.name,
                     country: sessionData.userInfo.country || null
                 };
-                localUser = await Users.createFromOAuth(oauthData);
+                localUser = await users.createFromOAuth(oauthData);
             }
 
             if (localUser && localUser.is_active) {
                 // pool data
-                req.authenticated = true;
-                req.user = localUser;
                 req.country = localUser.country;
                 req.session.user = localUser;
                 req.session.authenticated = true; 
 
                 res.locals.loggedIn = true;
-                res.locals.authenticated = true;
                 res.locals.user = localUser;
                 res.locals.user.id = localUser.id;
             } else {
-                req.authenticated = false;
+                req.session.authenticated = false;
+                req.session.user = null;
                 res.locals.loggedIn = false;
-                res.locals.authenticated = false;
             }
         } else {
-            req.authenticated = false;
+            req.session.authenticated = false;
+            req.session.user = null;
             res.locals.loggedIn = false;
-            res.locals.authenticated = false;
         }
 
         next();
     } catch (error) {
         console.error("Authentication middleware error:", error);
-        req.authenticated = false;
+        req.session.authenticated = false;
         res.locals.loggedIn = false;
-        res.locals.authenticated = false;
         next();
     }
 };
-
-export default authentication;

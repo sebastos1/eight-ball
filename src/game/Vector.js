@@ -1,4 +1,4 @@
-class Vector {
+export default class Vector {
     constructor(x = 0, y = 0) {
         this.x = x;
         this.y = y;
@@ -98,5 +98,3 @@ class Vector {
         return Vector.subtract(v1, v2).lengthSquared;
     }
 }
-
-export default Vector;

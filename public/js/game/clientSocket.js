@@ -45,7 +45,7 @@ function joinQueue() {
 }
 
 // Leave queue button click event
-$("#btn-leaveQueue").click(() => {
+$("#btn-leaveQueue").on("click", () => {
     // Send queue leave event to server
     socket.emit("queue-leave");
     // Show the menu

@@ -1,8 +1,6 @@
-// Dependencies
 import express from "express";
 import chalk from "chalk";
 
-// imports
 import { oauth, expressToWebRequest } from "../site/authentication.js";
 
 // Initialise route handler
@@ -11,9 +9,7 @@ const router = express.Router();
 // Log function
 const log = (string) => console.log(`${chalk.bold.underline.cyan("USER")} ${chalk.yellow("»")} ${chalk.green(string)}`);
 
-/*
-    OAUTH INTEGRATION
-*/
+// OAUTH
 router.get("/auth/login", async (req, res) => {
     const response = await oauth.login(expressToWebRequest(req));
 

@@ -10,7 +10,7 @@ import dotenv from "dotenv";
 // imports
 import helpers from "./src/site/helpers.js";
 import applySocketEvents from "./src/serverSocket.js";
-import authentication from "./src/site/authentication.js";
+import { authentication } from "./src/site/authentication.js";
 import { applySecurityConfig } from "./src/site/security.js";
 import { configureSessionStore, initializeDatabase, sessionStore } from "./src/db/database.js";
 import { initOAuth } from "./src/site/authentication.js";
@@ -18,7 +18,7 @@ import { ExpressStoreAdapter } from "./src/db/adapter.js";
 
 // Routers
 import indexRouter from "./src/routes/index.js";
-import usersRouter from "./src/routes/users.js";
+import authRouter from "./src/routes/auth.js";
 
 // Init
 dotenv.config();
@@ -48,7 +48,13 @@ app.engine("hbs", engine({
 app.set("view engine", "hbs");
 
 // Set static path to /public
-app.use(express.static("public"));
+app.use(express.static("public", {
+    setHeaders: (res, path) => {
+        if (path.endsWith('.js')) {
+            res.set('Content-Type', 'application/javascript');
+        }
+    }
+}));
 
 // HTTP logger middleware
 app.use(logger("tiny"));
@@ -91,7 +97,7 @@ app.use((req, res, next) => {
 
 // Routers
 app.use("/", indexRouter);
-app.use("/", usersRouter);
+app.use("/", authRouter);
 
 // Invalid route
 app.get("*", (_req, _res, next) => next("Page not found."));

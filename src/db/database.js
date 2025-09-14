@@ -15,14 +15,15 @@ export const sessionStore = new SequelizeStore({
 });
 
 export const configureSessionStore = (app) => {
+    sessionStore.sync();
     const sessionMiddleware = expressSession({
         store: sessionStore,
-        secret: "secret",
+        secret: process.env.SESSION_SECRET || "this_should_be_secret",
         resave: false,
         saveUninitialized: false,
         cookie: {
             maxAge: 7 * 24 * 60 * 60 * 1000, // 1 week
-            secure: "auto",
+            secure: process.env.NODE_ENV === "production" ? true : "auto",
         },
     });
 
@@ -137,5 +138,3 @@ export const initializeDatabase = async () => {
         console.error("Failed syncing database:", error);
     }
 };
-
-

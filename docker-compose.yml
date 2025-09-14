@@ -6,7 +6,13 @@ services:
       - OAUTH2_AUTH_SERVER=https://auth.sjallabong.eu
       - OAUTH2_CLIENT_ID=sjallabong-pool
       - APP_BASE_URL=https://pool.sjallabong.eu
+      - SESSION_SECRET=asdfadsfadsfasd
     expose:
       - "8080"
     ports:
       - "8080:8080"
+    volumes:
+      - data:/app
+
+volumes:
+  data:

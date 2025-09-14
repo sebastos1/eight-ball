@@ -1,9 +1,9 @@
 import Ball from "./Ball.js";
 import Vector from "./Vector.js";
-import physics from "./physics.js";
-import events from "./events.js";
-import Games from "../db/Games.js";
-import Users from "../db/Users.js";
+import { physics } from "./physics.js";
+import { event } from "./events.js";
+import { games } from "../db/games.js";
+import { users } from "../db/users.js";
 
 const WIDTH = 1280;
 const HEIGHT = 720;
@@ -14,7 +14,7 @@ const POCKETS = [[0, 0], [WIDTH / 2, 0], [WIDTH, 0], [0, HEIGHT], [WIDTH / 2, HE
 
 let gameCounter = 0;
 
-class Game {
+export default class Game {
     constructor(player1, player2) {
         this.id = ++gameCounter;
         this.initializePlayers(player1, player2);
@@ -37,8 +37,12 @@ class Game {
     initializeGameState() {
         this.active = false;
         this.ended = false;
-        this.turn = this.player1;
-        this.nextTurn = this.player2;
+
+        // random first player
+        const randomStart = Math.random() < 0.5;
+        this.turn = randomStart ? this.player1 : this.player2;
+        this.nextTurn = randomStart ? this.player2 : this.player1;
+
         this.foul = false;
         this.potted = false;
         this.whiteBallPotted = false;
@@ -53,7 +57,7 @@ class Game {
 
         const ballSetup = [
             { pos: [whiteX, whiteY], color: "white" },
-            { pos: [1030, 360], color: "black" },
+            { pos: [1030, 360] }, // center (used to be black, now random)
             { pos: [960, 360] }, { pos: [995, 340] },
             { pos: [995, 380] }, { pos: [1030, 320] },
             { pos: [1030, 400] }, { pos: [1065, 300] },
@@ -63,10 +67,12 @@ class Game {
             { pos: [1100, 400] }, { pos: [1100, 440] }
         ];
 
-        const colors = [...Array(7).fill("red"), ...Array(7).fill("yellow")];
-        for (let i = 2; i < ballSetup.length; i++) {
+        const colors = [...Array(7).fill("red"), ...Array(7).fill("yellow"), "black"];
+        for (let i = 1; i < ballSetup.length; i++) {
             const randomIndex = Math.floor(Math.random() * colors.length);
             ballSetup[i].color = colors.splice(randomIndex, 1)[0];
+            ballSetup[i].pos[0] += (Math.random() * 2 - 1);
+            ballSetup[i].pos[1] += (Math.random() * 2 - 1);
         }
 
         return ballSetup.map(({ pos, color }) => new Ball(new Vector(...pos), BALL_RADIUS, color));
@@ -87,7 +93,7 @@ class Game {
             if (physics.ballMotion(ball)) this.active = true;
 
             POCKETS.forEach(pocket => {
-                if (physics.doBallsOverlap(ball, pocket)) events.ballPotted(this, ball);
+                if (physics.doBallsOverlap(ball, pocket)) event.ballPotted(this, ball);
             });
         }
 
@@ -138,11 +144,11 @@ class Game {
             let ratingChanges = null;
 
             if (!winner.isGuest && !loser.isGuest) {
-                ratingChanges = await Users.updateRatingsAfterGame(winner.id, loser.id);
+                ratingChanges = await users.updateRatingsAfterGame(winner.id, loser.id);
                 if (!ratingChanges) console.log("Error updating ratings, logging anyway");
             }
 
-            await Games.create(winner, loser, ratingChanges, winReason);
+            await games.create(winner, loser, ratingChanges, winReason);
         } catch (error) {
             console.error("Error ending game:", error);
         }
@@ -212,5 +218,3 @@ class Game {
         }));
     }
 }
-
-export default Game;

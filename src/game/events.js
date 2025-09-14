@@ -1,10 +1,9 @@
-const events = {
+export const event = {
     ballPotted(game, ball) {
-
         switch (ball.color) {
             case "red":
             case "yellow":
-                // this.handleBlackBall(game); // for testing
+                // handleBlackBall(game); // for testing
                 this.handleColoredBall(game, ball);
                 break;
             case "white":
@@ -29,7 +28,6 @@ const events = {
     },
 
     handleColoredBall(game, ball) {
-
         // give a color if no ball gone
         if (game.turn.color === undefined) {
             game.turn.color = ball.color;
@@ -67,6 +65,4 @@ const events = {
             game.winReason = 2;
         }
     },
-};
-
-export default events;
+}

@@ -1,4 +1,4 @@
-class Queue {
+export default class Queue {
     constructor() {
         this.users = [];
     }
@@ -28,5 +28,3 @@ class Queue {
         }
     }
 }
-
-export default Queue;

@@ -1,0 +1,25 @@
+{
+    "compilerOptions": {
+        "target": "ES2022",
+        "module": "nodenext",
+        "moduleResolution": "nodenext",
+        "allowSyntheticDefaultImports": true,
+        "checkJs": true,
+        "noImplicitAny": false,
+        "strict": false,
+        "baseUrl": ".",
+        "paths": {
+            "*": [
+                "node_modules/*"
+            ]
+        }
+    },
+    "include": [
+        "**/*.js",
+        "**/*.mjs"
+    ],
+    "exclude": [
+        "node_modules",
+        "dist"
+    ]
+}
