@@ -203,4 +203,14 @@ export const users = {
             return null;
         }
     },
+
+    async updateCountry(id, country) {
+        try {
+            await User.update({ country }, { where: { id } });
+            return true;
+        } catch (error) {
+            console.error("Error updating user country:", error);
+            return false;
+        }
+    },
 }

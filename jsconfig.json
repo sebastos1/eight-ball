@@ -7,6 +7,13 @@
         "checkJs": true,
         "noImplicitAny": false,
         "strict": false,
+        "strictNullChecks": false,
+        "strictFunctionTypes": false,
+        "strictBindCallApply": false,
+        "strictPropertyInitialization": false,
+        "noImplicitReturns": false,
+        "noImplicitThis": false,
+        "noUncheckedIndexedAccess": false,
         "baseUrl": ".",
         "paths": {
             "*": [

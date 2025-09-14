@@ -1,6 +1,7 @@
 import OAuth2Server from "sjallabong-auth";
 import { users } from "../db/users.js";
 import { appBaseUrl, oauthServer } from "../../index.js";
+import session from "express-session";
 
 export let oauth;
 
@@ -43,6 +44,8 @@ export const authentication = async function (req, res, next) {
         const response = await oauth.checkSession(expressToWebRequest(req));
         const sessionData = await response.json();
 
+        console.log(sessionData);
+
         if (sessionData.authenticated && sessionData.userInfo) {
             const oauthId = sessionData.userInfo.sub;
 
@@ -59,8 +62,12 @@ export const authentication = async function (req, res, next) {
             }
 
             if (localUser && localUser.is_active) {
+                if (sessionData.userInfo.country && sessionData.userInfo.country !== localUser.country) {
+                    await users.updateCountry(localUser.id, sessionData.userInfo.country);
+                    localUser.country = sessionData.userInfo.country;
+                }
+
                 // pool data
-                req.country = localUser.country;
                 req.session.user = localUser;
                 req.session.authenticated = true; 
 
