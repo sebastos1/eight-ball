@@ -59,8 +59,6 @@ const applySocketEvents = function (io) {
             }
         } else if (socket.request.session.guestId) {
             const guestId = socket.request.session.guestId;
-
-            console.log("gid:", guestId);
             if (players.has(guestId)) {
                 player = players.get(guestId);
                 player.socket = socket;

@@ -24,12 +24,12 @@ const gameloop = function () {
 window.requestAnimationFrame(gameloop);
 
 // Join queue button click event
-$("#btn-joinQueue").click(() => {
+$("#btn-joinQueue").on("click", () => {
     joinQueue();
 });
 
 // Show menu button click event
-$("#btn-requeue").click(() => {
+$("#btn-requeue").on("click", () => {
     joinQueue();
 });
 
@@ -216,7 +216,7 @@ socket.on("queue-update", (data) => {
 });
 
 // rooms
-$("#btn-createRoom").click(() => {
+$("#btn-createRoom").on("click", () => {
     socket.emit("room-create", (response) => {
         if (response.success) {
             window.location.href = `/play?room=${response.roomId}`;
@@ -224,7 +224,7 @@ $("#btn-createRoom").click(() => {
     });
 });
 
-$("#btn-joinRoom").click(() => {
+$("#btn-joinRoom").on("click", () => {
     const roomId = $("#roomIdInput").val().trim().toUpperCase();
     if (roomId) {
         window.location.href = `/play?room=${roomId}`;
@@ -251,19 +251,19 @@ $(document).ready(() => {
     }
 });
 
-$("#btn-leaveRoom").click(() => {
+$("#btn-leaveRoom").on("click", () => {
     window.location.href = '/play';
 });
 
 // whatever class didnt work
-$("#btn-leaveRoom2").click(() => {
+$("#btn-leaveRoom2").on("click", () => {
     window.location.href = '/play';
 });
 
 // rematching
 let rematchState = 'idle';
 
-$("#btn-rematch").click(() => {
+$("#btn-rematch").on("click", () => {
     if (rematchState === 'accepting') {
         socket.emit("rematch-response", true, (response) => {
             console.log(response.message);

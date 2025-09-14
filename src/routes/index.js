@@ -26,7 +26,7 @@ router.get("/play", async (req, res) => {
     if (isGuest && !req.session.guestId) {
         req.session.guestId = "Guest_" + Math.random().toString(36).substring(2, 8);
         const ip = req.headers["x-real-ip"] || req.headers["x-forwarded-for"];
-        req.guestCountry = await getLocationFromIp(ip);
+        req.session.guestCountry = await getLocationFromIp(ip);
     }
 
     return res.render("play", {
@@ -34,7 +34,7 @@ router.get("/play", async (req, res) => {
         title: "Play",
         user: req.session.user || {
             username: req.session.guestId || "Guest",
-            country: req.guestCountry,
+            country: req.session.guestCountry,
             isGuest: true
         }
     });
@@ -74,7 +74,6 @@ router.get("/profile/:id", async (req, res) => {
 
         const userGames = await games.getGamesByUserId(profile.id);
         const ratingHistory = await users.getRatingHistory(profile.id);
-        console.log(ratingHistory);
 
         return res.render("profile", { profile, games: userGames, selfProfile, gamesPlayed, winRate, title: profile.username, ratingHistory });
     } catch (error) {

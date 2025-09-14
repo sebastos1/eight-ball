@@ -23,7 +23,7 @@ export const configureSessionStore = (app) => {
         saveUninitialized: false,
         cookie: {
             maxAge: 7 * 24 * 60 * 60 * 1000, // 1 week
-            secure: process.env.NODE_ENV === "production" ? true : "auto",
+            secure: "auto",
         },
     });
 

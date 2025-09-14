@@ -1,11 +1,7 @@
-FROM node:20
-
+FROM node:22-bookworm
 WORKDIR /app
-
 COPY package*.json ./
 RUN npm ci
 COPY . .
-RUN npm rebuild
-
 EXPOSE 8080
 CMD ["node", "index.js"]

@@ -1,6 +1,7 @@
 services:
   pool-app:
     build: .
+    network_mode: "host" # todo!
     environment:
       - NODE_ENV=production
       - OAUTH2_AUTH_SERVER=https://auth.sjallabong.eu
