@@ -27,7 +27,7 @@ const PORT = process.env.PORT || 8080;
 const server = http.createServer(app);
 
 export const appBaseUrl = process.env.APP_BASE_URL || `http://localhost:${PORT}`;
-export const oauthServer = process.env.OAUTH2_AUTH_SERVER || "http://localhost:3001";
+export const oauthServer = process.env.OAUTH2_AUTH_SERVER || "http://localhost:5173";
 
 await initializeDatabase();
 

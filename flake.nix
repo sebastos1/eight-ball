@@ -11,8 +11,8 @@
       in {
         devShell = pkgs.mkShell {
           buildInputs = with pkgs; [
-            nodejs_20
-	    python3
+            nodejs_22
+	          python3
             sqlite
           ];
           shellHook = ''

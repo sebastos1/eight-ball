@@ -1,23 +1,23 @@
-import OAuth2Server from "sjallabong-auth";
+import OAuth2Server from "authabong";
 import { users } from "../db/users.js";
 import { appBaseUrl, oauthServer } from "../../index.js";
 import session from "express-session";
 
 export let oauth;
 
-export function initOAuth(sessionStore) {
-    oauth = new OAuth2Server({
+export async function initOAuth(sessionStore) {
+    oauth = await new OAuth2Server({
         clientId: "sjallabong-pool",
-        authServer: oauthServer,
+        discoveryUrl: `${oauthServer}/.well-known/openid-configuration`,
         redirectUri: `${appBaseUrl}/auth/callback`,
         debug: true,
         scope: "openid profile pool"
-    }, sessionStore);
+    }, sessionStore).init();
 
     return oauth;
 }
 
-// sjallabong-auth uses web api so convert
+// authabong uses web api so convert
 export function expressToWebRequest(req) {
     const headers = new Headers();
     Object.entries(req.headers).forEach(([key, value]) => {
@@ -69,7 +69,7 @@ export const authentication = async function (req, res, next) {
 
                 // pool data
                 req.session.user = localUser;
-                req.session.authenticated = true; 
+                req.session.authenticated = true;
 
                 res.locals.loggedIn = true;
                 res.locals.user = localUser;
